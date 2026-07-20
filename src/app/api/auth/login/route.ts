@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { connectDb } from "@/lib/db";
-import { normalizeUsername, validateUsernameFormat } from "@/lib/username";
 import { UserModel } from "@/models/User";
 
 type LoginBody = {
@@ -25,11 +24,13 @@ export async function POST(request: Request) {
     );
   }
 
-  const format = validateUsernameFormat(body.username ?? "");
-  if (!format.ok) {
-    return NextResponse.json({ error: format.message }, { status: 400 });
+  const username = (body.username ?? "").trim().toLowerCase();
+  if (!username) {
+    return NextResponse.json(
+      { error: "Enter your username." },
+      { status: 400 },
+    );
   }
-  const username = normalizeUsername(body.username ?? "");
 
   try {
     await connectDb();
@@ -37,7 +38,6 @@ export async function POST(request: Request) {
     const user = await UserModel.findOne({
       emailNorm,
       username,
-      seededData: false,
     })
       .select("_id")
       .lean();

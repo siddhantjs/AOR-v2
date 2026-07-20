@@ -10,7 +10,6 @@ import {
   hintClass,
   labelClass,
 } from "@/components/ui";
-import { normalizeUsername } from "@/lib/username";
 
 export function LoginPage() {
   const router = useRouter();
@@ -32,7 +31,7 @@ export function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email.trim(),
-          username: normalizeUsername(username),
+          username: username.trim(),
         }),
       });
 
