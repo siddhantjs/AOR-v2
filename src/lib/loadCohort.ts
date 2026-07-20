@@ -2,11 +2,14 @@ import { connectDb } from "@/lib/db";
 import { buildCohortKey, aorMonthFromIso } from "@/lib/cohort";
 import {
   cohortDisplayName,
+  furthestStageKey,
+  stageStyle,
   toCohortApplicant,
   type CohortApplicantView,
   type CohortOption,
 } from "@/lib/cohortBrowse";
 import { toIsoDate } from "@/lib/dates";
+import { MILESTONE_IDS } from "@/lib/schema/constants";
 import type { User } from "@/lib/schema/types";
 import { CohortModel } from "@/models/Cohort";
 import { UserModel } from "@/models/User";
@@ -116,4 +119,119 @@ async function findCohortMembers(cohortKey: string) {
       "username applyingFrom pathway expressEntryProgram drawCategory itaDate aorDate primaryVisaOffice secondaryVisaOffice milestones userDetails",
     )
     .lean();
+}
+
+export type AllCohortCard = {
+  cohortKey: string;
+  title: string;
+  isYours: boolean;
+  total: number;
+  countLabel: string;
+  stageLabel: string;
+  stageBg: string;
+  stageFg: string;
+  empty: boolean;
+  sparkPoints: string;
+};
+
+export type AllCohortsPageData = {
+  userId: string;
+  myCohortKey: string;
+  cards: AllCohortCard[];
+};
+
+export async function loadAllCohortsPageData(
+  userId: string,
+): Promise<AllCohortsPageData | null> {
+  if (!/^[a-f\d]{24}$/i.test(userId)) return null;
+  await connectDb();
+
+  const me = await UserModel.findById(userId)
+    .select("applyingFrom aorDate")
+    .lean();
+  if (!me) return null;
+
+  const myKey = buildCohortKey(
+    aorMonthFromIso(toIsoDate(new Date(me.aorDate))),
+    me.applyingFrom,
+  );
+
+  const [cohortDocs, users] = await Promise.all([
+    CohortModel.find({}).lean(),
+    UserModel.find({})
+      .select("applyingFrom aorDate milestones")
+      .lean(),
+  ]);
+
+  const keySet = new Set<string>([myKey]);
+  for (const c of cohortDocs) keySet.add(c.cohortKey);
+
+  type Bucket = {
+    total: number;
+    stageCounts: Record<string, number>;
+  };
+  const buckets = new Map<string, Bucket>();
+
+  function ensure(key: string): Bucket {
+    let b = buckets.get(key);
+    if (!b) {
+      b = { total: 0, stageCounts: {} };
+      buckets.set(key, b);
+    }
+    return b;
+  }
+
+  for (const key of keySet) ensure(key);
+
+  for (const u of users) {
+    const key = buildCohortKey(
+      aorMonthFromIso(toIsoDate(new Date(u.aorDate))),
+      u.applyingFrom,
+    );
+    keySet.add(key);
+    const b = ensure(key);
+    b.total += 1;
+    const stage = furthestStageKey(u.milestones as User["milestones"]);
+    b.stageCounts[stage] = (b.stageCounts[stage] ?? 0) + 1;
+  }
+
+  const stageOrder = ["aor", ...MILESTONE_IDS];
+
+  const cards: AllCohortCard[] = [...keySet]
+    .sort()
+    .reverse()
+    .map((cohortKey) => {
+      const b = ensure(cohortKey);
+      const isYours = cohortKey === myKey;
+      const total = b.total;
+      const top = Object.entries(b.stageCounts).sort((a, c) => c[1] - a[1])[0];
+      const topKey = top?.[0] ?? "aor";
+      const st = stageStyle(topKey);
+      const dist = stageOrder.map((s) => b.stageCounts[s] ?? 0);
+      const mx = Math.max(1, ...dist);
+      const sparkPoints = dist
+        .map((v, i) => {
+          const x = ((i / Math.max(1, dist.length - 1)) * 82 + 2).toFixed(1);
+          const y = (32 - (v / mx) * 26).toFixed(1);
+          return `${x},${y}`;
+        })
+        .join(" ");
+
+      return {
+        cohortKey,
+        title: cohortDisplayName(cohortKey),
+        isYours,
+        total,
+        countLabel: `${total} applicant${total !== 1 ? "s" : ""}${
+          isYours && total > 0 ? ", including you" : ""
+        }`,
+        stageLabel: total ? `Most at ${st.label}` : "Be the first",
+        stageBg: st.bg,
+        stageFg: st.fg,
+        empty: total === 0,
+        sparkPoints,
+      };
+    });
+
+  return { userId, myCohortKey: myKey, cards };
 }

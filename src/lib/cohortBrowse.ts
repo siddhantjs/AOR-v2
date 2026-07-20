@@ -119,6 +119,21 @@ function furthestId(
   return last;
 }
 
+/** Furthest logged stage id, or `aor` if none logged yet. */
+export function furthestStageKey(
+  milestones: ProfileMilestone[] | undefined,
+): string {
+  return furthestId(loggedMap(milestones)) ?? "aor";
+}
+
+export function stageStyle(stageKey: string): {
+  label: string;
+  bg: string;
+  fg: string;
+} {
+  return STAGE_STYLE[stageKey] ?? STAGE_STYLE.aor;
+}
+
 function avColor(handle: string): string {
   let x = 0;
   for (let i = 0; i < handle.length; i++) {
