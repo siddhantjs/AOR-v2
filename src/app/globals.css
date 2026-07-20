@@ -9,7 +9,7 @@
  *   - src/styles/marketing-core.css
  *   - src/styles/track.css
  *   - src/styles/dashboard-v2.css
- *   - src/styles/aortrack.css (dark app chrome)
+ *   - src/styles/aortrack.css (legacy chrome tokens)
  *
  * Fonts are loaded in `src/app/layout.tsx` via `next/font/google`:
  *   Fraunces · DM Sans · DM Mono
@@ -120,49 +120,7 @@
   }
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     3. COLOR THEME — DARK (legacy aortrack / gate screens)
-     Opt-in: <html data-theme="dark"> or .theme-dark
-     ═══════════════════════════════════════════════════════════════════════════ */
-  
-  [data-theme="dark"],
-  .theme-dark {
-    --bg: #0f1923;
-    --bg-elevated: #162030;
-    --bg-muted: #1e2d3d;
-  
-    --navy: #0f1923;
-    --navy2: #162030;
-    --navy3: #1e2d3d;
-    --navy4: #253547;
-  
-    --red: #c0392b;
-    --red2: #a93226;
-    --red-pale: rgba(192, 57, 43, 0.12);
-  
-    --w: #ffffff;
-    --t1: #e8edf2;
-    --t2: #8fa3b8;
-    --t3: #4a6070;
-    --border: rgba(255, 255, 255, 0.08);
-    --bl: rgba(255, 255, 255, 0.04);
-    --gb: #1d5c35;
-    --ab: #5a3d0e;
-  
-    --ink: var(--t1);
-    --muted: var(--t2);
-    --muted2: var(--t3);
-    --color-text: var(--t1);
-    --color-text-muted: var(--t2);
-    --color-surface: var(--navy);
-    --color-border: var(--border);
-    --color-primary: var(--red);
-    --color-primary-hover: var(--red2);
-  
-    /* Dark chrome uses Sora in aortrack.css historically */
-  }
-  
-  /* ═══════════════════════════════════════════════════════════════════════════
-     4. BASE RESET & DOCUMENT
+     3. BASE RESET & DOCUMENT
      Fonts are set per tag (no inherit / browser default).
        --fh / --font-display  → headings
        --fb / --font-body     → UI + body copy
@@ -238,10 +196,6 @@
     background: var(--border2);
     border-radius: 5px;
   }
-  [data-theme="dark"] ::-webkit-scrollbar-thumb,
-  .theme-dark ::-webkit-scrollbar-thumb {
-    background: var(--navy4, #253547);
-  }
   
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -257,7 +211,7 @@
   }
   
   /* ═══════════════════════════════════════════════════════════════════════════
-     5. SHARED KEYFRAMES (lightweight)
+     4. SHARED KEYFRAMES (lightweight)
      ═══════════════════════════════════════════════════════════════════════════ */
   
   @keyframes fadeUp {
@@ -278,6 +232,36 @@
     }
     50% {
       opacity: 0.5;
+    }
+  }
+
+  @keyframes landing-rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes landing-draw {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes landing-pulse {
+    0%,
+    100% {
+      opacity: 0.75;
+    }
+    50% {
+      opacity: 1;
     }
   }
   

@@ -27,6 +27,7 @@ Source prototype: `aor-tracker-final-version.html`.
 
 | Prototype section | Route | Page component |
 | ----------------- | ----- | -------------- |
+| Landing (marketing home) | `/` | `src/components/pages/landing/LandingPage.tsx` |
 | “Tell us about your application” (`#pg-app`) | `/track` | `src/components/pages/track/TrackPage.tsx` |
 | “Your milestones” (`#pg-ms`) | `/track` (phase 2) | `src/components/pages/track/MilestonesStep.tsx` |
 | Dashboard (`#pg-dash`) | `/dashboard/[userId]` | `src/components/pages/dashboard/DashboardPage.tsx` |
