@@ -1,26 +1,29 @@
 import { notFound } from "next/navigation";
-import { DashboardPage } from "@/components/pages/dashboard";
+import { CohortPage } from "@/components/pages/dashboard/CohortPage";
 import { DashboardChrome } from "@/components/pages/dashboard/DashboardChrome";
-import { loadDashboardView } from "@/lib/loadDashboard";
+import { loadCohortPageData } from "@/lib/loadCohort";
 
 type PageProps = {
   params: Promise<{ userId: string }>;
+  searchParams: Promise<{ c?: string }>;
 };
 
-export default async function DashboardRoute({ params }: PageProps) {
+export default async function CohortRoute({ params, searchParams }: PageProps) {
   const { userId } = await params;
+  const { c } = await searchParams;
+
   let data;
   try {
-    data = await loadDashboardView(userId);
+    data = await loadCohortPageData(userId, c ?? null);
   } catch {
     notFound();
   }
   if (!data) notFound();
 
   return (
-    <DashboardChrome userId={userId} active="timeline">
+    <DashboardChrome userId={userId} active="cohort">
       <main className="mx-auto max-w-[var(--max)] px-[22px] pt-6 pb-[80px]">
-        <DashboardPage data={data} />
+        <CohortPage data={data} />
       </main>
     </DashboardChrome>
   );

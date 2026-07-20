@@ -31,6 +31,7 @@ Source prototype: `aor-tracker-final-version.html`.
 | “Your milestones” (`#pg-ms`) | `/track` (phase 2) | `src/components/pages/track/MilestonesStep.tsx` |
 | Dashboard (`#pg-dash`) | `/dashboard/[userId]` | `src/components/pages/dashboard/DashboardPage.tsx` |
 | Edit milestones (`#pg-ms` from dash) | `/dashboard/[userId]/edit-milestone` | `src/components/pages/dashboard/EditMilestonesPage.tsx` |
+| My cohort (`#pg-cd`) | `/dashboard/[userId]/cohort` | `src/components/pages/dashboard/CohortPage.tsx` |
 | Cohorts | TBD | — |
 
 Schema / types: see `SCHEMA_V3.md` and `src/lib/schema/`.
