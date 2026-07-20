@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+tracker-json
+pnp-non-express-entry-tracker
+cec-express-entry-tracker
+federal-skilled-worker-fsw-express-entry-tracker
+case-numbers-db-check.json
+case-numbers.json
+cohort-calibration-today.json
+milestone-sync-dry-run.json
+milestone-sync-applied.json
+tracker-seed-applied.json
