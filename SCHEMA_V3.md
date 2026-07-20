@@ -190,18 +190,42 @@ Canonical slugs stored on the profile. UI formats as `"Early September to Mid Oc
 // Pattern: "{early|mid|late}-{month}"
 // month ∈ january … december
 export type EstimateBucket =
-  | "early-january" | "mid-january" | "late-january"
-  | "early-february" | "mid-february" | "late-february"
-  | "early-march" | "mid-march" | "late-march"
-  | "early-april" | "mid-april" | "late-april"
-  | "early-may" | "mid-may" | "late-may"
-  | "early-june" | "mid-june" | "late-june"
-  | "early-july" | "mid-july" | "late-july"
-  | "early-august" | "mid-august" | "late-august"
-  | "early-september" | "mid-september" | "late-september"
-  | "early-october" | "mid-october" | "late-october"
-  | "early-november" | "mid-november" | "late-november"
-  | "early-december" | "mid-december" | "late-december";
+  | "early-january"
+  | "mid-january"
+  | "late-january"
+  | "early-february"
+  | "mid-february"
+  | "late-february"
+  | "early-march"
+  | "mid-march"
+  | "late-march"
+  | "early-april"
+  | "mid-april"
+  | "late-april"
+  | "early-may"
+  | "mid-may"
+  | "late-may"
+  | "early-june"
+  | "mid-june"
+  | "late-june"
+  | "early-july"
+  | "mid-july"
+  | "late-july"
+  | "early-august"
+  | "mid-august"
+  | "late-august"
+  | "early-september"
+  | "mid-september"
+  | "late-september"
+  | "early-october"
+  | "mid-october"
+  | "late-october"
+  | "early-november"
+  | "mid-november"
+  | "late-november"
+  | "early-december"
+  | "mid-december"
+  | "late-december";
 ```
 
 Include year in the AI response or derive from AOR when formatting (e.g. store optional `estimatedYear` if the window crosses year boundaries). Prefer storing year on the range:
@@ -310,12 +334,12 @@ USER_SCHEMA = {
 
 ### Uniqueness
 
-| Field | Unique? | Notes |
-|-------|---------|--------|
-| `email` / `emailNorm` | Yes | Always |
-| `caseNo` | Yes (sparse) | Tracker sync PK; null for non-seeded |
-| `shareToken` | Yes (sparse) | Null until share is created |
-| `username` | Yes for live users | **Not unique while seeding**. Enforce only when `seededData === false`. |
+| Field                 | Unique?            | Notes                                                                   |
+| --------------------- | ------------------ | ----------------------------------------------------------------------- |
+| `email` / `emailNorm` | Yes                | Always                                                                  |
+| `caseNo`              | Yes (sparse)       | Tracker sync PK; null for non-seeded                                    |
+| `shareToken`          | Yes (sparse)       | Null until share is created                                             |
+| `username`            | Yes for live users | **Not unique while seeding**. Enforce only when `seededData === false`. |
 
 Resolve cohort on write: find-or-create `COHORT` by `"{YYYY-MM}|{inland|outland}"`, then set `USER_SCHEMA.cohortKey` to that document’s `_id`.
 
@@ -359,14 +383,14 @@ No `STREAM_PACE`. No community median tables. Estimates live only on `PROFILE_MI
 
 ### When to call
 
-| Trigger | Call? | `phase` |
-|---------|-------|---------|
-| ITA + AOR first complete, PVO **and** SVO still missing | **Call 1** | `"aor-only"` |
-| Later PVO and/or SVO set (after call 1) | **Call 2** | `"with-offices"` |
-| ITA + AOR first complete, PVO **and** SVO already set | **One call only** | `"with-offices"` — skip call 2 |
-| `inputsHash` unchanged | Skip | — |
-| ITA / AOR change | Re-run (same rules as above) | — |
-| PVO / SVO change after `"with-offices"` | Re-run call 2 | `"with-offices"` |
+| Trigger                                                 | Call?                        | `phase`                        |
+| ------------------------------------------------------- | ---------------------------- | ------------------------------ |
+| ITA + AOR first complete, PVO **and** SVO still missing | **Call 1**                   | `"aor-only"`                   |
+| Later PVO and/or SVO set (after call 1)                 | **Call 2**                   | `"with-offices"`               |
+| ITA + AOR first complete, PVO **and** SVO already set   | **One call only**            | `"with-offices"` — skip call 2 |
+| `inputsHash` unchanged                                  | Skip                         | —                              |
+| ITA / AOR change                                        | Re-run (same rules as above) | —                              |
+| PVO / SVO change after `"with-offices"`                 | Re-run call 2                | `"with-offices"`               |
 
 Max **2** AI runs per user in the happy path; **1** if offices are already filled when ITA+AOR land.
 

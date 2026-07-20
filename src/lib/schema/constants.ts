@@ -192,11 +192,7 @@ export type ExpressEntryProgram = (typeof EXPRESS_ENTRY_PROGRAMS)[number];
 export const MARITAL_STATUSES = ["married", "single", "common-law"] as const;
 export type MaritalStatus = (typeof MARITAL_STATUSES)[number];
 
-export const SPOUSE_STATUSES = [
-  "accompanying",
-  "non-accompanying",
-  "no-spouse",
-] as const;
+export const SPOUSE_STATUSES = ["accompanying", "non-accompanying", "no-spouse"] as const;
 export type SpouseStatus = (typeof SPOUSE_STATUSES)[number];
 
 export const MEDICAL_TYPES = ["old-medical", "new-medical"] as const;

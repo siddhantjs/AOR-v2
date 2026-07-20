@@ -163,5 +163,4 @@ export type UserDocument = InferSchemaType<typeof UserSchema> & {
 };
 
 export const UserModel: Model<User> =
-  (mongoose.models.User as Model<User> | undefined) ??
-  mongoose.model<User>("User", UserSchema);
+  (mongoose.models.User as Model<User> | undefined) ?? mongoose.model<User>("User", UserSchema);
