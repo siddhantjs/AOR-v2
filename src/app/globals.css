@@ -29,14 +29,13 @@
     --font-fraunces: "Fraunces", Georgia, "Times New Roman", serif;
     --font-dm-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-dm-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    --font-sora: "Sora", system-ui, sans-serif; /* legacy dark chrome only */
-  
-    /* Semantic stacks used across marketing / track / dashboard */
+
+    /* Semantic stacks */
     --font-display: var(--font-fraunces);
     --font-body: var(--font-dm-sans);
     --font-mono: var(--font-dm-mono);
-  
-    /* Short aliases (match existing --fh / --fb / --fm in page CSS) */
+
+    /* Short aliases used in marketing / landing / track */
     --fh: var(--font-display);
     --fb: var(--font-body);
     --fm: var(--font-mono);
@@ -163,14 +162,14 @@
     --color-primary-hover: var(--red2);
   
     /* Dark chrome uses Sora in aortrack.css historically */
-    --font-body: var(--font-sora), "Sora", system-ui, sans-serif;
-    --fb: var(--font-body);
-    --f: var(--font-body);
-    --m: var(--font-mono);
   }
   
   /* ═══════════════════════════════════════════════════════════════════════════
      4. BASE RESET & DOCUMENT
+     Fonts are set per tag (no inherit / browser default).
+       --fh / --font-display  → headings
+       --fb / --font-body     → UI + body copy
+       --fm / --font-mono     → code
      ═══════════════════════════════════════════════════════════════════════════ */
   
   *,
@@ -183,13 +182,14 @@
     font-size: 16px;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    font-family: var(--fb);
   }
   
   body {
     margin: 0;
     min-height: 100vh;
     overflow-x: hidden;
-    font-family: var(--font-body);
+    font-family: var(--fb);
     font-size: 1rem;
     line-height: 1.65;
     color: var(--color-text);
@@ -198,25 +198,18 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
+  /* Display — Fraunces */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    font-family: var(--font-display);
+    font-family: var(--fh);
     font-weight: 800;
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: var(--ink);
-  }
-  
-  code,
-  kbd,
-  samp,
-  pre,
-  .mono {
-    font-family: var(--font-mono);
   }
   
   a {
@@ -224,11 +217,13 @@
     text-decoration: none;
   }
   
-  button,
-  input,
-  select,
-  textarea {
-    font-family: inherit;
+  /* Mono — DM Mono */
+  code,
+  kbd,
+  samp,
+  pre,
+  .mono {
+    font-family: var(--fm);
   }
   
   img,
