@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 /**
- * Dry-run: milestone date diff for tracker ∩ seeded DB only.
- * Scope: seededData:true profiles whose caseNo exists in tracker-json.
- * Seeded profiles may come from tracker-json seed or legacy Excel import.
- * Does NOT create profiles — compare/update existing seeded rows only.
+ * Dry-run: milestone date diff for tracker ∩ seeded users only.
  *
  * Usage:
  *   node scripts/dry-run-milestone-sync.mjs
@@ -17,7 +14,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { MongoClient } from "mongodb";
 import {
-  MILESTONE_KEYS,
+  TRACKER_MILESTONE_IDS,
   decodeRow,
   parseTrackerDate,
   planMilestoneUpdate,
@@ -50,6 +47,14 @@ function loadEnv() {
   }
 }
 
+function resolveDbName() {
+  return (
+    process.env.MONGODB_DB_NAME?.trim() ||
+    process.env.MONGODB_DB?.trim() ||
+    "aor-v2"
+  );
+}
+
 function loadTrackerRows() {
   if (!fs.existsSync(inDir)) {
     throw new Error(`Missing ${inDir}. Run npm run tracker:fetch first.`);
@@ -59,7 +64,7 @@ function loadTrackerRows() {
     .filter((f) => f.endsWith(".json"))
     .sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
 
-  /** @type {Map<string, ReturnType<typeof decodeRow>>} */
+  /** @type {Map<string, NonNullable<ReturnType<typeof decodeRow>>>} */
   const byCase = new Map();
   for (const file of files) {
     const data = JSON.parse(fs.readFileSync(path.join(inDir, file), "utf8"));
@@ -74,23 +79,25 @@ function loadTrackerRows() {
 /** @param {unknown} raw */
 function normalizeDbDate(raw) {
   if (raw == null || raw === "") return null;
+  if (raw instanceof Date) return raw.toISOString().slice(0, 10);
   const s = String(raw).trim();
   if (!s) return null;
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
   return parseTrackerDate(s);
 }
 
-/** @param {Record<string, { date?: string|null }>|undefined} milestones @param {string} key @param {{ aorDate?: string }} doc */
-function dbMilestoneDate(milestones, key, doc) {
-  if (key === "aor") {
-    const top = normalizeDbDate(doc.aorDate);
-    if (top) return top;
-  }
-  return normalizeDbDate(milestones?.[key]?.date);
+/**
+ * @param {Array<{ milestoneId?: string, milestoneDate?: string|null }>|undefined} milestones
+ * @param {string} id
+ * @param {{ aorDate?: unknown }} doc
+ */
+function dbMilestoneDate(milestones, id, doc) {
+  if (id === "aorDate") return normalizeDbDate(doc.aorDate);
+  const row = (milestones ?? []).find((m) => m.milestoneId === id);
+  return normalizeDbDate(row?.milestoneDate);
 }
 
 /**
- * Raw comparison (no merge rules).
  * @returns {'both_empty'|'match'|'mismatch'|'db_only'|'source_only'}
  */
 function compareDates(dbDate, sourceDate) {
@@ -101,6 +108,8 @@ function compareDates(dbDate, sourceDate) {
   return "mismatch";
 }
 
+const COMPARE_KEYS = ["aorDate", ...TRACKER_MILESTONE_IDS];
+
 async function main() {
   loadEnv();
   const uri = process.env.MONGODB_URI?.trim();
@@ -108,7 +117,7 @@ async function main() {
     console.error("MONGODB_URI is not set.");
     process.exit(1);
   }
-  const dbName = process.env.MONGODB_DB?.trim() || "aor-tracker";
+  const dbName = resolveDbName();
 
   const { files, byCase } = loadTrackerRows();
   const trackerCaseNos = [...byCase.keys()];
@@ -116,7 +125,7 @@ async function main() {
   const client = new MongoClient(uri);
   try {
     await client.connect();
-    const col = client.db(dbName).collection("profiles");
+    const col = client.db(dbName).collection("users");
 
     const [docs, dbSeededTotal, seededNotInFetch] = await Promise.all([
       col
@@ -146,15 +155,15 @@ async function main() {
     ]);
 
     const stats = {
-      scope: "tracker ∩ seeded",
-      comparedProfiles: docs.length,
+      scope: "tracker ∩ seeded users",
+      comparedUsers: docs.length,
       trackerRows: byCase.size,
       trackerFiles: files,
       dbSeededTotal,
       seededNotInFetch,
-      profilesWithAnyDiff: 0,
-      profilesWithMismatch: 0,
-      profilesWithSourceOnly: 0,
+      usersWithAnyDiff: 0,
+      usersWithMismatch: 0,
+      usersWithSourceOnly: 0,
       totalMismatches: 0,
       totalSourceOnly: 0,
       compare: {
@@ -165,7 +174,7 @@ async function main() {
         source_only: 0,
       },
       byMilestone: Object.fromEntries(
-        MILESTONE_KEYS.map((k) => [
+        COMPARE_KEYS.map((k) => [
           k,
           {
             both_empty: 0,
@@ -198,9 +207,12 @@ async function main() {
       let hasMismatch = false;
       let hasSourceOnly = false;
 
-      for (const key of MILESTONE_KEYS) {
+      for (const key of COMPARE_KEYS) {
         const dbDate = dbMilestoneDate(doc.milestones, key, doc);
-        const sourceDate = source.milestones[key] ?? null;
+        const sourceDate =
+          key === "aorDate"
+            ? source.aorDate
+            : (source.milestoneDates[key] ?? null);
         const kind = compareDates(dbDate, sourceDate);
 
         stats.compare[kind]++;
@@ -245,9 +257,9 @@ async function main() {
       }
 
       if (fieldDiffs.length > 0) {
-        stats.profilesWithAnyDiff++;
-        if (hasMismatch) stats.profilesWithMismatch++;
-        if (hasSourceOnly) stats.profilesWithSourceOnly++;
+        stats.usersWithAnyDiff++;
+        if (hasMismatch) stats.usersWithMismatch++;
+        if (hasSourceOnly) stats.usersWithSourceOnly++;
         diffs.push({
           caseNo,
           dbUsername: doc.username ?? null,
@@ -259,25 +271,14 @@ async function main() {
 
     diffs.sort((a, b) => String(a.caseNo).localeCompare(String(b.caseNo)));
 
-    const intersectionCaseNos = docs
-      .map((d) => String(d.caseNo).trim().toLowerCase())
-      .sort();
-
     const report = {
       dryRun: true,
       checkedAt: new Date().toISOString(),
       db: dbName,
+      collection: "users",
       scope: "tracker ∩ seeded (seededData:true, caseNo in tracker-json)",
-      intersectionCaseNos,
-      compareLegend: {
-        match: "DB and tracker fetch have the same ISO date",
-        mismatch: "both have dates but they differ",
-        db_only: "date in DB only (tracker row missing that milestone)",
-        source_only: "date in tracker fetch only (DB milestone empty)",
-        both_empty: "neither side has a date",
-      },
       mergeRules: {
-        aor: "never overwrite once set in DB",
+        aorDate: "never overwrite once set in DB",
         milestones: "earliest non-null (fill empty, or update if source is earlier)",
       },
       stats,
@@ -289,19 +290,18 @@ async function main() {
     const wouldApplyCount =
       stats.mergeWouldApply.fill + stats.mergeWouldApply.earlier;
 
-    console.log("Milestone diff dry-run — tracker ∩ seeded only (no writes)");
-    console.log(`  compared profiles:     ${stats.comparedProfiles}`);
-    console.log(`  (context: ${stats.dbSeededTotal} seeded total, ${stats.seededNotInFetch} seeded not in fetch)`);
-    console.log(`  profiles with any diff:  ${stats.profilesWithAnyDiff}`);
-    console.log(`  profiles w/ mismatch:    ${stats.profilesWithMismatch}`);
+    console.log("Milestone diff dry-run — tracker ∩ seeded users only (no writes)");
+    console.log(`  compared users:          ${stats.comparedUsers}`);
+    console.log(
+      `  (context: ${stats.dbSeededTotal} seeded total, ${stats.seededNotInFetch} seeded not in fetch)`,
+    );
+    console.log(`  users with any diff:     ${stats.usersWithAnyDiff}`);
+    console.log(`  users w/ mismatch:       ${stats.usersWithMismatch}`);
     console.log(`  total date mismatches:   ${stats.totalMismatches}`);
     console.log(`  total source-only:       ${stats.totalSourceOnly}`);
-    console.log(`  merge would apply:       ${wouldApplyCount} (fill ${stats.mergeWouldApply.fill}, earlier ${stats.mergeWouldApply.earlier})`);
-    console.log(`  merge would skip:        regress ${stats.mergeWouldApply.skip_regress}, aor locked ${stats.mergeWouldApply.skip_aor_locked}`);
-    console.log("  compare (field pairs):");
-    for (const [kind, count] of Object.entries(stats.compare)) {
-      if (count > 0) console.log(`    ${kind}: ${count}`);
-    }
+    console.log(
+      `  merge would apply:       ${wouldApplyCount} (fill ${stats.mergeWouldApply.fill}, earlier ${stats.mergeWouldApply.earlier})`,
+    );
     console.log(`  report → ${outPath}`);
   } finally {
     await client.close();

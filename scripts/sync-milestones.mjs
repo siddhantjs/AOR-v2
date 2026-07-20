@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 /**
- * Apply tracker milestone updates to existing seeded profiles only.
+ * Apply tracker milestone updates to existing seeded users only.
  * Scope: tracker ∩ seeded (seededData:true, caseNo in tracker-json).
  *
- * Does NOT create or upsert profiles — updateOne only, no upsert flag.
+ * Does NOT create users — updateOne only, no upsert.
  *
  * Usage:
- *   node scripts/sync-milestones.mjs           # preview (no writes)
- *   node scripts/sync-milestones.mjs --apply   # write to MongoDB
+ *   node scripts/sync-milestones.mjs
+ *   node scripts/sync-milestones.mjs --apply
  *   npm run tracker:sync
- *   npm run tracker:sync -- --apply
  *
  * Output: milestone-sync-applied.json
  */
@@ -19,8 +18,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { MongoClient } from "mongodb";
 import {
-  MILESTONE_KEYS,
+  TRACKER_MILESTONE_IDS,
+  aorMonthFromIso,
+  buildCohortKeyString,
   decodeRow,
+  isoToDate,
   parseTrackerDate,
   planMilestoneUpdate,
   wouldApply,
@@ -54,6 +56,14 @@ function loadEnv() {
   }
 }
 
+function resolveDbName() {
+  return (
+    process.env.MONGODB_DB_NAME?.trim() ||
+    process.env.MONGODB_DB?.trim() ||
+    "aor-v2"
+  );
+}
+
 function loadTrackerRows() {
   if (!fs.existsSync(inDir)) {
     throw new Error(`Missing ${inDir}. Run npm run tracker:fetch first.`);
@@ -63,7 +73,7 @@ function loadTrackerRows() {
     .filter((f) => f.endsWith(".json"))
     .sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
 
-  /** @type {Map<string, ReturnType<typeof decodeRow>>} */
+  /** @type {Map<string, NonNullable<ReturnType<typeof decodeRow>>>} */
   const byCase = new Map();
   for (const file of files) {
     const data = JSON.parse(fs.readFileSync(path.join(inDir, file), "utf8"));
@@ -78,75 +88,120 @@ function loadTrackerRows() {
 /** @param {unknown} raw */
 function normalizeDbDate(raw) {
   if (raw == null || raw === "") return null;
+  if (raw instanceof Date) return raw.toISOString().slice(0, 10);
   const s = String(raw).trim();
   if (!s) return null;
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
   return parseTrackerDate(s);
 }
 
-/** @param {Record<string, { date?: string|null }>|undefined} milestones @param {string} key @param {{ aorDate?: string }} doc */
-function dbMilestoneDate(milestones, key, doc) {
-  if (key === "aor") {
-    const top = normalizeDbDate(doc.aorDate);
-    if (top) return top;
-  }
-  return normalizeDbDate(milestones?.[key]?.date);
-}
-
-/** @param {string} aorDate @param {string} stream @param {string} type */
-function buildStatsCohortKey(aorDate, stream, type) {
-  const d = new Date(`${aorDate}T12:00:00`);
-  const month = d.getMonth() + 1;
-  const year = d.getFullYear();
-  const slug =
-    stream === "CEC" || String(stream).startsWith("CEC")
-      ? "CEC"
-      : stream === "PNP"
-        ? "PNP"
-        : "FSW";
-  const kind = String(type).toLowerCase() === "outland" ? "outland" : "inland";
-  return `${slug}:${month}:${year}:${kind}`;
+/**
+ * @param {Array<{ milestoneId?: string, milestoneDate?: string|null }>|undefined} milestones
+ * @param {string} id
+ */
+function dbMilestoneDate(milestones, id) {
+  const row = (milestones ?? []).find((m) => m.milestoneId === id);
+  return normalizeDbDate(row?.milestoneDate);
 }
 
 /**
  * @param {Record<string, unknown>} doc
  * @param {NonNullable<ReturnType<typeof decodeRow>>} source
  */
-function planProfileUpdate(doc, source) {
-  const now = new Date().toISOString();
+function planUserUpdate(doc, source) {
   /** @type {Record<string, unknown>} */
   const $set = { updatedAt: new Date() };
   /** @type {Array<{ milestone: string, action: string, from: string|null, to: string }>} */
   const changes = [];
-  let aorFilled = false;
 
-  for (const key of MILESTONE_KEYS) {
-    const dbDate = dbMilestoneDate(doc.milestones, key, doc);
-    const sourceDate = source.milestones[key] ?? null;
-    const plan = planMilestoneUpdate(dbDate, sourceDate, key);
+  const dbAor = normalizeDbDate(doc.aorDate);
+  const aorPlan = planMilestoneUpdate(dbAor, source.aorDate, "aorDate");
+  if (wouldApply(aorPlan) && aorPlan.proposed) {
+    $set.aorDate = isoToDate(aorPlan.proposed);
+    changes.push({
+      milestone: "aorDate",
+      action: aorPlan.action,
+      from: dbAor,
+      to: aorPlan.proposed,
+    });
+  }
+
+  /** @type {Map<string, { milestoneId: string, milestoneDate: string|null, estimatedFrom: null, estimatedTo: null, estimatedYearFrom: null, estimatedYearTo: null }>} */
+  const byId = new Map();
+  for (const row of doc.milestones ?? []) {
+    if (row?.milestoneId) {
+      byId.set(row.milestoneId, {
+        milestoneId: row.milestoneId,
+        milestoneDate: normalizeDbDate(row.milestoneDate),
+        estimatedFrom: row.estimatedFrom ?? null,
+        estimatedTo: row.estimatedTo ?? null,
+        estimatedYearFrom: row.estimatedYearFrom ?? null,
+        estimatedYearTo: row.estimatedYearTo ?? null,
+      });
+    }
+  }
+
+  let milestonesChanged = false;
+  for (const id of TRACKER_MILESTONE_IDS) {
+    const dbDate = dbMilestoneDate(doc.milestones, id);
+    const sourceDate = source.milestoneDates[id] ?? null;
+    const plan = planMilestoneUpdate(dbDate, sourceDate, id);
     if (!wouldApply(plan) || !plan.proposed) continue;
 
-    $set[`milestones.${key}.date`] = plan.proposed;
-    $set[`milestones.${key}.updatedAt`] = now;
+    byId.set(id, {
+      milestoneId: id,
+      milestoneDate: plan.proposed,
+      estimatedFrom: null,
+      estimatedTo: null,
+      estimatedYearFrom: null,
+      estimatedYearTo: null,
+    });
+    milestonesChanged = true;
     changes.push({
-      milestone: key,
+      milestone: id,
       action: plan.action,
       from: dbDate,
       to: plan.proposed,
     });
+  }
 
-    if (key === "aor") {
-      $set.aorDate = plan.proposed;
-      aorFilled = true;
-    }
+  if (milestonesChanged) {
+    $set.milestones = [...byId.values()].filter((m) => m.milestoneDate);
+  }
+
+  if (source.currentStatus && source.currentStatus !== doc.currentStatus) {
+    $set.currentStatus = source.currentStatus;
+    changes.push({
+      milestone: "currentStatus",
+      action: "fill",
+      from: doc.currentStatus ? String(doc.currentStatus) : null,
+      to: source.currentStatus,
+    });
+  }
+
+  // Refresh profile fields that are safe to overwrite on seeded users
+  if (source.userDetails?.nationality && !doc.userDetails?.nationality) {
+    $set["userDetails.nationality"] = source.userDetails.nationality;
+  }
+  if (
+    source.userDetails?.countryOfResidence &&
+    !doc.userDetails?.countryOfResidence
+  ) {
+    $set["userDetails.countryOfResidence"] = source.userDetails.countryOfResidence;
   }
 
   if (changes.length === 0) return null;
 
-  if (aorFilled) {
-    const stream = String(doc.stream ?? "CEC");
-    const type = String(doc.type ?? "Inland");
-    $set.cohortKey = buildStatsCohortKey(String($set.aorDate), stream, type);
+  const effectiveAor = normalizeDbDate($set.aorDate) ?? dbAor ?? source.aorDate;
+  if (effectiveAor && ($set.aorDate || source.applyingFrom !== doc.applyingFrom)) {
+    $set._recohort = {
+      aorMonth: aorMonthFromIso(effectiveAor),
+      applyingFrom: source.applyingFrom,
+      cohortKeyStr: buildCohortKeyString(
+        aorMonthFromIso(effectiveAor),
+        source.applyingFrom,
+      ),
+    };
   }
 
   return { $set, changes };
@@ -159,7 +214,7 @@ async function main() {
     console.error("MONGODB_URI is not set.");
     process.exit(1);
   }
-  const dbName = process.env.MONGODB_DB?.trim() || "aor-tracker";
+  const dbName = resolveDbName();
 
   const { files, byCase } = loadTrackerRows();
   const trackerCaseNos = [...byCase.keys()];
@@ -167,7 +222,7 @@ async function main() {
   const client = new MongoClient(uri);
   try {
     await client.connect();
-    const col = client.db(dbName).collection("profiles");
+    const col = client.db(dbName).collection("users");
 
     const docs = await col
       .find(
@@ -179,20 +234,22 @@ async function main() {
           projection: {
             caseNo: 1,
             aorDate: 1,
+            applyingFrom: 1,
             milestones: 1,
-            stream: 1,
-            type: 1,
+            currentStatus: 1,
+            userDetails: 1,
+            cohortKey: 1,
           },
         },
       )
       .toArray();
 
     const stats = {
-      scope: "tracker ∩ seeded (update existing only, no inserts)",
+      scope: "tracker ∩ seeded users (update existing only, no inserts)",
       trackerFiles: files,
       trackerRows: byCase.size,
-      comparedProfiles: docs.length,
-      profilesUpdated: 0,
+      comparedUsers: docs.length,
+      usersUpdated: 0,
       fieldsApplied: 0,
       fill: 0,
       earlier: 0,
@@ -209,7 +266,7 @@ async function main() {
       const source = byCase.get(caseNo);
       if (!source) continue;
 
-      const plan = planProfileUpdate(doc, source);
+      const plan = planUserUpdate(doc, source);
       if (!plan) {
         stats.skippedNoChanges++;
         continue;
@@ -221,13 +278,21 @@ async function main() {
         else if (c.action === "earlier") stats.earlier++;
       }
 
-      stats.profilesUpdated++;
+      // Drop internal recohort hint from $set for now (cohort moves need ensureCohort)
+      const { _recohort, ...$set } = plan.$set;
+      if (_recohort && apply) {
+        // Leave cohortKey as-is on sync; full re-seed / recount handles cohort moves.
+        // applyingFrom can still update when residence signals change.
+        $set.applyingFrom = _recohort.applyingFrom;
+      }
+
+      stats.usersUpdated++;
       applied.push({ caseNo, changes: plan.changes });
 
       ops.push({
         updateOne: {
           filter: { seededData: true, caseNo },
-          update: { $set: plan.$set },
+          update: { $set },
         },
       });
     }
@@ -243,8 +308,9 @@ async function main() {
       applied: apply,
       syncedAt: new Date().toISOString(),
       db: dbName,
+      collection: "users",
       mergeRules: {
-        aor: "never overwrite once set in DB",
+        aorDate: "never overwrite once set in DB",
         milestones: "earliest non-null (fill empty, or update if source is earlier)",
       },
       stats,
@@ -261,14 +327,16 @@ async function main() {
 
     const mode = apply ? "APPLIED" : "PREVIEW (pass --apply to write)";
     console.log(`Milestone sync — ${mode}`);
-    console.log(`  scope: existing seeded profiles only (no new profiles)`);
-    console.log(`  compared profiles:  ${stats.comparedProfiles}`);
-    console.log(`  would update:       ${stats.profilesUpdated} profiles, ${stats.fieldsApplied} fields`);
+    console.log(`  scope: existing seeded users only (no new users)`);
+    console.log(`  compared users:     ${stats.comparedUsers}`);
+    console.log(
+      `  would update:       ${stats.usersUpdated} users, ${stats.fieldsApplied} fields`,
+    );
     console.log(`    fill: ${stats.fill}, earlier: ${stats.earlier}`);
     console.log(`  unchanged:          ${stats.skippedNoChanges}`);
     if (bulkResult) {
       console.log(`  MongoDB modified:   ${bulkResult.modifiedCount}`);
-    } else if (!apply && stats.profilesUpdated > 0) {
+    } else if (!apply && stats.usersUpdated > 0) {
       console.log(`  Run with --apply to write these updates.`);
     }
     console.log(`  report → ${outPath}`);

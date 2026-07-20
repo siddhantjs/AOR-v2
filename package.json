@@ -8,7 +8,18 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "cases:check": "node scripts/check-cases-in-db.mjs",
+    "tracker:fetch": "node scripts/fetch-tracker-json.mjs --all",
+    "tracker:cases": "node scripts/extract-case-numbers.mjs",
+    "tracker:dry-run": "node scripts/dry-run-milestone-sync.mjs",
+    "tracker:sync": "node scripts/sync-milestones.mjs",
+    "tracker:seed": "node scripts/seed-from-tracker-json.mjs",
+    "tracker:seed:apply": "node scripts/seed-from-tracker-json.mjs --apply",
+    "db:migrate:dump": "node scripts/migrate-mongodb.mjs dump",
+    "db:migrate:restore": "node scripts/migrate-mongodb.mjs restore",
+    "db:migrate:copy": "node scripts/migrate-mongodb.mjs copy",
+    "db:migrate:verify": "node scripts/migrate-mongodb.mjs verify"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

@@ -6,11 +6,11 @@
  *   node scripts/check-cases-in-db.mjs
  *   npm run cases:check
  *
- * DB scope: profiles where seededData === true (tracker-json seed or legacy Excel).
+ * DB scope: users where seededData === true.
  *
  * Env (from .env.local or .env):
  *   MONGODB_URI — required
- *   MONGODB_DB  — optional, default aor-tracker
+ *   MONGODB_DB_NAME — optional (fallback MONGODB_DB → aor-v2)
  *
  * Output:
  *   Console summary + case-numbers-db-check.json at repo root
@@ -66,13 +66,16 @@ async function main() {
     process.exit(1);
   }
 
-  const dbName = process.env.MONGODB_DB?.trim() || "aor-tracker";
+  const dbName =
+    process.env.MONGODB_DB_NAME?.trim() ||
+    process.env.MONGODB_DB?.trim() ||
+    "aor-v2";
   const cases = readCaseNumbers();
 
   const client = new MongoClient(uri);
   try {
     await client.connect();
-    const col = client.db(dbName).collection("profiles");
+    const col = client.db(dbName).collection("users");
 
     const found = await col
       .find(
@@ -91,7 +94,8 @@ async function main() {
     const report = {
       checkedAt: new Date().toISOString(),
       db: dbName,
-      scope: "seededData: true profiles only",
+      collection: "users",
+      scope: "seededData: true users only",
       source: "case-numbers.json (tracker-json)",
       total: cases.length,
       presentCount: present.length,
@@ -104,7 +108,7 @@ async function main() {
     fs.writeFileSync(outPath, JSON.stringify(report, null, 2) + "\n");
 
     console.log(
-      `Checked ${report.total} tracker cases against seeded DB profiles`,
+      `Checked ${report.total} tracker cases against seeded DB users`,
     );
     console.log(`  Present in DB (seeded): ${report.presentCount}`);
     console.log(`  Missing from seeded:    ${report.missingCount}`);
