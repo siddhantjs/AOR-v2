@@ -163,16 +163,27 @@ function validate(values: ApplicationFormValues, usernameOk: boolean): FieldErro
 
 type ApplicationDetailsCardProps = {
   onContinue?: (values: ApplicationFormValues) => void;
+  /** Restores the form when navigating back from milestones. */
+  initialValues?: ApplicationFormValues;
 };
 
-export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardProps) {
-  const [values, setValues] = useState<ApplicationFormValues>(INITIAL);
+export function ApplicationDetailsCard({
+  onContinue,
+  initialValues,
+}: ApplicationDetailsCardProps) {
+  const [values, setValues] = useState<ApplicationFormValues>(
+    () => initialValues ?? INITIAL,
+  );
   const [errors, setErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState(false);
   const [datesTouched, setDatesTouched] = useState(false);
-  const [usernameStatus, setUsernameStatus] = useState<UsernameCheckStatus>("idle");
+  const [usernameStatus, setUsernameStatus] = useState<UsernameCheckStatus>(() =>
+    initialValues ? "available" : "idle",
+  );
   const [usernameMessage, setUsernameMessage] = useState<string | null>(null);
-  const [checkedUsername, setCheckedUsername] = useState<string | null>(null);
+  const [checkedUsername, setCheckedUsername] = useState<string | null>(() =>
+    initialValues ? normalizeUsername(initialValues.username) : null,
+  );
 
   const showEeProgram = values.pathway === "express-entry";
   const usernameAvailable =

@@ -24,7 +24,7 @@ Source prototype: `aor-tracker-final-version.html`.
 | Prototype section | Route | Page component |
 | ----------------- | ----- | -------------- |
 | “Tell us about your application” (`#pg-app`) | `/track` | `src/components/pages/track/TrackPage.tsx` |
-| “Your milestones” (`#pg-ms`) | TBD (phase 2 of `/track`) | — |
+| “Your milestones” (`#pg-ms`) | `/track` (phase 2) | `src/components/pages/track/MilestonesStep.tsx` |
 | Dashboard (`#pg-dash`) | TBD | — |
 | Cohorts | TBD | — |
 
