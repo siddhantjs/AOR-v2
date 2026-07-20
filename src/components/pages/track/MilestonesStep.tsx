@@ -330,12 +330,12 @@ export function MilestonesStep({
         </div>
       ) : null}
 
-      <div className="mb-[18px] flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3.5">
+      <div className="mb-[18px] flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3 sm:gap-3.5">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-2 rounded-[9px] border border-[var(--border2)] bg-[var(--bg-elevated)] px-[15px] py-2 text-[13px] font-bold text-[var(--ink)] transition-[var(--ease)] hover:border-[var(--muted2)]"
+            className="inline-flex shrink-0 items-center gap-2 rounded-[9px] border border-[var(--border2)] bg-[var(--bg-elevated)] px-[15px] py-2 text-[13px] font-bold text-[var(--ink)] transition-[var(--ease)] hover:border-[var(--muted2)]"
           >
             <svg
               className="size-4 fill-none stroke-current stroke-[1.8] [stroke-linecap:round] [stroke-linejoin:round]"
@@ -347,7 +347,7 @@ export function MilestonesStep({
             {backLabel}
           </button>
 
-          <div className="w-[170px]">
+          <div className="min-w-[140px] flex-1 sm:w-[170px] sm:flex-none">
             <div className="mb-1.5 flex justify-between text-[11.5px] font-semibold text-[var(--muted)]">
               <span>Logged</span>
               <b className="text-[var(--navy)]">
@@ -369,7 +369,7 @@ export function MilestonesStep({
           type="button"
           onClick={() => void handleSubmit()}
           disabled={submitting}
-          className="inline-flex items-center gap-2 rounded-[10px] bg-[var(--red)] px-[22px] py-[11px] font-[family-name:var(--font-display)] text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--red2)] disabled:cursor-not-allowed disabled:opacity-45"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-[var(--red)] px-[22px] py-[11px] font-[family-name:var(--font-display)] text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--red2)] disabled:cursor-not-allowed disabled:opacity-45 sm:w-auto"
         >
           {submitting ? "Saving…" : "Submit"}
         </button>
@@ -380,7 +380,7 @@ export function MilestonesStep({
           <div key={sec}>
             <div
               className={[
-                "border-t border-[var(--border)] bg-[var(--bg-muted)] px-[26px] py-2.5 text-[11px] font-bold tracking-[0.1em] text-[var(--muted2)] uppercase",
+                "border-t border-[var(--border)] bg-[var(--bg-muted)] px-4 py-2.5 text-[11px] font-bold tracking-[0.1em] text-[var(--muted2)] uppercase sm:px-[26px]",
                 secIndex === 0 ? "border-t-0" : "",
               ].join(" ")}
             >
@@ -396,8 +396,8 @@ export function MilestonesStep({
                   <div
                     id={`ms-row-${m.id}`}
                     className={[
-                      "relative grid grid-cols-[auto_1fr] items-center gap-4 border-t border-[var(--border)] px-[26px] py-[15px] transition-[var(--ease)] sm:grid-cols-[auto_1fr_auto]",
-                      isSub(m.id) ? "pl-[52px]" : "",
+                      "relative grid grid-cols-[auto_1fr] items-start gap-x-3 gap-y-2.5 border-t border-[var(--border)] px-4 py-3.5 transition-[var(--ease)] sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-4 sm:px-[26px] sm:py-[15px]",
+                      isSub(m.id) ? "pl-10 sm:pl-[52px]" : "",
                       st.done
                         ? "bg-[linear-gradient(90deg,rgba(200,40,30,0.035),transparent_55%)] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[3px] before:bg-[var(--red)]"
                         : "hover:bg-[var(--bg-muted)]",
@@ -410,7 +410,7 @@ export function MilestonesStep({
                       aria-pressed={st.done}
                       onClick={() => toggle(m.id)}
                       className={[
-                        "flex size-6 shrink-0 items-center justify-center rounded-full border-[1.6px] transition-[var(--ease)]",
+                        "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border-[1.6px] transition-[var(--ease)] sm:mt-0",
                         st.done
                           ? "border-[var(--red)] bg-[var(--red)]"
                           : "border-[var(--border2)] bg-[var(--bg-elevated)] hover:border-[var(--red)]",
@@ -430,27 +430,27 @@ export function MilestonesStep({
 
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-[var(--ink)]">{m.label}</div>
-                      <div className="text-xs text-[var(--muted)]">{m.desc}</div>
+                      <div className="text-xs break-words text-[var(--muted)]">{m.desc}</div>
                       {err ? (
                         <div className="mt-1 text-xs font-semibold text-[var(--red)]">{err}</div>
                       ) : null}
                     </div>
 
-                    <div className="col-span-2 flex flex-wrap items-center justify-end gap-3 sm:col-span-1">
+                    <div className="col-start-2 flex min-w-0 flex-wrap items-center justify-start gap-2 sm:col-start-3 sm:justify-end sm:gap-3">
                       {!st.done ? (
                         <span
                           className={[
-                            "max-w-[200px] text-right text-[11.5px] leading-snug",
+                            "max-w-full text-left text-[11.5px] leading-snug sm:max-w-[200px] sm:text-right",
                             estimatesById.has(m.id) || m.id === "bio_done"
                               ? "font-semibold text-[var(--navy)]"
-                              : "whitespace-nowrap text-[var(--muted2)]",
+                              : "text-[var(--muted2)] sm:whitespace-nowrap",
                           ].join(" ")}
                         >
                           {estimateLabel(m.id)}
                         </span>
                       ) : null}
                       {st.done ? (
-                        <div className="w-[168px]">
+                        <div className="w-full min-w-0 sm:w-[168px]">
                           <DashboardDatePicker
                             value={st.date}
                             onChange={(v) => setDate(m.id, v)}
@@ -465,7 +465,7 @@ export function MilestonesStep({
                   </div>
 
                   {m.id === "bio_done" && showOffices ? (
-                    <div className="border-t border-[var(--border)] bg-[var(--bg-muted)] px-[26px] py-5">
+                    <div className="border-t border-[var(--border)] bg-[var(--bg-muted)] px-4 py-5 sm:px-[26px]">
                       <h3 className="m-0 text-[14.5px] font-extrabold text-[var(--navy)]">
                         Which offices hold your file?
                       </h3>
@@ -485,14 +485,14 @@ export function MilestonesStep({
                         <span>
                           Not sure about your PVO or SVO? Call IRCC at{" "}
                           <a
-                            className="font-bold whitespace-nowrap text-[var(--red)] no-underline"
+                            className="font-bold text-[var(--red)] no-underline sm:whitespace-nowrap"
                             href="tel:18882422100"
                           >
                             1 888 242 2100
                           </a>{" "}
                           if you are within Canada, or{" "}
                           <a
-                            className="font-bold whitespace-nowrap text-[var(--red)] no-underline"
+                            className="font-bold text-[var(--red)] no-underline sm:whitespace-nowrap"
                             href="tel:16139444000"
                           >
                             1 613 944 4000

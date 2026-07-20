@@ -20,7 +20,7 @@ export default async function EditMilestoneRoute({ params }: PageProps) {
 
   return (
     <DashboardChrome userId={userId} active="edit">
-      <main className="mx-auto max-w-[var(--max)] px-[22px] pt-8 pb-[100px]">
+      <main className="mx-auto max-w-[var(--max)] px-4 pt-6 pb-20 sm:px-[22px] sm:pt-8 sm:pb-[100px]">
         <EditMilestonesPage data={data} />
       </main>
     </DashboardChrome>

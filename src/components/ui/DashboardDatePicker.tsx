@@ -305,8 +305,10 @@ export function DashboardDatePicker({
       {open ? (
         <div
           className={[
-            "absolute z-50 mt-1.5 w-[288px] min-w-[288px] rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-[var(--shadow-md)]",
-            popoverAlign === "end" ? "right-0" : "left-0",
+            "absolute z-50 mt-1.5 w-[min(288px,calc(100vw-2.5rem))] rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-[var(--shadow-md)]",
+            popoverAlign === "end"
+              ? "left-0 right-auto sm:left-auto sm:right-0"
+              : "left-0",
           ].join(" ")}
           role="dialog"
           aria-modal="false"
