@@ -77,20 +77,56 @@ const INITIAL: ApplicationFormValues = {
   email: "",
 };
 
-function validate(values: ApplicationFormValues): FieldErrors {
+function todayIso(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function dayAfterIso(iso: string): string {
+  const y = Number(iso.slice(0, 4));
+  const m = Number(iso.slice(5, 7)) - 1;
+  const d = Number(iso.slice(8, 10));
+  const dt = new Date(y, m, d);
+  dt.setDate(dt.getDate() + 1);
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+}
+
+/** Matches HTML `onCoreDates` / `validatePhase1` date rules. */
+function validateCoreDates(
+  values: Pick<ApplicationFormValues, "itaDate" | "aorDate">,
+  opts: { requirePresent?: boolean } = {},
+): FieldErrors {
+  const { requirePresent = true } = opts;
   const errors: FieldErrors = {};
+
+  if (requirePresent) {
+    if (!values.itaDate) {
+      errors.itaDate = "Add your ITA date.";
+    }
+    if (!values.aorDate) {
+      errors.aorDate = "Add your AOR date.";
+    }
+  }
+
+  if (values.itaDate && values.aorDate && values.aorDate <= values.itaDate) {
+    errors.aorDate = "AOR comes after your ITA. Check both dates.";
+  } else if (values.aorDate && values.aorDate > todayIso()) {
+    errors.aorDate = "AOR cannot be in the future.";
+  }
+
+  return errors;
+}
+
+function validate(values: ApplicationFormValues): FieldErrors {
+  const errors: FieldErrors = {
+    ...validateCoreDates(values, { requirePresent: true }),
+  };
 
   if (!values.applyingFrom) {
     errors.applyingFrom = "Choose Inland or Outland.";
   }
   if (values.pathway === "express-entry" && !values.expressEntryProgram) {
     errors.expressEntryProgram = "Choose an Express Entry program.";
-  }
-  if (!values.itaDate) {
-    errors.itaDate = "Add your ITA date.";
-  }
-  if (!values.aorDate) {
-    errors.aorDate = "Add your AOR date.";
   }
   if (!values.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
     errors.email = "A valid email is required.";
@@ -107,9 +143,17 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
   const [values, setValues] = useState<ApplicationFormValues>(INITIAL);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState(false);
+  const [datesTouched, setDatesTouched] = useState(false);
 
   const showEeProgram = values.pathway === "express-entry";
-  const visibleErrors = useMemo(() => (touched ? errors : {}), [touched, errors]);
+  const visibleErrors = useMemo(() => {
+    if (touched) return errors;
+    if (!datesTouched) return {};
+    return {
+      ...(errors.itaDate ? { itaDate: errors.itaDate } : {}),
+      ...(errors.aorDate ? { aorDate: errors.aorDate } : {}),
+    };
+  }, [touched, datesTouched, errors]);
 
   function update<K extends keyof ApplicationFormValues>(
     key: K,
@@ -127,9 +171,21 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
     });
   }
 
+  /** Live date checks — same rules as HTML `onCoreDates`. */
+  function updateDate(key: "itaDate" | "aorDate", value: string) {
+    const next = { ...values, [key]: value };
+    setDatesTouched(true);
+    setValues(next);
+    setErrors((prevErrs) => {
+      const { itaDate: _i, aorDate: _a, ...rest } = prevErrs;
+      return { ...rest, ...validateCoreDates(next, { requirePresent: false }) };
+    });
+  }
+
   function handleContinue() {
     const nextErrors = validate(values);
     setTouched(true);
+    setDatesTouched(true);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
     onContinue?.(values);
@@ -221,7 +277,8 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
             label="ITA date"
             required
             value={values.itaDate}
-            onChange={(v) => update("itaDate", v)}
+            onChange={(v) => updateDate("itaDate", v)}
+            max={todayIso()}
             hint="The day IRCC invited you to apply."
             error={visibleErrors.itaDate}
           />
@@ -230,7 +287,9 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
             label="AOR date"
             required
             value={values.aorDate}
-            onChange={(v) => update("aorDate", v)}
+            onChange={(v) => updateDate("aorDate", v)}
+            min={values.itaDate ? dayAfterIso(values.itaDate) : undefined}
+            max={todayIso()}
             hint="The day IRCC acknowledged your application. Sets your cohort."
             error={visibleErrors.aorDate}
           />
