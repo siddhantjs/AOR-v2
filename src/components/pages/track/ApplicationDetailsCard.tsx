@@ -162,7 +162,7 @@ function validate(values: ApplicationFormValues, usernameOk: boolean): FieldErro
 }
 
 type ApplicationDetailsCardProps = {
-  onContinue?: (values: ApplicationFormValues) => void;
+  onContinue?: (values: ApplicationFormValues) => void | Promise<void>;
   /** Restores the form when navigating back from milestones. */
   initialValues?: ApplicationFormValues;
 };
@@ -184,13 +184,15 @@ export function ApplicationDetailsCard({
   const [checkedUsername, setCheckedUsername] = useState<string | null>(() =>
     initialValues ? normalizeUsername(initialValues.username) : null,
   );
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const showEeProgram = values.pathway === "express-entry";
   const usernameAvailable =
     usernameStatus === "available" &&
     checkedUsername === normalizeUsername(values.username);
 
-  const canContinue = usernameAvailable;
+  const canContinue = usernameAvailable && !submitting;
 
   const visibleErrors = useMemo(() => {
     if (touched) return errors;
@@ -289,16 +291,31 @@ export function ApplicationDetailsCard({
     });
   }
 
-  function handleContinue() {
+  async function handleContinue() {
     const nextErrors = validate(values, usernameAvailable);
     setTouched(true);
     setDatesTouched(true);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0 || !usernameAvailable) return;
-    onContinue?.({
-      ...values,
-      username: normalizeUsername(values.username),
-    });
+    setSubmitError(null);
+    if (Object.keys(nextErrors).length > 0 || !usernameAvailable || submitting) {
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await onContinue?.({
+        ...values,
+        username: normalizeUsername(values.username),
+      });
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Could not start your timeline. Try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const usernameHint =
@@ -487,21 +504,29 @@ export function ApplicationDetailsCard({
           </div>
         </div>
 
+        {submitError ? (
+          <p className="mt-4 text-sm font-semibold text-[var(--red)]" role="alert">
+            {submitError}
+          </p>
+        ) : null}
+
         <div className="mt-[22px] flex justify-end">
           <button
             type="button"
-            onClick={handleContinue}
+            onClick={() => void handleContinue()}
             disabled={!canContinue}
             className="inline-flex items-center gap-2 rounded-[10px] bg-[var(--red)] px-[22px] py-[11px] font-[family-name:var(--font-display)] text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--red2)] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[var(--red)]"
           >
-            Continue
-            <svg
-              className="size-4 shrink-0 fill-none stroke-current stroke-[1.8] [stroke-linecap:round] [stroke-linejoin:round]"
-              viewBox="0 0 24 24"
-              aria-hidden
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            {submitting ? "Building estimates…" : "Continue"}
+            {!submitting ? (
+              <svg
+                className="size-4 shrink-0 fill-none stroke-current stroke-[1.8] [stroke-linecap:round] [stroke-linejoin:round]"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            ) : null}
           </button>
         </div>
       </div>

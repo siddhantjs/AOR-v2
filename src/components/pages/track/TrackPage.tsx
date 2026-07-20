@@ -9,16 +9,57 @@ import {
 import { MilestonesStep } from "./MilestonesStep";
 import { TrackFlowHeader } from "./TrackFlowHeader";
 import { LogoMark } from "@/components/common/LogoMark";
+import type { MilestoneEstimate } from "@/lib/schema/types";
 
 type TrackStep = "application" | "milestones";
+
+type TrackStartResponse = {
+  userId: string;
+  status: "skipped" | "completed" | "failed";
+  phase: string | null;
+  reason: string | null;
+  estimates: MilestoneEstimate[];
+  error?: string;
+};
 
 export function TrackPage() {
   const [step, setStep] = useState<TrackStep>("application");
   const [application, setApplication] = useState<ApplicationFormValues | null>(
     null,
   );
+  const [userId, setUserId] = useState<string | null>(null);
+  const [estimates, setEstimates] = useState<MilestoneEstimate[]>([]);
+  const [estimateNotice, setEstimateNotice] = useState<string | null>(null);
 
-  function handleContinue(values: ApplicationFormValues) {
+  async function handleContinue(values: ApplicationFormValues) {
+    // Already created on a prior Continue — skip recreate.
+    if (userId) {
+      setApplication(values);
+      setStep("milestones");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const res = await fetch("/api/track/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+
+    const data = (await res.json()) as TrackStartResponse & { error?: string };
+
+    if (!res.ok) {
+      throw new Error(data.error ?? "Could not start your timeline. Try again.");
+    }
+
+    setUserId(data.userId);
+    setEstimates(data.estimates ?? []);
+    setEstimateNotice(
+      data.status === "failed"
+        ? data.reason ??
+            "Estimates could not be generated yet. You can still log milestones."
+        : null,
+    );
     setApplication(values);
     setStep("milestones");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -56,7 +97,12 @@ export function TrackPage() {
                 { step: 2, label: "Milestones", state: "on" },
               ]}
             />
-            <MilestonesStep application={application} onBack={handleBack} />
+            <MilestonesStep
+              application={application}
+              estimates={estimates}
+              estimateNotice={estimateNotice}
+              onBack={handleBack}
+            />
           </>
         ) : (
           <>

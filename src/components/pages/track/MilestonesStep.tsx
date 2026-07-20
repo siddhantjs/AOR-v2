@@ -8,6 +8,8 @@ import {
   type MilestoneSection,
   type VisaOffice,
 } from "@/lib/schema/constants";
+import type { MilestoneEstimate } from "@/lib/schema/types";
+import { formatEstimateRange } from "@/lib/estimateFormat";
 import { DashboardDatePicker, Select } from "@/components/ui";
 import type { ApplicationFormValues } from "./ApplicationDetailsCard";
 
@@ -146,11 +148,19 @@ function validateMilestoneDate(
 
 type MilestonesStepProps = {
   application: ApplicationFormValues;
+  estimates?: MilestoneEstimate[];
+  estimateNotice?: string | null;
   onBack: () => void;
   onSubmit?: (state: MilestonesFormState) => void;
 };
 
-export function MilestonesStep({ application, onBack, onSubmit }: MilestonesStepProps) {
+export function MilestonesStep({
+  application,
+  estimates = [],
+  estimateNotice = null,
+  onBack,
+  onSubmit,
+}: MilestonesStepProps) {
   const [state, setState] = useState<MilestonesFormState>(() => ({
     milestones: initialMilestones(),
     primaryVisaOffice: "",
@@ -159,6 +169,22 @@ export function MilestonesStep({ application, onBack, onSubmit }: MilestonesStep
   const [errors, setErrors] = useState<Partial<Record<MilestoneId, string>>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [submitNotice, setSubmitNotice] = useState<string | null>(null);
+
+  const estimatesById = useMemo(() => {
+    const map = new Map<MilestoneId, MilestoneEstimate>();
+    for (const est of estimates) {
+      map.set(est.milestoneId, est);
+    }
+    return map;
+  }, [estimates]);
+
+  function estimateLabel(id: MilestoneId): string {
+    if (id === "bio_done") return "30 days after BIL";
+    const est = estimatesById.get(id);
+    if (est) return formatEstimateRange(est);
+    const def = MILESTONES.find((m) => m.id === id);
+    return def?.est ? "We'll estimate" : "no estimate";
+  }
 
   const loggedCount = useMemo(
     () =>
@@ -286,6 +312,15 @@ export function MilestonesStep({ application, onBack, onSubmit }: MilestonesStep
 
   return (
     <div>
+      {estimateNotice ? (
+        <div
+          className="mb-4 rounded-[var(--radius-md)] border border-[#efd9a8] bg-[var(--abg)] px-4 py-3 text-sm font-semibold text-[#5b4a1e]"
+          role="status"
+        >
+          {estimateNotice}
+        </div>
+      ) : null}
+
       {notice ? (
         <div
           className="mb-4 rounded-[var(--radius-md)] border border-[var(--red)] bg-[var(--red-pale)] px-4 py-3 text-sm font-semibold text-[var(--red)]"
@@ -405,9 +440,18 @@ export function MilestonesStep({ application, onBack, onSubmit }: MilestonesStep
                     </div>
 
                     <div className="col-span-2 flex flex-wrap items-center justify-end gap-3 sm:col-span-1">
-                      <span className="text-[11.5px] whitespace-nowrap text-[var(--muted2)]">
-                        {m.est ? "We'll estimate" : "no estimate"}
-                      </span>
+                      {!st.done ? (
+                        <span
+                          className={[
+                            "max-w-[200px] text-right text-[11.5px] leading-snug",
+                            estimatesById.has(m.id) || m.id === "bio_done"
+                              ? "font-semibold text-[var(--navy)]"
+                              : "whitespace-nowrap text-[var(--muted2)]",
+                          ].join(" ")}
+                        >
+                          {estimateLabel(m.id)}
+                        </span>
+                      ) : null}
                       {st.done ? (
                         <div className="w-[168px]">
                           <DashboardDatePicker
