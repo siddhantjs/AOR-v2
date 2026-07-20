@@ -13,6 +13,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Page-level components** live in `src/components/pages/<route>/` — one folder per page, composed of that page’s sections.
 - Route files import the page component, e.g. `src/app/track/page.tsx` → `TrackPage`.
 - Styling: **Tailwind only** (no CSS modules). Colors/tokens come from [`src/app/globals.css`](src/app/globals.css) via `var(--…)` (e.g. `bg-[var(--bg-muted)]`, `text-[var(--navy)]`).
+- Shared UI primitives live in `src/components/ui/` (e.g. `Select`, `DashboardDatePicker`) — theme via globals tokens; reuse across pages.
 
 ## HTML prototype → routes
 

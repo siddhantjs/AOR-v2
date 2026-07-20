@@ -10,6 +10,7 @@ import {
   type ExpressEntryProgram,
   type Pathway,
 } from "@/lib/schema/constants";
+import { controlClass, DashboardDatePicker, errorClass, hintClass, labelClass, Select } from "@/components/ui";
 
 const PATHWAY_LABELS: Record<Pathway, string> = {
   "express-entry": "Express Entry",
@@ -38,6 +39,21 @@ const RESIDENCE_OPTIONS: {
     subtitle: "You live outside Canada",
   },
 ];
+
+const PATHWAY_OPTIONS = PATHWAYS.map((pathway) => ({
+  value: pathway,
+  label: PATHWAY_LABELS[pathway],
+}));
+
+const EE_PROGRAM_OPTIONS = EXPRESS_ENTRY_PROGRAMS.map((program) => ({
+  value: program,
+  label: EE_PROGRAM_LABELS[program],
+}));
+
+const DRAW_OPTIONS = DRAW_CATEGORIES.map((cat) => ({
+  value: cat.value,
+  label: cat.label,
+}));
 
 export type ApplicationFormValues = {
   applyingFrom: ApplyingFrom | null;
@@ -81,14 +97,6 @@ function validate(values: ApplicationFormValues): FieldErrors {
   }
 
   return errors;
-}
-
-function fieldControlClass(hasError: boolean) {
-  return [
-    "w-full rounded-[var(--radius-md)] border bg-[var(--bg-elevated)] px-3 py-2.5 text-sm text-[var(--ink)] outline-none transition-[var(--ease)]",
-    "focus:border-[var(--navy)] focus:shadow-[0_0_0_3px_rgba(26,35,50,0.08)]",
-    hasError ? "border-[var(--red)] bg-[var(--red-pale)]" : "border-[var(--border2)]",
-  ].join(" ");
 }
 
 type ApplicationDetailsCardProps = {
@@ -138,7 +146,7 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
         </p>
 
         <div className="mb-4">
-          <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--ink)]">
+          <label className={labelClass()}>
             Where are you applying from? <span className="text-[var(--red)]">*</span>
           </label>
           <div
@@ -176,133 +184,77 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
             })}
           </div>
           {visibleErrors.applyingFrom ? (
-            <div className="mt-1.5 text-xs font-semibold text-[var(--red)]">
-              {visibleErrors.applyingFrom}
-            </div>
+            <p className={errorClass()}>{visibleErrors.applyingFrom}</p>
           ) : null}
         </div>
 
         <div className="grid grid-cols-1 gap-x-[18px] gap-y-4 min-[621px]:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--ink)]">
-              Pathway <span className="text-[var(--red)]">*</span>
-            </label>
-            <select
-              className={fieldControlClass(false)}
-              value={values.pathway}
-              onChange={(e) => update("pathway", e.target.value as Pathway)}
-            >
-              {PATHWAYS.map((pathway) => (
-                <option key={pathway} value={pathway}>
-                  {PATHWAY_LABELS[pathway]}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Pathway"
+            required
+            value={values.pathway}
+            options={PATHWAY_OPTIONS}
+            onChange={(v) => update("pathway", v)}
+          />
 
           {showEeProgram ? (
-            <div>
-              <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--ink)]">
-                Express Entry program <span className="text-[var(--red)]">*</span>
-              </label>
-              <select
-                className={fieldControlClass(Boolean(visibleErrors.expressEntryProgram))}
-                value={values.expressEntryProgram ?? ""}
-                onChange={(e) =>
-                  update("expressEntryProgram", e.target.value as ExpressEntryProgram)
-                }
-              >
-                {EXPRESS_ENTRY_PROGRAMS.map((program) => (
-                  <option key={program} value={program}>
-                    {EE_PROGRAM_LABELS[program]}
-                  </option>
-                ))}
-              </select>
-              {visibleErrors.expressEntryProgram ? (
-                <div className="mt-1.5 text-xs font-semibold text-[var(--red)]">
-                  {visibleErrors.expressEntryProgram}
-                </div>
-              ) : null}
-            </div>
+            <Select
+              label="Express Entry program"
+              required
+              value={values.expressEntryProgram ?? ""}
+              options={EE_PROGRAM_OPTIONS}
+              error={visibleErrors.expressEntryProgram}
+              onChange={(v) => update("expressEntryProgram", v)}
+            />
           ) : null}
 
-          <div className="min-[621px]:col-span-2">
-            <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--ink)]">
-              Draw category <span className="text-[var(--red)]">*</span>
-            </label>
-            <select
-              className={fieldControlClass(false)}
-              value={values.drawCategory}
-              onChange={(e) => update("drawCategory", e.target.value as DrawCategory)}
-            >
-              {DRAW_CATEGORIES.map((cat) => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            className="min-[621px]:col-span-2"
+            label="Draw category"
+            required
+            value={values.drawCategory}
+            options={DRAW_OPTIONS}
+            onChange={(v) => update("drawCategory", v)}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--ink)]">
-              ITA date <span className="text-[var(--red)]">*</span>
-            </label>
-            <input
-              type="date"
-              className={fieldControlClass(Boolean(visibleErrors.itaDate))}
-              value={values.itaDate}
-              onChange={(e) => update("itaDate", e.target.value)}
-            />
-            <div className="mt-1.5 text-[11.5px] text-[var(--muted2)]">
-              The day IRCC invited you to apply.
-            </div>
-            {visibleErrors.itaDate ? (
-              <div className="mt-1.5 text-xs font-semibold text-[var(--red)]">
-                {visibleErrors.itaDate}
-              </div>
-            ) : null}
-          </div>
+          <DashboardDatePicker
+            label="ITA date"
+            required
+            value={values.itaDate}
+            onChange={(v) => update("itaDate", v)}
+            hint="The day IRCC invited you to apply."
+            error={visibleErrors.itaDate}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--ink)]">
-              AOR date <span className="text-[var(--red)]">*</span>
-            </label>
-            <input
-              type="date"
-              className={fieldControlClass(Boolean(visibleErrors.aorDate))}
-              value={values.aorDate}
-              onChange={(e) => update("aorDate", e.target.value)}
-            />
-            <div className="mt-1.5 text-[11.5px] text-[var(--muted2)]">
-              The day IRCC acknowledged your application. Sets your cohort.
-            </div>
-            {visibleErrors.aorDate ? (
-              <div className="mt-1.5 text-xs font-semibold text-[var(--red)]">
-                {visibleErrors.aorDate}
-              </div>
-            ) : null}
-          </div>
+          <DashboardDatePicker
+            label="AOR date"
+            required
+            value={values.aorDate}
+            onChange={(v) => update("aorDate", v)}
+            hint="The day IRCC acknowledged your application. Sets your cohort."
+            error={visibleErrors.aorDate}
+          />
 
           <div className="min-[621px]:col-span-2">
-            <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--ink)]">
+            <label htmlFor="track-email" className={labelClass()}>
               Email <span className="text-[var(--red)]">*</span>
             </label>
             <input
+              id="track-email"
               type="email"
-              className={fieldControlClass(Boolean(visibleErrors.email))}
+              className={controlClass(Boolean(visibleErrors.email))}
               value={values.email}
               placeholder="you@example.com"
               onChange={(e) => update("email", e.target.value)}
               autoComplete="email"
             />
-            <div className="mt-1.5 text-[11.5px] text-[var(--muted2)]">
-              Saves your timeline and sends milestone alerts. Never shown publicly.
-            </div>
-            {visibleErrors.email ? (
-              <div className="mt-1.5 text-xs font-semibold text-[var(--red)]">
-                {visibleErrors.email}
-              </div>
-            ) : null}
+            {!visibleErrors.email ? (
+              <p className={hintClass()}>
+                Saves your timeline and sends milestone alerts. Never shown publicly.
+              </p>
+            ) : (
+              <p className={errorClass()}>{visibleErrors.email}</p>
+            )}
           </div>
         </div>
 
