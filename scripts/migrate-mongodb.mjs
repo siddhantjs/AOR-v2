@@ -67,18 +67,12 @@ function resolveConfig() {
     process.env.MONGODB_URI_SOURCE?.trim() ||
     process.env.MONGODB_URI_OLD?.trim() ||
     process.env.MONGODB_URI?.trim();
-  const uriDest =
-    process.env.MONGODB_URI_DEST?.trim() ||
-    process.env.MONGODB_URI_NEW?.trim();
+  const uriDest = process.env.MONGODB_URI_DEST?.trim() || process.env.MONGODB_URI_NEW?.trim();
   if (!uriSource) {
-    throw new Error(
-      "Set MONGODB_URI_SOURCE (or MONGODB_URI) for the source cluster.",
-    );
+    throw new Error("Set MONGODB_URI_SOURCE (or MONGODB_URI) for the source cluster.");
   }
   const dbSource =
-    process.env.MONGODB_DB_SOURCE?.trim() ||
-    dbNameFromUri(uriSource) ||
-    "aor-tracker-dev";
+    process.env.MONGODB_DB_SOURCE?.trim() || dbNameFromUri(uriSource) || "aor-tracker-dev";
   const dbDest =
     process.env.MONGODB_DB_DEST?.trim() ||
     (uriDest ? dbNameFromUri(uriDest) : undefined) ||
@@ -224,44 +218,36 @@ async function copyDirect(config) {
 async function verifyDestTypes(destDb, dbDest) {
   const errors = [];
   const posts = destDb.collection("community_posts");
-    const top = await posts.findOne({});
-    if (top) {
-      if (!isObjectId(top._id)) {
-        errors.push(`community_posts._id is ${typeof top._id}, expected ObjectId`);
-      }
-      if (top.createdAt != null && !isDate(top.createdAt)) {
-        errors.push(
-          `community_posts.createdAt is ${typeof top.createdAt}, expected Date`,
-        );
-      }
+  const top = await posts.findOne({});
+  if (top) {
+    if (!isObjectId(top._id)) {
+      errors.push(`community_posts._id is ${typeof top._id}, expected ObjectId`);
     }
+    if (top.createdAt != null && !isDate(top.createdAt)) {
+      errors.push(`community_posts.createdAt is ${typeof top.createdAt}, expected Date`);
+    }
+  }
 
-    const reply = await posts.findOne({ replyToId: { $exists: true } });
-    if (reply) {
-      if (!isObjectId(reply._id)) {
-        errors.push(`reply._id is ${typeof reply._id}, expected ObjectId`);
-      }
-      if (!isObjectId(reply.replyToId)) {
-        errors.push(
-          `reply.replyToId is ${typeof reply.replyToId}, expected ObjectId`,
-        );
-      }
-    } else if ((await posts.countDocuments()) > 0) {
-      console.log("  (no reply docs with replyToId — skipped reply type check)");
+  const reply = await posts.findOne({ replyToId: { $exists: true } });
+  if (reply) {
+    if (!isObjectId(reply._id)) {
+      errors.push(`reply._id is ${typeof reply._id}, expected ObjectId`);
     }
+    if (!isObjectId(reply.replyToId)) {
+      errors.push(`reply.replyToId is ${typeof reply.replyToId}, expected ObjectId`);
+    }
+  } else if ((await posts.countDocuments()) > 0) {
+    console.log("  (no reply docs with replyToId — skipped reply type check)");
+  }
 
-    const profile = await destDb.collection("profiles").findOne({});
-    if (profile?.createdAt != null && !isDate(profile.createdAt)) {
-      errors.push(
-        `profiles.createdAt is ${typeof profile.createdAt}, expected Date`,
-      );
-    }
+  const profile = await destDb.collection("profiles").findOne({});
+  if (profile?.createdAt != null && !isDate(profile.createdAt)) {
+    errors.push(`profiles.createdAt is ${typeof profile.createdAt}, expected Date`);
+  }
 
-    if (errors.length) {
-      throw new Error(
-        `BSON type check failed on ${dbDest}:\n  - ${errors.join("\n  - ")}`,
-      );
-    }
+  if (errors.length) {
+    throw new Error(`BSON type check failed on ${dbDest}:\n  - ${errors.join("\n  - ")}`);
+  }
   console.log("BSON types on dest: ok (_id/replyToId ObjectId, dates Date)");
 }
 
@@ -280,9 +266,7 @@ async function verify(config) {
   for (const name of COLLECTIONS) {
     const match = srcCounts[name] === destCounts[name];
     if (!match) ok = false;
-    console.log(
-      `  ${name}: ${srcCounts[name]} → ${destCounts[name]} ${match ? "ok" : "MISMATCH"}`,
-    );
+    console.log(`  ${name}: ${srcCounts[name]} → ${destCounts[name]} ${match ? "ok" : "MISMATCH"}`);
   }
 
   await verifyDestTypes(destDb, dbDest);

@@ -3,14 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ApplicationDetailsCard,
-  type ApplicationFormValues,
-} from "./ApplicationDetailsCard";
-import {
-  MilestonesStep,
-  type MilestonesFormState,
-} from "./MilestonesStep";
+import { ApplicationDetailsCard, type ApplicationFormValues } from "./ApplicationDetailsCard";
+import { MilestonesStep, type MilestonesFormState } from "./MilestonesStep";
 import { TrackFlowHeader } from "./TrackFlowHeader";
 import { LogoMark } from "@/components/common/LogoMark";
 import type { MilestoneEstimate } from "@/lib/schema/types";
@@ -29,9 +23,7 @@ type TrackStartResponse = {
 export function TrackPage() {
   const router = useRouter();
   const [step, setStep] = useState<TrackStep>("application");
-  const [application, setApplication] = useState<ApplicationFormValues | null>(
-    null,
-  );
+  const [application, setApplication] = useState<ApplicationFormValues | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [estimates, setEstimates] = useState<MilestoneEstimate[]>([]);
   const [estimateNotice, setEstimateNotice] = useState<string | null>(null);
@@ -60,8 +52,7 @@ export function TrackPage() {
     setEstimates(data.estimates ?? []);
     setEstimateNotice(
       data.status === "failed"
-        ? data.reason ??
-            "Estimates could not be generated yet. You can still log milestones."
+        ? (data.reason ?? "Estimates could not be generated yet. You can still log milestones.")
         : null,
     );
     setApplication(values);

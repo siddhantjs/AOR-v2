@@ -57,11 +57,7 @@ function loadEnv() {
 }
 
 function resolveDbName() {
-  return (
-    process.env.MONGODB_DB_NAME?.trim() ||
-    process.env.MONGODB_DB?.trim() ||
-    "aor-v2"
-  );
+  return process.env.MONGODB_DB_NAME?.trim() || process.env.MONGODB_DB?.trim() || "aor-v2";
 }
 
 function loadTrackerRows() {
@@ -183,10 +179,7 @@ function planUserUpdate(doc, source) {
   if (source.userDetails?.nationality && !doc.userDetails?.nationality) {
     $set["userDetails.nationality"] = source.userDetails.nationality;
   }
-  if (
-    source.userDetails?.countryOfResidence &&
-    !doc.userDetails?.countryOfResidence
-  ) {
+  if (source.userDetails?.countryOfResidence && !doc.userDetails?.countryOfResidence) {
     $set["userDetails.countryOfResidence"] = source.userDetails.countryOfResidence;
   }
 
@@ -197,10 +190,7 @@ function planUserUpdate(doc, source) {
     $set._recohort = {
       aorMonth: aorMonthFromIso(effectiveAor),
       applyingFrom: source.applyingFrom,
-      cohortKeyStr: buildCohortKeyString(
-        aorMonthFromIso(effectiveAor),
-        source.applyingFrom,
-      ),
+      cohortKeyStr: buildCohortKeyString(aorMonthFromIso(effectiveAor), source.applyingFrom),
     };
   }
 
@@ -329,9 +319,7 @@ async function main() {
     console.log(`Milestone sync — ${mode}`);
     console.log(`  scope: existing seeded users only (no new users)`);
     console.log(`  compared users:     ${stats.comparedUsers}`);
-    console.log(
-      `  would update:       ${stats.usersUpdated} users, ${stats.fieldsApplied} fields`,
-    );
+    console.log(`  would update:       ${stats.usersUpdated} users, ${stats.fieldsApplied} fields`);
     console.log(`    fill: ${stats.fill}, earlier: ${stats.earlier}`);
     console.log(`  unchanged:          ${stats.skippedNoChanges}`);
     if (bulkResult) {

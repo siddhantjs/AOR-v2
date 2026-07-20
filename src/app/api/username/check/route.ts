@@ -9,10 +9,7 @@ export async function GET(request: Request) {
   const format = validateUsernameFormat(raw);
 
   if (!format.ok) {
-    return NextResponse.json(
-      { available: false, reason: format.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ available: false, reason: format.message }, { status: 400 });
   }
 
   const username = normalizeUsername(raw);

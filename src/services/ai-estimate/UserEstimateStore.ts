@@ -1,9 +1,5 @@
 import { connectDb } from "@/lib/db";
-import type {
-  EstimateMeta,
-  MilestoneEstimate,
-  ProfileMilestone,
-} from "@/lib/schema/types";
+import type { EstimateMeta, MilestoneEstimate, ProfileMilestone } from "@/lib/schema/types";
 import { UserModel } from "@/models/User";
 import { UserEstimateSnapshot } from "./models";
 
@@ -41,11 +37,7 @@ export class UserEstimateStore {
     );
   }
 
-  async save(
-    userId: string,
-    estimates: MilestoneEstimate[],
-    meta: EstimateMeta,
-  ): Promise<void> {
+  async save(userId: string, estimates: MilestoneEstimate[], meta: EstimateMeta): Promise<void> {
     await connectDb();
     const doc = await UserModel.findById(userId);
     if (!doc) throw new Error(`User not found: ${userId}`);

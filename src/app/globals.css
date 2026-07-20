@@ -26,242 +26,241 @@
    Fallbacks apply if those vars are missing.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-   :root {
-    /* Semantic stacks (point at next/font vars) */
-    --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-    --font-body: var(--font-dm-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-mono: var(--font-dm-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+:root {
+  /* Semantic stacks (point at next/font vars) */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-dm-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-    /* Short aliases used in marketing / landing / track */
-    --fh: var(--font-display);
-    --fb: var(--font-body);
-    --fm: var(--font-mono);
-  }
-  
-  /* ═══════════════════════════════════════════════════════════════════════════
+  /* Short aliases used in marketing / landing / track */
+  --fh: var(--font-display);
+  --fb: var(--font-body);
+  --fm: var(--font-mono);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
      2. COLOR THEME — LIGHT (default product / marketing / dashboard / track)
      ═══════════════════════════════════════════════════════════════════════════ */
-  
-  :root {
-    /* Surfaces */
-    --cream: #fffcf5;
-    --cream2: #f5f0e6;
-    --cream3: #ede8dc;
-    --bg: var(--cream);
-    --bg-elevated: #ffffff;
-    --bg-muted: var(--cream2);
-  
-    /* Brand */
-    --navy: #1a2332;
-    --navy2: #253347;
-    --navy3: #0d1824;
-    --red: #c8281e;
-    --red2: #a81f17;
-    --red-pale: #fdecea;
-  
-    /* Accents */
-    --green: #2d6a4f;
-    --green2: #1f5038;
-    --gbg: #eaf4ee;
-    --g4: #4ade80;
-    --amber: #b5651d;
-    --abg: #fdf3e3;
-    --blue: #1e5f8c;
-    --bbg: #e8f2fb;
-    --purple: #5b21b6;
-    --pbg: #ede9fe;
-    --teal: #0d7377;
-    --tbg: #e0f4f4;
-  
-    /* Borders & text */
-    --border: #d5cfbf;
-    --border2: #c8c0af;
-    --ink: var(--navy);
-    --muted: #7a7060;
-    --muted2: #9a8e7e;
-  
-    /* Text on dark chrome (navy bars / hero) */
-    --on-navy: #ffffff;
-    --on-navy-soft: rgba(255, 255, 255, 0.9);
-    --on-navy-muted: rgba(255, 255, 255, 0.82);
-  
-    /* Semantic */
-    --color-primary: var(--red);
-    --color-primary-hover: var(--red2);
-    --color-success: var(--green);
-    --color-warning: var(--amber);
-    --color-info: var(--blue);
-    --color-danger: var(--red);
-    --color-text: var(--ink);
-    --color-text-muted: var(--muted);
-    --color-surface: var(--bg);
-    --color-border: var(--border);
-  
-    /* Layout */
-    --max: 1160px;
-    --max-narrow: 720px;
-    --header-h: 60px;
-  
-    /* Radii */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --radius-xl: 20px;
-    --radius-full: 9999px;
-  
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(26, 35, 50, 0.05);
-    --shadow-md: 0 1px 2px rgba(26, 35, 50, 0.05), 0 8px 28px rgba(26, 35, 50, 0.07);
-    --shadow-lg: 0 24px 60px rgba(26, 35, 50, 0.18);
-  
-    /* Motion */
-    --ease: 0.15s ease;
-    --ease-out: 0.25s ease;
-  }
-  
-  /* ═══════════════════════════════════════════════════════════════════════════
+
+:root {
+  /* Surfaces */
+  --cream: #fffcf5;
+  --cream2: #f5f0e6;
+  --cream3: #ede8dc;
+  --bg: var(--cream);
+  --bg-elevated: #ffffff;
+  --bg-muted: var(--cream2);
+
+  /* Brand */
+  --navy: #1a2332;
+  --navy2: #253347;
+  --navy3: #0d1824;
+  --red: #c8281e;
+  --red2: #a81f17;
+  --red-pale: #fdecea;
+
+  /* Accents */
+  --green: #2d6a4f;
+  --green2: #1f5038;
+  --gbg: #eaf4ee;
+  --g4: #4ade80;
+  --amber: #b5651d;
+  --abg: #fdf3e3;
+  --blue: #1e5f8c;
+  --bbg: #e8f2fb;
+  --purple: #5b21b6;
+  --pbg: #ede9fe;
+  --teal: #0d7377;
+  --tbg: #e0f4f4;
+
+  /* Borders & text */
+  --border: #d5cfbf;
+  --border2: #c8c0af;
+  --ink: var(--navy);
+  --muted: #7a7060;
+  --muted2: #9a8e7e;
+
+  /* Text on dark chrome (navy bars / hero) */
+  --on-navy: #ffffff;
+  --on-navy-soft: rgba(255, 255, 255, 0.9);
+  --on-navy-muted: rgba(255, 255, 255, 0.82);
+
+  /* Semantic */
+  --color-primary: var(--red);
+  --color-primary-hover: var(--red2);
+  --color-success: var(--green);
+  --color-warning: var(--amber);
+  --color-info: var(--blue);
+  --color-danger: var(--red);
+  --color-text: var(--ink);
+  --color-text-muted: var(--muted);
+  --color-surface: var(--bg);
+  --color-border: var(--border);
+
+  /* Layout */
+  --max: 1160px;
+  --max-narrow: 720px;
+  --header-h: 60px;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(26, 35, 50, 0.05);
+  --shadow-md: 0 1px 2px rgba(26, 35, 50, 0.05), 0 8px 28px rgba(26, 35, 50, 0.07);
+  --shadow-lg: 0 24px 60px rgba(26, 35, 50, 0.18);
+
+  /* Motion */
+  --ease: 0.15s ease;
+  --ease-out: 0.25s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
      3. BASE RESET & DOCUMENT
      Fonts are set per tag (no inherit / browser default).
        --fh / --font-display  → headings
        --fb / --font-body     → UI + body copy
        --fm / --font-mono     → code
      ═══════════════════════════════════════════════════════════════════════════ */
-  
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  font-family: var(--fb);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--fb);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--color-text);
+  background: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Display — Fraunces */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--fh);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Mono — DM Mono */
+code,
+kbd,
+samp,
+pre,
+.mono {
+  font-family: var(--fm);
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
-    box-sizing: border-box;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
-  
-  html {
-    font-size: 16px;
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
-    font-family: var(--fb);
-  }
-  
-  body {
-    margin: 0;
-    min-height: 100vh;
-    overflow-x: hidden;
-    font-family: var(--fb);
-    font-size: 1rem;
-    line-height: 1.65;
-    color: var(--color-text);
-    background: var(--color-surface);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* Display — Fraunces */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--fh);
-    font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-  }
-  
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  
-  /* Mono — DM Mono */
-  code,
-  kbd,
-  samp,
-  pre,
-  .mono {
-    font-family: var(--fm);
-  }
-  
-  img,
-  svg,
-  video {
-    max-width: 100%;
-    display: block;
-  }
-  
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--border2);
-    border-radius: 5px;
-  }
-  
-  @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-  
-  /* ═══════════════════════════════════════════════════════════════════════════
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
      4. SHARED KEYFRAMES (lightweight)
      ═══════════════════════════════════════════════════════════════════════════ */
-  
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  
-  @keyframes blink {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
 
-  @keyframes landing-rise {
-    from {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 
-  @keyframes landing-draw {
-    from {
-      transform: scaleY(0);
-    }
-    to {
-      transform: scaleY(1);
-    }
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
   }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-  @keyframes landing-pulse {
-    0%,
-    100% {
-      opacity: 0.75;
-    }
-    50% {
-      opacity: 1;
-    }
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
   }
-  
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes landing-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes landing-pulse {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}

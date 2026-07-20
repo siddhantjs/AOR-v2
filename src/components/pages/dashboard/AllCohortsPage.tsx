@@ -20,10 +20,8 @@ export function AllCohortsPage({ data }: AllCohortsPageProps) {
 
       {!data.cards.length ? (
         <div className="mt-[22px] rounded-[var(--radius-lg)] border border-dashed border-[var(--border2)] bg-[var(--bg-elevated)] px-9 py-9 text-center">
-          <h3 className="m-0 mb-1 text-[17px] font-extrabold text-[var(--navy)]">
-            No cohorts yet
-          </h3>
-          <p className="mx-auto m-0 max-w-[440px] text-[13px] text-[var(--muted)]">
+          <h3 className="m-0 mb-1 text-[17px] font-extrabold text-[var(--navy)]">No cohorts yet</h3>
+          <p className="m-0 mx-auto max-w-[440px] text-[13px] text-[var(--muted)]">
             Cohorts appear as applicants submit timelines.
           </p>
         </div>

@@ -2,10 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { TrackFlowHeader } from "@/components/pages/track/TrackFlowHeader";
-import {
-  MilestonesStep,
-  type MilestonesFormState,
-} from "@/components/pages/track/MilestonesStep";
+import { MilestonesStep, type MilestonesFormState } from "@/components/pages/track/MilestonesStep";
 import type { EditMilestonesData } from "@/lib/loadDashboard";
 
 type EditMilestonesPageProps = {

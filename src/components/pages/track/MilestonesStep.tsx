@@ -28,9 +28,10 @@ const SECTION_LABELS: Record<MilestoneSection, string> = {
   "the-finish-line": "The finish line",
 };
 
-const OFFICE_OPTIONS: { value: VisaOffice; label: string }[] = OFFICE_LIST.map(
-  (o) => ({ value: o, label: o }),
-);
+const OFFICE_OPTIONS: { value: VisaOffice; label: string }[] = OFFICE_LIST.map((o) => ({
+  value: o,
+  label: o,
+}));
 
 function todayIso(): string {
   const d = new Date();
@@ -61,8 +62,7 @@ const MILESTONE_SECTIONS: {
   sec: MilestoneSection;
   items: (typeof MILESTONES)[number][];
 }[] = (() => {
-  const out: { sec: MilestoneSection; items: (typeof MILESTONES)[number][] }[] =
-    [];
+  const out: { sec: MilestoneSection; items: (typeof MILESTONES)[number][] }[] = [];
   for (const m of MILESTONES) {
     const last = out[out.length - 1];
     if (!last || last.sec !== m.sec) out.push({ sec: m.sec, items: [m] });
@@ -183,18 +183,13 @@ export function MilestonesStep({
 
   const loggedCount = useMemo(
     () =>
-      MILESTONES.filter(
-        (m) => state.milestones[m.id].done && state.milestones[m.id].date,
-      ).length,
+      MILESTONES.filter((m) => state.milestones[m.id].done && state.milestones[m.id].date).length,
     [state.milestones],
   );
 
-  const showOffices =
-    state.milestones.bio_done.done && Boolean(state.milestones.bio_done.date);
+  const showOffices = state.milestones.bio_done.done && Boolean(state.milestones.bio_done.date);
 
-  const aorMinNext = application.aorDate
-    ? dayAfterIso(application.aorDate)
-    : undefined;
+  const aorMinNext = application.aorDate ? dayAfterIso(application.aorDate) : undefined;
 
   function flash(msg: string) {
     setNotice(msg);
@@ -309,9 +304,7 @@ export function MilestonesStep({
       await onSubmit(state);
     } catch (err) {
       setSubmitError(
-        err instanceof Error
-          ? err.message
-          : "Could not save your timeline. Try again.",
+        err instanceof Error ? err.message : "Could not save your timeline. Try again.",
       );
       setSubmitting(false);
     }
@@ -436,14 +429,10 @@ export function MilestonesStep({
                     </button>
 
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold text-[var(--ink)]">
-                        {m.label}
-                      </div>
+                      <div className="text-sm font-semibold text-[var(--ink)]">{m.label}</div>
                       <div className="text-xs text-[var(--muted)]">{m.desc}</div>
                       {err ? (
-                        <div className="mt-1 text-xs font-semibold text-[var(--red)]">
-                          {err}
-                        </div>
+                        <div className="mt-1 text-xs font-semibold text-[var(--red)]">{err}</div>
                       ) : null}
                     </div>
 
@@ -480,8 +469,8 @@ export function MilestonesStep({
                         Which offices hold your file?
                       </h3>
                       <p className="mt-0.5 mb-3 text-[12.5px] text-[var(--muted)]">
-                        After biometrics your file moves to a visa office. Telling
-                        us which one sharpens every estimate below.
+                        After biometrics your file moves to a visa office. Telling us which one
+                        sharpens every estimate below.
                       </p>
 
                       <div className="mb-3.5 flex gap-2.5 rounded-[11px] border border-[#efd9a8] bg-[var(--abg)] px-3.5 py-3 text-[12.5px] leading-[1.55] text-[#5b4a1e]">

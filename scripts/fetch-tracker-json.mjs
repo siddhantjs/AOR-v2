@@ -29,8 +29,7 @@ const root = path.resolve(__dirname, "..");
 const DEFAULT_OUT_DIR = path.join(root, "tracker-json");
 
 const STEP = 100;
-const AOR_SORT_KEY =
-  "xuset-kavav-casez-nypek-sybet-synyg-nocan-tyzef-tyxux";
+const AOR_SORT_KEY = "xuset-kavav-casez-nypek-sybet-synyg-nocan-tyzef-tyxux";
 
 function env(name) {
   return process.env[name]?.trim() || "";
@@ -103,11 +102,7 @@ function parseArgs(argv) {
 /** Resolve output dir: --out > TRACKER_JSON_DIR > tracker-json. Create if missing. */
 function resolveOutDir(cliOut) {
   const raw = (cliOut || env("TRACKER_JSON_DIR") || "").trim();
-  const outDir = raw
-    ? path.isAbsolute(raw)
-      ? raw
-      : path.resolve(root, raw)
-    : DEFAULT_OUT_DIR;
+  const outDir = raw ? (path.isAbsolute(raw) ? raw : path.resolve(root, raw)) : DEFAULT_OUT_DIR;
   fs.mkdirSync(outDir, { recursive: true });
   return outDir;
 }
@@ -190,18 +185,14 @@ async function main() {
 
   const cookie = slimCookie(cookieRaw);
   if (!cookie) {
-    console.error(
-      "TRACKER_COOKIE has no session cookies (_honshu_session / remember_user_token).",
-    );
+    console.error("TRACKER_COOKIE has no session cookies (_honshu_session / remember_user_token).");
     process.exit(1);
   }
 
   const endpoints = resolveTrackerEndpoints();
   const tracker = env("TRACKER_TRACKER") || "cec-express-entry-tracker";
   const delayMs =
-    Number(env("TRACKER_DELAY_MS")) ||
-    parseArgs(process.argv.slice(2)).delayMs ||
-    800;
+    Number(env("TRACKER_DELAY_MS")) || parseArgs(process.argv.slice(2)).delayMs || 800;
 
   const opts = parseArgs(process.argv.slice(2));
   const outDir = resolveOutDir(opts.out);
@@ -256,9 +247,7 @@ async function main() {
       fs.writeFileSync(outPath, JSON.stringify(data, null, 4) + "\n");
       written++;
       rows += data.values.length;
-      console.log(
-        `  wrote ${range}.json (start=${start}, ${data.values.length} rows)`,
-      );
+      console.log(`  wrote ${range}.json (start=${start}, ${data.values.length} rows)`);
 
       if (data.values.length === 0) break;
     }

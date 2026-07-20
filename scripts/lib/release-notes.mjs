@@ -52,14 +52,7 @@ export function bulletFromPr(pr, repoFull) {
  * @param {string} [opts.footer] Optional footer line(s)
  * @param {string} opts.repoFull
  */
-export function buildKeepAChangelogNotes({
-  version,
-  date,
-  featurePrs,
-  intro,
-  footer,
-  repoFull,
-}) {
+export function buildKeepAChangelogNotes({ version, date, featurePrs, intro, footer, repoFull }) {
   const fixes = featurePrs.filter(isFixPr);
   const added = featurePrs.filter((p) => !isFixPr(p));
 

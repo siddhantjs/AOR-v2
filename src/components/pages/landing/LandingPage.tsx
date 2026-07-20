@@ -52,8 +52,7 @@ export function LandingPage() {
             backgroundImage:
               "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)",
             backgroundSize: "48px 48px",
-            maskImage:
-              "linear-gradient(to bottom, black 0%, transparent 80%)",
+            maskImage: "linear-gradient(to bottom, black 0%, transparent 80%)",
           }}
         />
 
@@ -66,8 +65,7 @@ export function LandingPage() {
               See where your PR file sits — and what comes next.
             </h1>
             <p className="mt-4 max-w-[36ch] text-[15px] leading-relaxed text-[var(--muted)] sm:text-base">
-              Log your milestones, get AI date windows, and browse real journeys
-              in your AOR cohort.
+              Log your milestones, get AI date windows, and browse real journeys in your AOR cohort.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
@@ -85,10 +83,7 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div
-            className="animate-[landing-rise_0.7s_ease-out_0.12s_both]"
-            aria-hidden
-          >
+          <div className="animate-[landing-rise_0.7s_ease-out_0.12s_both]" aria-hidden>
             <TimelinePreview />
           </div>
         </div>
@@ -103,8 +98,8 @@ export function LandingPage() {
             Two minutes to join your cohort.
           </h2>
           <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-[var(--muted)] sm:text-[15px]">
-            Tell us your ITA and AOR, mark what has already happened, and we
-            estimate the rest from people on a similar path.
+            Tell us your ITA and AOR, mark what has already happened, and we estimate the rest from
+            people on a similar path.
           </p>
 
           <ol className="mt-10 grid gap-8 sm:grid-cols-3 sm:gap-6">
@@ -132,9 +127,7 @@ export function LandingPage() {
                 <h3 className="mt-1.5 text-[17px] font-bold tracking-[-0.02em] text-[var(--navy)]">
                   {step.title}
                 </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-[var(--muted)]">
-                  {step.body}
-                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-[var(--muted)]">{step.body}</p>
               </li>
             ))}
           </ol>

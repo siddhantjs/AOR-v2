@@ -55,10 +55,7 @@ export function Select<T extends string = string>({
 
   const selected = options.find((o) => o.value === value);
   const hasError = Boolean(error);
-  const enabledOptions = useMemo(
-    () => options.filter((o) => !o.disabled),
-    [options],
-  );
+  const enabledOptions = useMemo(() => options.filter((o) => !o.disabled), [options]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -153,9 +150,7 @@ export function Select<T extends string = string>({
           )}
         >
           <span
-            className={
-              selected ? "truncate text-[var(--ink)]" : "truncate text-[var(--muted2)]"
-            }
+            className={selected ? "truncate text-[var(--ink)]" : "truncate text-[var(--muted2)]"}
           >
             {selected?.label ?? placeholder}
           </span>

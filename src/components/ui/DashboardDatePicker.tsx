@@ -283,11 +283,7 @@ export function DashboardDatePicker({
           ].join(" "),
         )}
       >
-        <span
-          className={
-            value ? "truncate text-[var(--ink)]" : "truncate text-[var(--muted2)]"
-          }
-        >
+        <span className={value ? "truncate text-[var(--ink)]" : "truncate text-[var(--muted2)]"}>
           {display}
         </span>
         <svg
@@ -422,9 +418,7 @@ export function DashboardDatePicker({
                   className={[
                     "flex aspect-square items-center justify-center rounded-[var(--radius-sm)] text-[13px] font-medium transition-[var(--ease)]",
                     "disabled:cursor-not-allowed disabled:opacity-30",
-                    cell.outside && !isSelected
-                      ? "text-[var(--muted2)]"
-                      : "text-[var(--ink)]",
+                    cell.outside && !isSelected ? "text-[var(--muted2)]" : "text-[var(--ink)]",
                     isSelected
                       ? "bg-[var(--blue)] font-semibold text-[var(--on-navy)] ring-2 ring-[var(--navy)] ring-offset-1 ring-offset-[var(--bg-elevated)]"
                       : isToday

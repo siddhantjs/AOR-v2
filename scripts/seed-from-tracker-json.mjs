@@ -62,11 +62,7 @@ function loadEnv() {
 }
 
 function resolveDbName() {
-  return (
-    process.env.MONGODB_DB_NAME?.trim() ||
-    process.env.MONGODB_DB?.trim() ||
-    "aor-v2"
-  );
+  return process.env.MONGODB_DB_NAME?.trim() || process.env.MONGODB_DB?.trim() || "aor-v2";
 }
 
 function loadTrackerRows() {
@@ -98,7 +94,10 @@ function syntheticEmail(username, caseNo) {
     .replace(/[^a-z0-9]+/g, ".")
     .replace(/^\.+|\.+$/g, "")
     .slice(0, 40);
-  const caseSlug = caseNo.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+  const caseSlug = caseNo
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "");
   const local = (userSlug || "user") + "." + caseSlug;
   return `${local}@seeded.aortrack.app`;
 }
@@ -170,10 +169,7 @@ async function recountCohorts(db, cohortKeyStrings) {
     if (!cohort) continue;
 
     const members = await users
-      .find(
-        { cohortKey: cohort._id },
-        { projection: { milestones: 1 } },
-      )
+      .find({ cohortKey: cohort._id }, { projection: { milestones: 1 } })
       .toArray();
 
     /** @type {Record<string, number>} */

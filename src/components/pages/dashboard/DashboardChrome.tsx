@@ -10,11 +10,7 @@ type DashboardChromeProps = {
   children: ReactNode;
 };
 
-export function DashboardChrome({
-  userId,
-  active,
-  children,
-}: DashboardChromeProps) {
+export function DashboardChrome({ userId, active, children }: DashboardChromeProps) {
   const base = `/dashboard/${userId}`;
 
   const link = (href: string, key: NavKey, label: string) => {

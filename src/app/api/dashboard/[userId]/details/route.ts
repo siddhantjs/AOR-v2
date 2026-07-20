@@ -2,10 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDb } from "@/lib/db";
 import { findOrCreateCohortForUser } from "@/lib/cohort";
 import { toIsoDate, parseIsoDate } from "@/lib/dates";
-import {
-  toApplicantDetailsForm,
-  type ApplicantDetailsForm,
-} from "@/lib/applicantDetails";
+import { toApplicantDetailsForm, type ApplicantDetailsForm } from "@/lib/applicantDetails";
 import {
   APPLYING_FROM,
   DRAW_CATEGORIES,
@@ -34,13 +31,10 @@ const DRAW_SET = new Set(DRAW_CATEGORIES.map((c) => c.value));
 const OFFICE_SET = new Set<string>(OFFICE_LIST);
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 
-function parseBody(body: Partial<ApplicantDetailsForm>):
-  | { ok: true; data: ApplicantDetailsForm }
-  | { ok: false; error: string } {
-  if (
-    !body.pathway ||
-    !(PATHWAYS as readonly string[]).includes(body.pathway)
-  ) {
+function parseBody(
+  body: Partial<ApplicantDetailsForm>,
+): { ok: true; data: ApplicantDetailsForm } | { ok: false; error: string } {
+  if (!body.pathway || !(PATHWAYS as readonly string[]).includes(body.pathway)) {
     return { ok: false, error: "Choose an application type." };
   }
   const pathway = body.pathway as Pathway;
@@ -49,9 +43,7 @@ function parseBody(body: Partial<ApplicantDetailsForm>):
   if (pathway === "express-entry") {
     if (
       !body.expressEntryProgram ||
-      !(EXPRESS_ENTRY_PROGRAMS as readonly string[]).includes(
-        body.expressEntryProgram,
-      )
+      !(EXPRESS_ENTRY_PROGRAMS as readonly string[]).includes(body.expressEntryProgram)
     ) {
       return { ok: false, error: "Choose an Express Entry program." };
     }
@@ -61,10 +53,7 @@ function parseBody(body: Partial<ApplicantDetailsForm>):
   if (!body.drawCategory || !DRAW_SET.has(body.drawCategory as DrawCategory)) {
     return { ok: false, error: "Choose a draw category." };
   }
-  if (
-    !body.applyingFrom ||
-    !(APPLYING_FROM as readonly string[]).includes(body.applyingFrom)
-  ) {
+  if (!body.applyingFrom || !(APPLYING_FROM as readonly string[]).includes(body.applyingFrom)) {
     return { ok: false, error: "Choose Inland or Outland." };
   }
 
@@ -87,22 +76,13 @@ function parseBody(body: Partial<ApplicantDetailsForm>):
     return { ok: false, error: "Invalid SVO." };
   }
 
-  if (
-    body.maritalStatus &&
-    !(MARITAL_STATUSES as readonly string[]).includes(body.maritalStatus)
-  ) {
+  if (body.maritalStatus && !(MARITAL_STATUSES as readonly string[]).includes(body.maritalStatus)) {
     return { ok: false, error: "Invalid marital status." };
   }
-  if (
-    body.spouseStatus &&
-    !(SPOUSE_STATUSES as readonly string[]).includes(body.spouseStatus)
-  ) {
+  if (body.spouseStatus && !(SPOUSE_STATUSES as readonly string[]).includes(body.spouseStatus)) {
     return { ok: false, error: "Invalid spouse status." };
   }
-  if (
-    body.medicalType &&
-    !(MEDICAL_TYPES as readonly string[]).includes(body.medicalType)
-  ) {
+  if (body.medicalType && !(MEDICAL_TYPES as readonly string[]).includes(body.medicalType)) {
     return { ok: false, error: "Invalid medical type." };
   }
 
@@ -162,10 +142,7 @@ export async function POST(request: Request, { params }: RouteParams) {
       data.aorDate = aorIso;
     }
     if (data.itaDate >= aorIso) {
-      return NextResponse.json(
-        { error: "ITA must be before your AOR." },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "ITA must be before your AOR." }, { status: 400 });
     }
 
     const prevApplying = user.applyingFrom;
@@ -191,11 +168,9 @@ export async function POST(request: Request, { params }: RouteParams) {
       maritalStatus: data.maritalStatus || null,
       spouseStatus: data.spouseStatus || null,
       nationality: data.nationality || null,
-      foreignWork:
-        data.foreignWork === "" ? null : data.foreignWork === "yes",
+      foreignWork: data.foreignWork === "" ? null : data.foreignWork === "yes",
       foreignWorkYears: null,
-      canadianWork:
-        data.canadianWork === "" ? null : data.canadianWork === "yes",
+      canadianWork: data.canadianWork === "" ? null : data.canadianWork === "yes",
       canadianWorkYears: null,
       dependants: deps != null && Number.isFinite(deps) ? deps : null,
       countryOfResidence: data.countryOfResidence || null,

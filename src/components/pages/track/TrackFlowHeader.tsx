@@ -30,12 +30,7 @@ function phaseClasses(state: Phase["state"]) {
   };
 }
 
-export function TrackFlowHeader({
-  kicker,
-  title,
-  subtitle,
-  phases,
-}: TrackFlowHeaderProps) {
+export function TrackFlowHeader({ kicker, title, subtitle, phases }: TrackFlowHeaderProps) {
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
       <div>

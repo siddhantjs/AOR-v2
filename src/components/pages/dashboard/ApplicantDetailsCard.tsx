@@ -10,8 +10,7 @@ import {
 import { formatLongDate } from "@/lib/dates";
 import { Select } from "@/components/ui";
 
-const editControl =
-  "w-[168px] shrink-0 [&_button]:py-1.5 [&_button]:text-[12.5px]";
+const editControl = "w-[168px] shrink-0 [&_button]:py-1.5 [&_button]:text-[12.5px]";
 
 const inputControl =
   "w-[168px] rounded-[var(--radius-md)] border border-[var(--border2)] bg-[var(--bg-elevated)] px-3 py-1.5 text-right text-[12.5px] text-[var(--ink)] outline-none focus:border-[var(--navy)] focus:shadow-[0_0_0_3px_rgba(26,35,50,0.08)]";
@@ -21,10 +20,7 @@ type ApplicantDetailsCardProps = {
   initialForm: ApplicantDetailsForm;
 };
 
-export function ApplicantDetailsCard({
-  userId,
-  initialForm,
-}: ApplicantDetailsCardProps) {
+export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCardProps) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(initialForm);
@@ -33,9 +29,7 @@ export function ApplicantDetailsCard({
   const [error, setError] = useState<string | null>(null);
 
   const rows = displayApplicantDetails(form).map((row) =>
-    row.key === "ita" && form.itaDate
-      ? { ...row, value: formatLongDate(form.itaDate) }
-      : row,
+    row.key === "ita" && form.itaDate ? { ...row, value: formatLongDate(form.itaDate) } : row,
   );
 
   function startEdit() {
@@ -59,11 +53,7 @@ export function ApplicantDetailsCard({
       if (key === "pathway" && value !== "express-entry") {
         next.expressEntryProgram = "";
       }
-      if (
-        key === "pathway" &&
-        value === "express-entry" &&
-        !next.expressEntryProgram
-      ) {
+      if (key === "pathway" && value === "express-entry" && !next.expressEntryProgram) {
         next.expressEntryProgram = "cec";
       }
       return next;
@@ -130,18 +120,12 @@ export function ApplicantDetailsCard({
           >
             <span className="flex-1 text-[13px] text-[var(--muted)]">{d.label}</span>
             {editing ? (
-              <FieldEditor
-                fieldKey={d.key}
-                draft={draft}
-                onChange={patchDraft}
-              />
+              <FieldEditor fieldKey={d.key} draft={draft} onChange={patchDraft} />
             ) : (
               <span
                 className={[
                   "text-right text-[13px] font-semibold",
-                  d.value === "—"
-                    ? "font-medium text-[var(--muted2)]"
-                    : "text-[var(--ink)]",
+                  d.value === "—" ? "font-medium text-[var(--muted2)]" : "text-[var(--ink)]",
                 ].join(" ")}
               >
                 {d.value}
@@ -188,10 +172,7 @@ function FieldEditor({
 }: {
   fieldKey: string;
   draft: ApplicantDetailsForm;
-  onChange: <K extends keyof ApplicantDetailsForm>(
-    key: K,
-    value: ApplicantDetailsForm[K],
-  ) => void;
+  onChange: <K extends keyof ApplicantDetailsForm>(key: K, value: ApplicantDetailsForm[K]) => void;
 }) {
   switch (fieldKey) {
     case "pathway":

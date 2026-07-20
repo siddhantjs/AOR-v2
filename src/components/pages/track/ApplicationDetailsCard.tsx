@@ -76,13 +76,7 @@ export type ApplicationFormValues = {
 
 type FieldErrors = Partial<Record<keyof ApplicationFormValues, string>>;
 
-type UsernameCheckStatus =
-  | "idle"
-  | "checking"
-  | "available"
-  | "taken"
-  | "invalid"
-  | "error";
+type UsernameCheckStatus = "idle" | "checking" | "available" | "taken" | "invalid" | "error";
 
 const INITIAL: ApplicationFormValues = {
   applyingFrom: null,
@@ -167,13 +161,8 @@ type ApplicationDetailsCardProps = {
   initialValues?: ApplicationFormValues;
 };
 
-export function ApplicationDetailsCard({
-  onContinue,
-  initialValues,
-}: ApplicationDetailsCardProps) {
-  const [values, setValues] = useState<ApplicationFormValues>(
-    () => initialValues ?? INITIAL,
-  );
+export function ApplicationDetailsCard({ onContinue, initialValues }: ApplicationDetailsCardProps) {
+  const [values, setValues] = useState<ApplicationFormValues>(() => initialValues ?? INITIAL);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState(false);
   const [datesTouched, setDatesTouched] = useState(false);
@@ -189,8 +178,7 @@ export function ApplicationDetailsCard({
 
   const showEeProgram = values.pathway === "express-entry";
   const usernameAvailable =
-    usernameStatus === "available" &&
-    checkedUsername === normalizeUsername(values.username);
+    usernameStatus === "available" && checkedUsername === normalizeUsername(values.username);
 
   const canContinue = usernameAvailable && !submitting;
 
@@ -203,10 +191,7 @@ export function ApplicationDetailsCard({
     };
   }, [touched, datesTouched, errors]);
 
-  function update<K extends keyof ApplicationFormValues>(
-    key: K,
-    value: ApplicationFormValues[K],
-  ) {
+  function update<K extends keyof ApplicationFormValues>(key: K, value: ApplicationFormValues[K]) {
     setValues((prev) => {
       const next = { ...prev, [key]: value };
       if (key === "pathway" && value !== "express-entry") {
@@ -245,9 +230,7 @@ export function ApplicationDetailsCard({
     setUsernameMessage(null);
 
     try {
-      const res = await fetch(
-        `/api/username/check?username=${encodeURIComponent(username)}`,
-      );
+      const res = await fetch(`/api/username/check?username=${encodeURIComponent(username)}`);
       const data = (await res.json()) as {
         available?: boolean;
         reason?: string;
@@ -309,9 +292,7 @@ export function ApplicationDetailsCard({
       });
     } catch (err) {
       setSubmitError(
-        err instanceof Error
-          ? err.message
-          : "Could not start your timeline. Try again.",
+        err instanceof Error ? err.message : "Could not start your timeline. Try again.",
       );
     } finally {
       setSubmitting(false);
@@ -327,9 +308,7 @@ export function ApplicationDetailsCard({
 
   const usernameError =
     visibleErrors.username ||
-    (usernameStatus === "taken" ||
-    usernameStatus === "invalid" ||
-    usernameStatus === "error"
+    (usernameStatus === "taken" || usernameStatus === "invalid" || usernameStatus === "error"
       ? usernameMessage
       : null);
 
@@ -347,11 +326,7 @@ export function ApplicationDetailsCard({
           <label className={labelClass()}>
             Where are you applying from? <span className="text-[var(--red)]">*</span>
           </label>
-          <div
-            className="grid grid-cols-2 gap-2.5"
-            role="group"
-            aria-label="Applying from"
-          >
+          <div className="grid grid-cols-2 gap-2.5" role="group" aria-label="Applying from">
             {RESIDENCE_OPTIONS.map((opt) => {
               const selected = values.applyingFrom === opt.value;
               return (

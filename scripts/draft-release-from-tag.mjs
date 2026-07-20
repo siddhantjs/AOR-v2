@@ -60,9 +60,7 @@ function gitTagDate(tagName) {
 
 function apiTagCommitDate(tagName) {
   try {
-    const ref = ghApi(
-      `repos/${owner}/${repo}/git/refs/tags/${encodeURIComponent(tagName)}`,
-    );
+    const ref = ghApi(`repos/${owner}/${repo}/git/refs/tags/${encodeURIComponent(tagName)}`);
     let sha = ref.object?.sha;
     if (!sha) return null;
     if (ref.object?.type === "tag") {
@@ -70,9 +68,7 @@ function apiTagCommitDate(tagName) {
       sha = tagObj.object?.sha ?? sha;
     }
     const commit = ghApi(`repos/${owner}/${repo}/commits/${sha}`);
-    return (
-      commit.commit?.committer?.date ?? commit.commit?.author?.date ?? null
-    );
+    return commit.commit?.committer?.date ?? commit.commit?.author?.date ?? null;
   } catch {
     return null;
   }
@@ -211,9 +207,7 @@ function createDraftRelease(tagName, notes) {
 
 async function main() {
   if (!tag || !TAG_RE.test(tag)) {
-    console.error(
-      `Invalid or missing TAG. Expected format vX.Y.Z (got: ${tag ?? "unset"})`,
-    );
+    console.error(`Invalid or missing TAG. Expected format vX.Y.Z (got: ${tag ?? "unset"})`);
     process.exit(1);
   }
 

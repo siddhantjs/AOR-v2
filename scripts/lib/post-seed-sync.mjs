@@ -41,11 +41,7 @@ function loadEnv() {
 }
 
 function resolveDbName() {
-  return (
-    process.env.MONGODB_DB_NAME?.trim() ||
-    process.env.MONGODB_DB?.trim() ||
-    "aor-v2"
-  );
+  return process.env.MONGODB_DB_NAME?.trim() || process.env.MONGODB_DB?.trim() || "aor-v2";
 }
 
 /**
@@ -56,8 +52,7 @@ async function recountCohorts(db, onlyKeys) {
   const users = db.collection("users");
   const cohorts = db.collection("cohorts");
 
-  const filter =
-    onlyKeys && onlyKeys.length > 0 ? { cohortKey: { $in: onlyKeys } } : {};
+  const filter = onlyKeys && onlyKeys.length > 0 ? { cohortKey: { $in: onlyKeys } } : {};
 
   const cohortDocs = await cohorts.find(filter).toArray();
   let updated = 0;
@@ -131,7 +126,10 @@ async function main() {
   const dbName = resolveDbName();
   const cohortKeysArg = process.argv[2]?.trim();
   const onlyKeys = cohortKeysArg
-    ? cohortKeysArg.split(",").map((k) => k.trim()).filter(Boolean)
+    ? cohortKeysArg
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean)
     : null;
 
   const client = new MongoClient(uri);

@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDb } from "@/lib/db";
-import {
-  mergeLoggedMilestones,
-  newShareToken,
-  officesFromBody,
-} from "@/lib/dashboardView";
+import { mergeLoggedMilestones, newShareToken, officesFromBody } from "@/lib/dashboardView";
 import { MILESTONE_IDS, OFFICE_LIST, type MilestoneId } from "@/lib/schema/constants";
 import type { ProfileMilestone } from "@/lib/schema/types";
 import { UserModel } from "@/models/User";
@@ -34,18 +30,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid user." }, { status: 400 });
   }
 
-  const logged: Partial<Record<MilestoneId, { done: boolean; date: string }>> =
-    {};
+  const logged: Partial<Record<MilestoneId, { done: boolean; date: string }>> = {};
 
   for (const id of MILESTONE_IDS) {
     const entry = body.milestones?.[id];
     if (!entry?.done) continue;
     const date = (entry.date ?? "").trim();
     if (!ISO_DATE.test(date)) {
-      return NextResponse.json(
-        { error: `Add the date for ${id}.` },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: `Add the date for ${id}.` }, { status: 400 });
     }
     logged[id] = { done: true, date };
   }
@@ -66,10 +58,7 @@ export async function POST(request: Request) {
 
     const existing = (user.milestones ?? []) as ProfileMilestone[];
     const merged = mergeLoggedMilestones(existing, logged);
-    const offices = officesFromBody(
-      body.primaryVisaOffice,
-      body.secondaryVisaOffice,
-    );
+    const offices = officesFromBody(body.primaryVisaOffice, body.secondaryVisaOffice);
 
     user.set("milestones", merged);
     user.set("primaryVisaOffice", offices.primaryVisaOffice);

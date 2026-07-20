@@ -107,10 +107,8 @@ export function toApplicantDetailsForm(user: User): ApplicantDetailsForm {
     crsScore: ud?.crsScore != null ? String(ud.crsScore) : "",
     maritalStatus: ud?.maritalStatus ?? "",
     spouseStatus: ud?.spouseStatus ?? "",
-    foreignWork:
-      ud?.foreignWork == null ? "" : ud.foreignWork ? "yes" : "no",
-    canadianWork:
-      ud?.canadianWork == null ? "" : ud.canadianWork ? "yes" : "no",
+    foreignWork: ud?.foreignWork == null ? "" : ud.foreignWork ? "yes" : "no",
+    canadianWork: ud?.canadianWork == null ? "" : ud.canadianWork ? "yes" : "no",
     dependants: ud?.dependants != null ? String(ud.dependants) : "",
     primaryVisaOffice: (user.primaryVisaOffice ?? "") as VisaOffice | "",
     secondaryVisaOffice: (user.secondaryVisaOffice ?? "") as VisaOffice | "",
@@ -123,8 +121,7 @@ export function displayApplicantDetails(
   form: ApplicantDetailsForm,
 ): { key: string; label: string; value: string }[] {
   const draw =
-    DRAW_CATEGORIES.find((c) => c.value === form.drawCategory)?.label ??
-    form.drawCategory;
+    DRAW_CATEGORIES.find((c) => c.value === form.drawCategory)?.label ?? form.drawCategory;
 
   return [
     {
@@ -166,22 +163,12 @@ export function displayApplicantDetails(
     {
       key: "fw",
       label: "Foreign work",
-      value:
-        form.foreignWork === ""
-          ? "—"
-          : form.foreignWork === "yes"
-            ? "Yes"
-            : "No",
+      value: form.foreignWork === "" ? "—" : form.foreignWork === "yes" ? "Yes" : "No",
     },
     {
       key: "cw",
       label: "Canadian work",
-      value:
-        form.canadianWork === ""
-          ? "—"
-          : form.canadianWork === "yes"
-            ? "Yes"
-            : "No",
+      value: form.canadianWork === "" ? "—" : form.canadianWork === "yes" ? "Yes" : "No",
     },
     { key: "dep", label: "Dependants", value: form.dependants || "—" },
     {

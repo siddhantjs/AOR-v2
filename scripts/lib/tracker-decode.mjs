@@ -18,15 +18,7 @@ const MONTHS = {
 };
 
 /** SCHEMA_V3 milestone ids that can be filled from tracker columns. */
-export const TRACKER_MILESTONE_IDS = [
-  "bil",
-  "medical",
-  "bgc_start",
-  "final",
-  "p1",
-  "p2",
-  "ecopr",
-];
+export const TRACKER_MILESTONE_IDS = ["bil", "medical", "bgc_start", "final", "p1", "p2", "ecopr"];
 
 /** All profile milestone ids (sparse rows omit nulls on seed). */
 export const PROFILE_MILESTONE_IDS = [
@@ -128,11 +120,7 @@ export function parseTrackerDate(cell) {
   const day = Number(m[2]);
   const year = Number(m[3]);
   const d = new Date(Date.UTC(year, month, day, 12, 0, 0));
-  if (
-    d.getUTCFullYear() !== year ||
-    d.getUTCMonth() !== month ||
-    d.getUTCDate() !== day
-  ) {
+  if (d.getUTCFullYear() !== year || d.getUTCMonth() !== month || d.getUTCDate() !== day) {
     return null;
   }
   return d.toISOString().slice(0, 10);
@@ -292,10 +280,7 @@ export function decodeRow(row) {
     ecopr: ecoprInland,
   });
 
-  const ecopr =
-    applyingFrom === "outland"
-      ? landing ?? ecoprInland
-      : ecoprInland ?? landing;
+  const ecopr = applyingFrom === "outland" ? (landing ?? ecoprInland) : (ecoprInland ?? landing);
 
   /** @type {Record<string, string|null>} */
   const milestoneDates = {

@@ -34,10 +34,7 @@ export async function loadCohortPageData(
   const me = await UserModel.findById(userId).lean();
   if (!me) return null;
 
-  const myKey = buildCohortKey(
-    aorMonthFromIso(toIsoDate(new Date(me.aorDate))),
-    me.applyingFrom,
-  );
+  const myKey = buildCohortKey(aorMonthFromIso(toIsoDate(new Date(me.aorDate))), me.applyingFrom);
 
   const activeKey =
     cohortKeyParam && /^\d{4}-\d{2}\|(inland|outland)$/.test(cohortKeyParam)
@@ -94,10 +91,7 @@ export async function loadCohortPageData(
 
 async function findCohortMembers(cohortKey: string) {
   const cohort = await CohortModel.findOne({ cohortKey }).select("_id").lean();
-  const [ym, applyingFrom] = cohortKey.split("|") as [
-    string,
-    "inland" | "outland",
-  ];
+  const [ym, applyingFrom] = cohortKey.split("|") as [string, "inland" | "outland"];
 
   const monthStart = new Date(`${ym}-01T00:00:00.000Z`);
   const monthEnd = new Date(monthStart);
@@ -138,27 +132,18 @@ export type AllCohortsPageData = {
   cards: AllCohortCard[];
 };
 
-export async function loadAllCohortsPageData(
-  userId: string,
-): Promise<AllCohortsPageData | null> {
+export async function loadAllCohortsPageData(userId: string): Promise<AllCohortsPageData | null> {
   if (!/^[a-f\d]{24}$/i.test(userId)) return null;
   await connectDb();
 
-  const me = await UserModel.findById(userId)
-    .select("applyingFrom aorDate")
-    .lean();
+  const me = await UserModel.findById(userId).select("applyingFrom aorDate").lean();
   if (!me) return null;
 
-  const myKey = buildCohortKey(
-    aorMonthFromIso(toIsoDate(new Date(me.aorDate))),
-    me.applyingFrom,
-  );
+  const myKey = buildCohortKey(aorMonthFromIso(toIsoDate(new Date(me.aorDate))), me.applyingFrom);
 
   const [cohortDocs, users] = await Promise.all([
     CohortModel.find({}).lean(),
-    UserModel.find({})
-      .select("applyingFrom aorDate milestones")
-      .lean(),
+    UserModel.find({}).select("applyingFrom aorDate milestones").lean(),
   ]);
 
   const keySet = new Set<string>([myKey]);
@@ -182,10 +167,7 @@ export async function loadAllCohortsPageData(
   for (const key of keySet) ensure(key);
 
   for (const u of users) {
-    const key = buildCohortKey(
-      aorMonthFromIso(toIsoDate(new Date(u.aorDate))),
-      u.applyingFrom,
-    );
+    const key = buildCohortKey(aorMonthFromIso(toIsoDate(new Date(u.aorDate))), u.applyingFrom);
     keySet.add(key);
     const b = ensure(key);
     b.total += 1;

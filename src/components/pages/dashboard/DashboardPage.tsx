@@ -37,11 +37,7 @@ export function DashboardPage({ data }: DashboardPageProps) {
 
   function shareWA() {
     const msg = `Following my Canadian PR journey on AORTrack: ${shareHref()}`;
-    window.open(
-      `https://wa.me/?text=${encodeURIComponent(msg)}`,
-      "_blank",
-      "noopener,noreferrer",
-    );
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -49,20 +45,14 @@ export function DashboardPage({ data }: DashboardPageProps) {
       {/* Hero */}
       <div className="rounded-[18px] bg-[var(--navy)] p-1.5 text-[var(--on-navy)] shadow-[var(--shadow-md)]">
         <div className="grid grid-cols-1 overflow-hidden rounded-[14px] min-[821px]:grid-cols-3">
-          <HeroCell
-            label="Days since AOR"
-            big={String(data.daysSinceAor)}
-            sub={data.aorSub}
-          />
+          <HeroCell label="Days since AOR" big={String(data.daysSinceAor)} sub={data.aorSub} />
           <HeroCell
             label="Typical wait in your group"
             big={
               data.typicalWaitDays != null ? (
                 <>
                   {data.typicalWaitDays}
-                  <small className="ml-1 text-[17px] font-bold text-[#aeb9c5]">
-                    days
-                  </small>
+                  <small className="ml-1 text-[17px] font-bold text-[#aeb9c5]">days</small>
                 </>
               ) : (
                 "—"
@@ -153,10 +143,7 @@ export function DashboardPage({ data }: DashboardPageProps) {
             </div>
           </section>
 
-          <ApplicantDetailsCard
-            userId={data.userId}
-            initialForm={data.applicantForm}
-          />
+          <ApplicantDetailsCard userId={data.userId} initialForm={data.applicantForm} />
         </div>
 
         <div>
@@ -168,7 +155,7 @@ export function DashboardPage({ data }: DashboardPageProps) {
             <p className="mt-0.5 mb-3.5 text-[12.5px] text-[var(--muted)]">
               Read only link. No personal data exposed.
             </p>
-            <div className="mb-3 break-all rounded-[9px] border border-[var(--border)] bg-[var(--bg-muted)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">
+            <div className="mb-3 rounded-[9px] border border-[var(--border)] bg-[var(--bg-muted)] px-3 py-2.5 font-[family-name:var(--font-mono)] text-[11px] break-all text-[var(--muted)]">
               {data.sharePath}
             </div>
             <div className="flex flex-wrap gap-2">
@@ -268,13 +255,11 @@ function HeroCell({
       className={[
         "relative px-7 py-6",
         divider
-          ? "before:absolute before:inset-x-[8%] before:top-0 before:h-px before:bg-white/12 min-[821px]:before:inset-y-[22%] min-[821px]:before:left-0 min-[821px]:before:right-auto min-[821px]:before:h-auto min-[821px]:before:w-px"
+          ? "before:absolute before:inset-x-[8%] before:top-0 before:h-px before:bg-white/12 min-[821px]:before:inset-y-[22%] min-[821px]:before:right-auto min-[821px]:before:left-0 min-[821px]:before:h-auto min-[821px]:before:w-px"
           : "",
       ].join(" ")}
     >
-      <div className="text-[11px] font-bold tracking-[0.1em] text-[#8b99a8] uppercase">
-        {label}
-      </div>
+      <div className="text-[11px] font-bold tracking-[0.1em] text-[#8b99a8] uppercase">{label}</div>
       <div className="mt-1 font-[family-name:var(--font-display)] text-[44px] leading-[1.1] font-extrabold tracking-[-0.03em]">
         {big}
       </div>

@@ -42,10 +42,7 @@ export function CohortPage({ data }: CohortPageProps) {
     router.push(`/dashboard/${data.userId}/cohort?c=${q}`);
   }
 
-  const onlyYou =
-    data.isYours &&
-    data.applicants.length === 1 &&
-    data.applicants[0]?.isYou;
+  const onlyYou = data.isYours && data.applicants.length === 1 && data.applicants[0]?.isYou;
 
   return (
     <div>
@@ -96,9 +93,9 @@ export function CohortPage({ data }: CohortPageProps) {
           <h3 className="m-0 mb-1 text-[17px] font-extrabold text-[var(--navy)]">
             You are the first one here
           </h3>
-          <p className="mx-auto m-0 max-w-[440px] text-[13px] text-[var(--muted)]">
-            You are the pioneer of this cohort. Your estimates still hold, and
-            this page fills up as others join.
+          <p className="m-0 mx-auto max-w-[440px] text-[13px] text-[var(--muted)]">
+            You are the pioneer of this cohort. Your estimates still hold, and this page fills up as
+            others join.
           </p>
         </div>
       ) : null}
@@ -108,25 +105,19 @@ export function CohortPage({ data }: CohortPageProps) {
           <h3 className="m-0 mb-1 text-[17px] font-extrabold text-[var(--navy)]">
             No journeys here yet
           </h3>
-          <p className="mx-auto m-0 max-w-[440px] text-[13px] text-[var(--muted)]">
+          <p className="m-0 mx-auto max-w-[440px] text-[13px] text-[var(--muted)]">
             This cohort is waiting for its first applicant.
           </p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] shadow-[var(--shadow-md)]">
           {rows.map((a) => (
-            <ApplicantRow
-              key={a.id}
-              applicant={a}
-              onOpen={() => setOpenId(a.id)}
-            />
+            <ApplicantRow key={a.id} applicant={a} onOpen={() => setOpenId(a.id)} />
           ))}
         </div>
       )}
 
-      {selected ? (
-        <ApplicantDrawer applicant={selected} onClose={() => setOpenId(null)} />
-      ) : null}
+      {selected ? <ApplicantDrawer applicant={selected} onClose={() => setOpenId(null)} /> : null}
     </div>
   );
 }

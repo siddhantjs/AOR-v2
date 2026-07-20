@@ -24,8 +24,7 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   // metadataBase: new URL(getSiteUrl()),
   title: "AORTrack | Canadian Immigration Timeline",
-  description:
-    "Crowd-sourced Canadian PR timelines by stream, cohort, and milestone.",
+  description: "Crowd-sourced Canadian PR timelines by stream, cohort, and milestone.",
 };
 
 export const viewport: Viewport = {
@@ -41,10 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${fraunces.variable} ${dmSans.variable} ${dmMono.variable} h-full`}
-    >
+    <html lang="en" className={`${fraunces.variable} ${dmSans.variable} ${dmMono.variable} h-full`}>
       <body className="min-h-full antialiased">{children}</body>
     </html>
   );

@@ -4,9 +4,7 @@ export function normalizeUsername(raw: string): string {
   return raw.trim().toLowerCase();
 }
 
-export function validateUsernameFormat(
-  raw: string,
-): { ok: true } | { ok: false; message: string } {
+export function validateUsernameFormat(raw: string): { ok: true } | { ok: false; message: string } {
   const username = normalizeUsername(raw);
 
   if (!username) {

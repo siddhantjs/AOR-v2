@@ -8,11 +8,7 @@ import type {
 } from "@/lib/schema/types";
 import { EstimateConfig } from "./EstimateConfig";
 import { GeminiClient } from "./GeminiClient";
-import {
-  EstimatePromptPayload,
-  EstimateRunResult,
-  UserEstimateSnapshot,
-} from "./models";
+import { EstimatePromptPayload, EstimateRunResult, UserEstimateSnapshot } from "./models";
 import { UserEstimateStore } from "./UserEstimateStore";
 
 /**
@@ -50,16 +46,11 @@ export class AiEstimateService {
   }
 
   async runSnapshot(snapshot: UserEstimateSnapshot): Promise<EstimateRunResult> {
-    if (
-      Number.isNaN(snapshot.itaDate.getTime()) ||
-      Number.isNaN(snapshot.aorDate.getTime())
-    ) {
+    if (Number.isNaN(snapshot.itaDate.getTime()) || Number.isNaN(snapshot.aorDate.getTime())) {
       return EstimateRunResult.failed("ITA and AOR are required.");
     }
 
-    const phase: EstimatePhase = snapshot.hasOffices()
-      ? "with-offices"
-      : "aor-only";
+    const phase: EstimatePhase = snapshot.hasOffices() ? "with-offices" : "aor-only";
     const inputsHash = this.hash(snapshot, phase);
 
     if (snapshot.estimateMeta?.inputsHash === inputsHash) {
@@ -103,10 +94,7 @@ export class AiEstimateService {
     return EstimateRunResult.completed(phase, inputsHash, estimates);
   }
 
-  private buildPrompt(
-    snapshot: UserEstimateSnapshot,
-    phase: EstimatePhase,
-  ): EstimatePromptPayload {
+  private buildPrompt(snapshot: UserEstimateSnapshot, phase: EstimatePhase): EstimatePromptPayload {
     const logged = snapshot.milestones
       .filter((m) => m.milestoneDate)
       .map((m) => ({
@@ -151,10 +139,7 @@ export class AiEstimateService {
     return createHash("sha256").update(parts.join("\n")).digest("hex");
   }
 
-  private validate(
-    rows: MilestoneEstimate[],
-    snapshot: UserEstimateSnapshot,
-  ): MilestoneEstimate[] {
+  private validate(rows: MilestoneEstimate[], snapshot: UserEstimateSnapshot): MilestoneEstimate[] {
     const estimable = new Set(MILESTONES.filter((m) => m.est).map((m) => m.id));
     const logged = new Set(
       snapshot.milestones.filter((m) => m.milestoneDate).map((m) => m.milestoneId),
@@ -169,10 +154,7 @@ export class AiEstimateService {
       if (!this.isBucket(row.estimatedFrom) || !this.isBucket(row.estimatedTo)) {
         continue;
       }
-      if (
-        !Number.isFinite(row.estimatedYearFrom) ||
-        !Number.isFinite(row.estimatedYearTo)
-      ) {
+      if (!Number.isFinite(row.estimatedYearFrom) || !Number.isFinite(row.estimatedYearTo)) {
         continue;
       }
       seen.add(row.milestoneId);

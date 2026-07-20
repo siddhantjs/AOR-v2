@@ -48,11 +48,7 @@ function loadEnv() {
 }
 
 function resolveDbName() {
-  return (
-    process.env.MONGODB_DB_NAME?.trim() ||
-    process.env.MONGODB_DB?.trim() ||
-    "aor-v2"
-  );
+  return process.env.MONGODB_DB_NAME?.trim() || process.env.MONGODB_DB?.trim() || "aor-v2";
 }
 
 function loadTrackerRows() {
@@ -210,9 +206,7 @@ async function main() {
       for (const key of COMPARE_KEYS) {
         const dbDate = dbMilestoneDate(doc.milestones, key, doc);
         const sourceDate =
-          key === "aorDate"
-            ? source.aorDate
-            : (source.milestoneDates[key] ?? null);
+          key === "aorDate" ? source.aorDate : (source.milestoneDates[key] ?? null);
         const kind = compareDates(dbDate, sourceDate);
 
         stats.compare[kind]++;
@@ -287,8 +281,7 @@ async function main() {
 
     fs.writeFileSync(outPath, JSON.stringify(report, null, 2) + "\n");
 
-    const wouldApplyCount =
-      stats.mergeWouldApply.fill + stats.mergeWouldApply.earlier;
+    const wouldApplyCount = stats.mergeWouldApply.fill + stats.mergeWouldApply.earlier;
 
     console.log("Milestone diff dry-run — tracker ∩ seeded users only (no writes)");
     console.log(`  compared users:          ${stats.comparedUsers}`);

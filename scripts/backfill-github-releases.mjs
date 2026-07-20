@@ -14,10 +14,7 @@
  */
 
 import { execFileSync, spawnSync } from "node:child_process";
-import {
-  buildReleasePrNotes,
-  parseReleasePrTitle,
-} from "./lib/release-notes.mjs";
+import { buildReleasePrNotes, parseReleasePrTitle } from "./lib/release-notes.mjs";
 
 const REPO = process.env.GITHUB_REPO_FULL ?? "Get-North-Path/AOR-tracker";
 const [owner, repo] = REPO.split("/");
@@ -52,9 +49,7 @@ async function fetchAllMergedPulls() {
     if (batch.length < 100) break;
     page += 1;
   }
-  pulls.sort(
-    (a, b) => new Date(a.merged_at).getTime() - new Date(b.merged_at).getTime(),
-  );
+  pulls.sort((a, b) => new Date(a.merged_at).getTime() - new Date(b.merged_at).getTime());
   return pulls;
 }
 
@@ -69,8 +64,7 @@ function groupReleases(allMerged) {
 
   for (let i = 0; i < releasePrs.length; i++) {
     const { pr: releasePr, tag } = releasePrs[i];
-    const prevMergedAt =
-      i === 0 ? null : new Date(releasePrs[i - 1].pr.merged_at).getTime();
+    const prevMergedAt = i === 0 ? null : new Date(releasePrs[i - 1].pr.merged_at).getTime();
     const endMergedAt = new Date(releasePr.merged_at).getTime();
 
     const featurePrs = nonRelease.filter((pr) => {
@@ -94,9 +88,7 @@ function groupReleases(allMerged) {
 function existingReleases() {
   try {
     const tags = ghApi(`repos/${owner}/${repo}/releases?per_page=100`);
-    return new Set(
-      (Array.isArray(tags) ? tags : []).map((r) => r.tag_name),
-    );
+    return new Set((Array.isArray(tags) ? tags : []).map((r) => r.tag_name));
   } catch {
     return new Set();
   }

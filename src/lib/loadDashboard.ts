@@ -2,10 +2,7 @@ import { connectDb } from "@/lib/db";
 import { toIsoDate } from "@/lib/dates";
 import { estimatesFromProfile } from "@/lib/estimateFormat";
 import { buildDashboardView, type DashboardView } from "@/lib/dashboardView";
-import {
-  emptyMilestonesFormState,
-  type MilestonesFormState,
-} from "@/lib/milestonesForm";
+import { emptyMilestonesFormState, type MilestonesFormState } from "@/lib/milestonesForm";
 import {
   MILESTONES,
   type ApplyingFrom,
@@ -30,9 +27,7 @@ export type EditApplicationSnapshot = {
   email: string;
 };
 
-export async function loadDashboardView(
-  userId: string,
-): Promise<DashboardView | null> {
+export async function loadDashboardView(userId: string): Promise<DashboardView | null> {
   const doc = await loadUserLean(userId);
   if (!doc) return null;
   return buildDashboardView(doc);
@@ -45,9 +40,7 @@ export type EditMilestonesData = {
   estimates: MilestoneEstimate[];
 };
 
-export async function loadEditMilestonesData(
-  userId: string,
-): Promise<EditMilestonesData | null> {
+export async function loadEditMilestonesData(userId: string): Promise<EditMilestonesData | null> {
   const doc = await loadUserLean(userId);
   if (!doc) return null;
 

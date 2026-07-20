@@ -86,10 +86,7 @@ function streamLabel(applyingFrom: "inland" | "outland"): string {
   return applyingFrom === "inland" ? "Inland" : "Outland";
 }
 
-function progLabel(
-  pathway: Pathway,
-  ee: ExpressEntryProgram | null,
-): string {
+function progLabel(pathway: Pathway, ee: ExpressEntryProgram | null): string {
   if (pathway !== "express-entry") return "PNP";
   return ee ? EE_LABEL[ee] : "EE";
 }
@@ -111,12 +108,8 @@ function midEstimateIso(row: ProfileMilestone): string | null {
   ) {
     return null;
   }
-  const a = parseIsoDate(
-    approxIsoFromBucket(row.estimatedFrom, row.estimatedYearFrom),
-  ).getTime();
-  const b = parseIsoDate(
-    approxIsoFromBucket(row.estimatedTo, row.estimatedYearTo),
-  ).getTime();
+  const a = parseIsoDate(approxIsoFromBucket(row.estimatedFrom, row.estimatedYearFrom)).getTime();
+  const b = parseIsoDate(approxIsoFromBucket(row.estimatedTo, row.estimatedYearTo)).getTime();
   return toIsoDate(new Date((a + b) / 2));
 }
 
@@ -265,11 +258,8 @@ export function buildDashboardView(user: User): DashboardView {
     : "Add your PVO to sharpen estimates";
 
   const applicantForm = toApplicantDetailsForm(user);
-  const details: DetailRowView[] = displayApplicantDetails(applicantForm).map(
-    (row) =>
-      row.key === "ita"
-        ? { ...row, value: formatLongDate(itaIso) }
-        : row,
+  const details: DetailRowView[] = displayApplicantDetails(applicantForm).map((row) =>
+    row.key === "ita" ? { ...row, value: formatLongDate(itaIso) } : row,
   );
 
   return {

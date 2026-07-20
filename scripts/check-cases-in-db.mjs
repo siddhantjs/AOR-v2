@@ -66,10 +66,7 @@ async function main() {
     process.exit(1);
   }
 
-  const dbName =
-    process.env.MONGODB_DB_NAME?.trim() ||
-    process.env.MONGODB_DB?.trim() ||
-    "aor-v2";
+  const dbName = process.env.MONGODB_DB_NAME?.trim() || process.env.MONGODB_DB?.trim() || "aor-v2";
   const cases = readCaseNumbers();
 
   const client = new MongoClient(uri);
@@ -78,15 +75,10 @@ async function main() {
     const col = client.db(dbName).collection("users");
 
     const found = await col
-      .find(
-        { seededData: true, caseNo: { $in: cases } },
-        { projection: { caseNo: 1 } },
-      )
+      .find({ seededData: true, caseNo: { $in: cases } }, { projection: { caseNo: 1 } })
       .toArray();
 
-    const foundSet = new Set(
-      found.map((doc) => String(doc.caseNo).trim().toLowerCase()),
-    );
+    const foundSet = new Set(found.map((doc) => String(doc.caseNo).trim().toLowerCase()));
 
     const present = cases.filter((c) => foundSet.has(c));
     const missing = cases.filter((c) => !foundSet.has(c));
@@ -107,9 +99,7 @@ async function main() {
     const outPath = path.join(root, "case-numbers-db-check.json");
     fs.writeFileSync(outPath, JSON.stringify(report, null, 2) + "\n");
 
-    console.log(
-      `Checked ${report.total} tracker cases against seeded DB users`,
-    );
+    console.log(`Checked ${report.total} tracker cases against seeded DB users`);
     console.log(`  Present in DB (seeded): ${report.presentCount}`);
     console.log(`  Missing from seeded:    ${report.missingCount}`);
     console.log(`Report: ${outPath}`);

@@ -43,21 +43,21 @@ function todayIsoUtc(): string {
 }
 
 function validateBody(body: StartBody):
-  | { ok: true; data: {
-      applyingFrom: ApplyingFrom;
-      pathway: Pathway;
-      expressEntryProgram: ExpressEntryProgram | null;
-      drawCategory: DrawCategory;
-      itaDate: string;
-      aorDate: string;
-      username: string;
-      email: string;
-    } }
+  | {
+      ok: true;
+      data: {
+        applyingFrom: ApplyingFrom;
+        pathway: Pathway;
+        expressEntryProgram: ExpressEntryProgram | null;
+        drawCategory: DrawCategory;
+        itaDate: string;
+        aorDate: string;
+        username: string;
+        email: string;
+      };
+    }
   | { ok: false; error: string; status: number } {
-  if (
-    !body.applyingFrom ||
-    !(APPLYING_FROM as readonly string[]).includes(body.applyingFrom)
-  ) {
+  if (!body.applyingFrom || !(APPLYING_FROM as readonly string[]).includes(body.applyingFrom)) {
     return { ok: false, error: "Choose Inland or Outland.", status: 400 };
   }
   if (!body.pathway || !(PATHWAYS as readonly string[]).includes(body.pathway)) {
@@ -160,10 +160,7 @@ export async function POST(request: Request) {
       seededData: false,
     });
     if (usernameTaken) {
-      return NextResponse.json(
-        { error: "That username is already taken." },
-        { status: 409 },
-      );
+      return NextResponse.json({ error: "That username is already taken." }, { status: 409 });
     }
 
     const emailNorm = data.email.toLowerCase();
@@ -219,8 +216,7 @@ export async function POST(request: Request) {
       }
     } catch (err) {
       status = "failed";
-      reason =
-        err instanceof Error ? err.message : "Could not generate estimates.";
+      reason = err instanceof Error ? err.message : "Could not generate estimates.";
     }
 
     return NextResponse.json({
@@ -232,10 +228,7 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     if (isDuplicateKey(err)) {
-      return NextResponse.json(
-        { error: "Username or email is already in use." },
-        { status: 409 },
-      );
+      return NextResponse.json({ error: "Username or email is already in use." }, { status: 409 });
     }
 
     const message =
@@ -246,8 +239,7 @@ export async function POST(request: Request) {
           : "Could not start your timeline. Try again.";
 
     const status =
-      message === "Database is not configured." ||
-      message === "AI estimates are not configured."
+      message === "Database is not configured." || message === "AI estimates are not configured."
         ? 503
         : 500;
 

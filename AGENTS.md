@@ -1,4 +1,5 @@
 <!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
@@ -25,15 +26,15 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Source prototype: `aor-tracker-final-version.html`.
 
-| Prototype section | Route | Page component |
-| ----------------- | ----- | -------------- |
-| Landing (marketing home) | `/` | `src/components/pages/landing/LandingPage.tsx` |
-| “Tell us about your application” (`#pg-app`) | `/track` | `src/components/pages/track/TrackPage.tsx` |
-| “Your milestones” (`#pg-ms`) | `/track` (phase 2) | `src/components/pages/track/MilestonesStep.tsx` |
-| Dashboard (`#pg-dash`) | `/dashboard/[userId]` | `src/components/pages/dashboard/DashboardPage.tsx` |
-| Edit milestones (`#pg-ms` from dash) | `/dashboard/[userId]/edit-milestone` | `src/components/pages/dashboard/EditMilestonesPage.tsx` |
-| My cohort (`#pg-cd`) | `/dashboard/[userId]/cohort` | `src/components/pages/dashboard/CohortPage.tsx` |
-| All cohorts (`#pg-cohorts`) | `/dashboard/[userId]/all-cohorts` | `src/components/pages/dashboard/AllCohortsPage.tsx` |
-| Cohorts | TBD | — |
+| Prototype section                            | Route                                | Page component                                          |
+| -------------------------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Landing (marketing home)                     | `/`                                  | `src/components/pages/landing/LandingPage.tsx`          |
+| “Tell us about your application” (`#pg-app`) | `/track`                             | `src/components/pages/track/TrackPage.tsx`              |
+| “Your milestones” (`#pg-ms`)                 | `/track` (phase 2)                   | `src/components/pages/track/MilestonesStep.tsx`         |
+| Dashboard (`#pg-dash`)                       | `/dashboard/[userId]`                | `src/components/pages/dashboard/DashboardPage.tsx`      |
+| Edit milestones (`#pg-ms` from dash)         | `/dashboard/[userId]/edit-milestone` | `src/components/pages/dashboard/EditMilestonesPage.tsx` |
+| My cohort (`#pg-cd`)                         | `/dashboard/[userId]/cohort`         | `src/components/pages/dashboard/CohortPage.tsx`         |
+| All cohorts (`#pg-cohorts`)                  | `/dashboard/[userId]/all-cohorts`    | `src/components/pages/dashboard/AllCohortsPage.tsx`     |
+| Cohorts                                      | TBD                                  | —                                                       |
 
 Schema / types: see `SCHEMA_V3.md` and `src/lib/schema/`.

@@ -15,15 +15,10 @@ export function todayIso(): string {
 
 /** Whole days from `iso` (or Date) to today (local calendar). */
 export function daysSince(isoOrDate: string | Date): number {
-  const start =
-    typeof isoOrDate === "string" ? parseIsoDate(isoOrDate) : isoOrDate;
+  const start = typeof isoOrDate === "string" ? parseIsoDate(isoOrDate) : isoOrDate;
   const now = new Date();
   const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-  const then = Date.UTC(
-    start.getUTCFullYear(),
-    start.getUTCMonth(),
-    start.getUTCDate(),
-  );
+  const then = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
   return Math.max(0, Math.round((today - then) / 86_400_000));
 }
 

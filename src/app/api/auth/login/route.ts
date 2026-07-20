@@ -18,18 +18,12 @@ export async function POST(request: Request) {
   const email = (body.email ?? "").trim();
   const emailNorm = email.toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailNorm)) {
-    return NextResponse.json(
-      { error: "Enter a valid email." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Enter a valid email." }, { status: 400 });
   }
 
   const username = (body.username ?? "").trim().toLowerCase();
   if (!username) {
-    return NextResponse.json(
-      { error: "Enter your username." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Enter your username." }, { status: 400 });
   }
 
   try {

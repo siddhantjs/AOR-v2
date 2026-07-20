@@ -25,10 +25,7 @@ const SHORT_FILTER: Record<MilestoneId, string> = {
   prcard: "PR card",
 };
 
-const STAGE_STYLE: Record<
-  string,
-  { label: string; bg: string; fg: string }
-> = {
+const STAGE_STYLE: Record<string, { label: string; bg: string; fg: string }> = {
   aor: { label: "AOR received", bg: "#eef1f4", fg: "#68727e" },
   bil: { label: "BIL received", bg: "#ecf2fe", fg: "#2f6fed" },
   bio_done: { label: "Biometrics completed", bg: "#ecf2fe", fg: "#2f6fed" },
@@ -84,10 +81,7 @@ export function cohortFilterOptions(): { value: "all" | MilestoneId; label: stri
   ];
 }
 
-function progLabel(
-  pathway: Pathway,
-  ee: ExpressEntryProgram | null,
-): string {
+function progLabel(pathway: Pathway, ee: ExpressEntryProgram | null): string {
   if (pathway !== "express-entry") return "PNP";
   return ee ? EE_LABEL[ee] : "EE";
 }
@@ -109,9 +103,7 @@ function loggedMap(
   return out;
 }
 
-function furthestId(
-  logged: Partial<Record<MilestoneId, string>>,
-): MilestoneId | null {
+function furthestId(logged: Partial<Record<MilestoneId, string>>): MilestoneId | null {
   let last: MilestoneId | null = null;
   for (const m of MILESTONES) {
     if (logged[m.id]) last = m.id;
@@ -120,9 +112,7 @@ function furthestId(
 }
 
 /** Furthest logged stage id, or `aor` if none logged yet. */
-export function furthestStageKey(
-  milestones: ProfileMilestone[] | undefined,
-): string {
+export function furthestStageKey(milestones: ProfileMilestone[] | undefined): string {
   return furthestId(loggedMap(milestones)) ?? "aor";
 }
 
@@ -162,20 +152,14 @@ export type CohortApplicantView = {
   details: { label: string; value: string }[];
 };
 
-export function toCohortApplicant(
-  user: User,
-  viewerId: string,
-): CohortApplicantView {
+export function toCohortApplicant(user: User, viewerId: string): CohortApplicantView {
   const isYou = String(user._id) === viewerId;
-  const handle = isYou
-    ? "You"
-    : user.username?.trim() || "Peer";
+  const handle = isYou ? "You" : user.username?.trim() || "Peer";
   const logged = loggedMap(user.milestones);
   const furthest = furthestId(logged);
   const stage = STAGE_STYLE[furthest ?? "aor"];
   const aorIso = toIsoDate(new Date(user.aorDate));
-  const streamLabel =
-    user.applyingFrom === "inland" ? "Inland" : "Outland";
+  const streamLabel = user.applyingFrom === "inland" ? "Inland" : "Outland";
   const prog = progLabel(user.pathway, user.expressEntryProgram);
   const cat = drawShort(user.drawCategory);
   const ud = user.userDetails;
@@ -201,9 +185,7 @@ export function toCohortApplicant(
       { label: "Program", value: prog },
       {
         label: "Draw category",
-        value:
-          DRAW_CATEGORIES.find((c) => c.value === user.drawCategory)?.label ??
-          cat,
+        value: DRAW_CATEGORIES.find((c) => c.value === user.drawCategory)?.label ?? cat,
       },
       { label: "Location", value: streamLabel },
       { label: "PVO", value: user.primaryVisaOffice ?? "—" },
@@ -229,9 +211,7 @@ export type CohortTimelineRow = {
   pending?: boolean;
 };
 
-export function applicantTimelineRows(
-  a: CohortApplicantView,
-): CohortTimelineRow[] {
+export function applicantTimelineRows(a: CohortApplicantView): CohortTimelineRow[] {
   const rows: CohortTimelineRow[] = [
     {
       label: "AOR received",
