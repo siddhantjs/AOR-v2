@@ -11,8 +11,9 @@
  *   - src/styles/dashboard-v2.css
  *   - src/styles/aortrack.css (dark app chrome)
  *
- * Fonts are loaded in `src/app/layout.tsx` (Google Fonts):
+ * Fonts are loaded in `src/app/layout.tsx` via `next/font/google`:
  *   Fraunces · DM Sans · DM Mono
+ *   → CSS vars: --font-fraunces, --font-dm-sans, --font-dm-mono
  *
  * Usage (when adopting):
  *   @import "./globals.copy.css";
@@ -21,19 +22,15 @@
 
 /* ═══════════════════════════════════════════════════════════════════════════
    1. FONT FAMILY ALIASES
-   Next/layout sets --font-fraunces / --font-dm-sans / --font-dm-mono when
-   using next/font or Google link. Fallbacks keep the page readable without them.
+   next/font sets --font-fraunces / --font-dm-sans / --font-dm-mono on <html>.
+   Fallbacks apply if those vars are missing.
    ═══════════════════════════════════════════════════════════════════════════ */
 
    :root {
-    --font-fraunces: "Fraunces", Georgia, "Times New Roman", serif;
-    --font-dm-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-dm-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-
-    /* Semantic stacks */
-    --font-display: var(--font-fraunces);
-    --font-body: var(--font-dm-sans);
-    --font-mono: var(--font-dm-mono);
+    /* Semantic stacks (point at next/font vars) */
+    --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    --font-body: var(--font-dm-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: var(--font-dm-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
     /* Short aliases used in marketing / landing / track */
     --fh: var(--font-display);

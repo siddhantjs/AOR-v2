@@ -1,9 +1,29 @@
 import type { Metadata, Viewport } from "next";
+import { DM_Mono, DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   // metadataBase: new URL(getSiteUrl()),
-  title: "AORTrack   Canadian Immigration Timeline",
+  title: "AORTrack | Canadian Immigration Timeline",
   description:
     "Crowd-sourced Canadian PR timelines by stream, cohort, and milestone.",
 };
@@ -21,18 +41,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="min-h-full antialiased">
-        {children}
-      </body>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${dmSans.variable} ${dmMono.variable} h-full`}
+    >
+      <body className="min-h-full antialiased">{children}</body>
     </html>
   );
 }
