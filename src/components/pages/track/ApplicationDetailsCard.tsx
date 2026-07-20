@@ -10,7 +10,15 @@ import {
   type ExpressEntryProgram,
   type Pathway,
 } from "@/lib/schema/constants";
-import { controlClass, DashboardDatePicker, errorClass, hintClass, labelClass, Select } from "@/components/ui";
+import { normalizeUsername, validateUsernameFormat } from "@/lib/username";
+import {
+  controlClass,
+  DashboardDatePicker,
+  errorClass,
+  hintClass,
+  labelClass,
+  Select,
+} from "@/components/ui";
 
 const PATHWAY_LABELS: Record<Pathway, string> = {
   "express-entry": "Express Entry",
@@ -62,10 +70,19 @@ export type ApplicationFormValues = {
   drawCategory: DrawCategory;
   itaDate: string;
   aorDate: string;
+  username: string;
   email: string;
 };
 
 type FieldErrors = Partial<Record<keyof ApplicationFormValues, string>>;
+
+type UsernameCheckStatus =
+  | "idle"
+  | "checking"
+  | "available"
+  | "taken"
+  | "invalid"
+  | "error";
 
 const INITIAL: ApplicationFormValues = {
   applyingFrom: null,
@@ -74,6 +91,7 @@ const INITIAL: ApplicationFormValues = {
   drawCategory: "general",
   itaDate: "",
   aorDate: "",
+  username: "",
   email: "",
 };
 
@@ -117,7 +135,7 @@ function validateCoreDates(
   return errors;
 }
 
-function validate(values: ApplicationFormValues): FieldErrors {
+function validate(values: ApplicationFormValues, usernameOk: boolean): FieldErrors {
   const errors: FieldErrors = {
     ...validateCoreDates(values, { requirePresent: true }),
   };
@@ -128,6 +146,14 @@ function validate(values: ApplicationFormValues): FieldErrors {
   if (values.pathway === "express-entry" && !values.expressEntryProgram) {
     errors.expressEntryProgram = "Choose an Express Entry program.";
   }
+
+  const format = validateUsernameFormat(values.username);
+  if (!format.ok) {
+    errors.username = format.message;
+  } else if (!usernameOk) {
+    errors.username = "Check that this username is available.";
+  }
+
   if (!values.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
     errors.email = "A valid email is required.";
   }
@@ -144,8 +170,17 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
   const [errors, setErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState(false);
   const [datesTouched, setDatesTouched] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<UsernameCheckStatus>("idle");
+  const [usernameMessage, setUsernameMessage] = useState<string | null>(null);
+  const [checkedUsername, setCheckedUsername] = useState<string | null>(null);
 
   const showEeProgram = values.pathway === "express-entry";
+  const usernameAvailable =
+    usernameStatus === "available" &&
+    checkedUsername === normalizeUsername(values.username);
+
+  const canContinue = usernameAvailable;
+
   const visibleErrors = useMemo(() => {
     if (touched) return errors;
     if (!datesTouched) return {};
@@ -171,6 +206,67 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
     });
   }
 
+  function updateUsername(raw: string) {
+    setValues((prev) => ({ ...prev, username: raw }));
+    setUsernameStatus("idle");
+    setUsernameMessage(null);
+    setCheckedUsername(null);
+    setErrors((prev) => {
+      const { username: _u, ...rest } = prev;
+      return rest;
+    });
+  }
+
+  async function checkUsername() {
+    const format = validateUsernameFormat(values.username);
+    if (!format.ok) {
+      setUsernameStatus("invalid");
+      setUsernameMessage(format.message);
+      setCheckedUsername(null);
+      setErrors((prev) => ({ ...prev, username: format.message }));
+      return;
+    }
+
+    const username = normalizeUsername(values.username);
+    setUsernameStatus("checking");
+    setUsernameMessage(null);
+
+    try {
+      const res = await fetch(
+        `/api/username/check?username=${encodeURIComponent(username)}`,
+      );
+      const data = (await res.json()) as {
+        available?: boolean;
+        reason?: string;
+        username?: string;
+      };
+
+      if (!res.ok || !data.available) {
+        const reason = data.reason ?? "That username is already taken.";
+        setUsernameStatus(res.status >= 500 ? "error" : "taken");
+        setUsernameMessage(reason);
+        setCheckedUsername(null);
+        setErrors((prev) => ({ ...prev, username: reason }));
+        return;
+      }
+
+      setUsernameStatus("available");
+      setUsernameMessage("Username is available.");
+      setCheckedUsername(data.username ?? username);
+      setValues((prev) => ({ ...prev, username: data.username ?? username }));
+      setErrors((prev) => {
+        const { username: _u, ...rest } = prev;
+        return rest;
+      });
+    } catch {
+      const reason = "Could not check username. Try again.";
+      setUsernameStatus("error");
+      setUsernameMessage(reason);
+      setCheckedUsername(null);
+      setErrors((prev) => ({ ...prev, username: reason }));
+    }
+  }
+
   /** Live date checks — same rules as HTML `onCoreDates`. */
   function updateDate(key: "itaDate" | "aorDate", value: string) {
     const next = { ...values, [key]: value };
@@ -183,13 +279,31 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
   }
 
   function handleContinue() {
-    const nextErrors = validate(values);
+    const nextErrors = validate(values, usernameAvailable);
     setTouched(true);
     setDatesTouched(true);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-    onContinue?.(values);
+    if (Object.keys(nextErrors).length > 0 || !usernameAvailable) return;
+    onContinue?.({
+      ...values,
+      username: normalizeUsername(values.username),
+    });
   }
+
+  const usernameHint =
+    usernameStatus === "available" && usernameAvailable
+      ? usernameMessage
+      : usernameStatus === "idle"
+        ? "Public display name. Must be unique."
+        : null;
+
+  const usernameError =
+    visibleErrors.username ||
+    (usernameStatus === "taken" ||
+    usernameStatus === "invalid" ||
+    usernameStatus === "error"
+      ? usernameMessage
+      : null);
 
   return (
     <div className="mx-auto max-w-[660px]">
@@ -295,6 +409,51 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
           />
 
           <div className="min-[621px]:col-span-2">
+            <label htmlFor="track-username" className={labelClass()}>
+              Username <span className="text-[var(--red)]">*</span>
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="track-username"
+                type="text"
+                autoComplete="username"
+                spellCheck={false}
+                className={controlClass(Boolean(usernameError))}
+                value={values.username}
+                placeholder="e.g. northpath_pr"
+                onChange={(e) => updateUsername(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void checkUsername();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => void checkUsername()}
+                disabled={usernameStatus === "checking" || !values.username.trim()}
+                className="shrink-0 rounded-[var(--radius-md)] border border-[var(--navy)] bg-[var(--navy)] px-4 text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--navy2)] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {usernameStatus === "checking" ? "Checking…" : "Check"}
+              </button>
+            </div>
+            {usernameError ? (
+              <p className={errorClass()}>{usernameError}</p>
+            ) : usernameHint ? (
+              <p
+                className={
+                  usernameStatus === "available" && usernameAvailable
+                    ? "mt-1.5 text-[11.5px] font-semibold text-[var(--green)]"
+                    : hintClass()
+                }
+              >
+                {usernameHint}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="min-[621px]:col-span-2">
             <label htmlFor="track-email" className={labelClass()}>
               Email <span className="text-[var(--red)]">*</span>
             </label>
@@ -321,7 +480,8 @@ export function ApplicationDetailsCard({ onContinue }: ApplicationDetailsCardPro
           <button
             type="button"
             onClick={handleContinue}
-            className="inline-flex items-center gap-2 rounded-[10px] bg-[var(--red)] px-[22px] py-[11px] font-[family-name:var(--font-display)] text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--red2)]"
+            disabled={!canContinue}
+            className="inline-flex items-center gap-2 rounded-[10px] bg-[var(--red)] px-[22px] py-[11px] font-[family-name:var(--font-display)] text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--red2)] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[var(--red)]"
           >
             Continue
             <svg

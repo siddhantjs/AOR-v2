@@ -14,6 +14,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Route files import the page component, e.g. `src/app/track/page.tsx` → `TrackPage`.
 - Styling: **Tailwind only** (no CSS modules). Colors/tokens come from [`src/app/globals.css`](src/app/globals.css) via `var(--…)` (e.g. `bg-[var(--bg-muted)]`, `text-[var(--navy)]`).
 - Shared UI primitives live in `src/components/ui/` (e.g. `Select`, `DashboardDatePicker`) — theme via globals tokens; reuse across pages.
+- Username availability: `GET /api/username/check?username=` (unique among live users, `seededData: false`). Requires `MONGODB_URI` (+ optional `MONGODB_DB_NAME`, default `aor-v2`).
 
 ## HTML prototype → routes
 

@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AOR Track · GetNorthPath</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff;
+  --bd:#e8eaee; --bd-2:#dfe2e8;
+  --ink:#16202b; --soft:#68727e; --faint:#98a1ab;
+  --navy:#141f2c; --navy-2:#1d2b3a;
+  --red:#d63424; --red-d:#b8291b; --red-s:#fdeeec; --red-b:#f6cdc8;
+  --green:#1f9d61; --green-s:#e8f6ef;
+  --blue:#2f6fed; --blue-s:#ecf2fe;
+  --amber:#b97f16; --amber-s:#fdf4e2;
+  --r:14px; --rs:10px;
+  --sh:0 1px 2px rgba(22,32,43,.05),0 8px 28px rgba(22,32,43,.07);
+  --sh-lg:0 24px 60px rgba(22,32,43,.18);
+  --disp:'Manrope',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.55;font-size:14px;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+h1,h2,h3,.disp{font-family:var(--disp)}
+svg.i{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- header ---------- */
+header{background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:70}
+.hd{max-width:1120px;margin:0 auto;padding:0 22px;height:60px;display:flex;align-items:center;gap:8px}
+.logo{display:flex;align-items:center;gap:9px;border:0;background:none;padding:0}
+.logo .mark{width:32px;height:32px;border-radius:9px;background:var(--navy);display:flex;align-items:center;justify-content:center}
+.logo .mark svg{width:17px;height:17px;fill:var(--red)}
+.logo .wm{font-family:var(--disp);font-weight:800;font-size:17px;color:var(--navy);letter-spacing:-.02em}
+.logo .wm span{color:var(--red)}
+.hd-sp{flex:1}
+.nav-l{display:flex;gap:2px}
+.nl{border:0;background:none;color:var(--soft);font-size:13.5px;font-weight:600;padding:8px 13px;border-radius:9px;display:inline-flex;gap:7px;align-items:center;transition:.15s}
+.nl:hover{background:var(--bg);color:var(--ink)}
+.nl.on{background:var(--red-s);color:var(--red)}
+.hb{border:1px solid var(--bd-2);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:13px;font-weight:600;display:inline-flex;gap:7px;align-items:center;transition:.15s}
+.hb:hover{border-color:var(--faint)}
+.hb.red{background:var(--red);border-color:var(--red);color:#fff}
+.hb.red:hover{background:var(--red-d)}
+
+.wrap{max-width:1120px;margin:0 auto;padding:32px 22px 100px}
+.page{display:none}
+.page.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes slidein{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+
+.kicker{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+h1.pg{font-size:28px;font-weight:800;letter-spacing:-.03em;color:var(--navy);margin:6px 0 4px}
+.pg-sub{color:var(--soft);font-size:14px;max-width:600px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh)}
+.btn{border:0;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;font-family:var(--disp);display:inline-flex;align-items:center;gap:8px;transition:.15s}
+.btn.red{background:var(--red);color:#fff}
+.btn.red:hover{background:var(--red-d)}
+.btn.navy{background:var(--navy);color:#fff}
+.btn.navy:hover{background:var(--navy-2)}
+.btn.ghost{background:#fff;border:1px solid var(--bd-2);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--faint)}
+.btn.sm{padding:8px 15px;font-size:13px;border-radius:9px}
+
+/* ---------- flow header (2 phases) ---------- */
+.flow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.phases{display:flex;align-items:center;gap:10px}
+.ph{display:flex;align-items:center;gap:9px;font-weight:700;font-family:var(--disp);font-size:13.5px;color:var(--faint)}
+.ph .b{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--bd-2);display:flex;align-items:center;justify-content:center;font-size:12px;background:#fff}
+.ph.on{color:var(--navy)}
+.ph.on .b{background:var(--navy);border-color:var(--navy);color:#fff}
+.ph.done{color:var(--green)}
+.ph.done .b{background:var(--green-s);border-color:var(--green);color:var(--green)}
+.ph-line{width:34px;height:1.5px;background:var(--bd-2)}
+
+/* ---------- application card ---------- */
+.app-shell{max-width:660px;margin:0 auto}
+.app-card{padding:30px 34px}
+.app-card h2{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--navy)}
+.app-card .lead{font-size:13px;color:var(--soft);margin:3px 0 22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+.fld label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--ink)}
+.fld label .req{color:var(--red)}
+.fld input,.fld select{width:100%;border:1px solid var(--bd-2);background:#fff;border-radius:var(--rs);padding:10px 12px;font-size:14px;color:var(--ink);outline:none;transition:.15s}
+.fld input:focus,.fld select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(20,31,44,.08)}
+.fld .sub{font-size:11.5px;color:var(--faint);margin-top:5px}
+.fld.err input,.fld.err select{border-color:var(--red);background:#fffafa}
+.fld .emsg{display:none;font-size:12px;color:var(--red);font-weight:600;margin-top:5px}
+.fld.err .emsg{display:block}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg button{border:1px solid var(--bd-2);background:#fff;border-radius:var(--rs);padding:13px 12px;text-align:left;transition:.15s}
+.seg button .t{font-family:var(--disp);font-weight:700;font-size:14px;color:var(--ink);display:block}
+.seg button small{font-size:11.5px;color:var(--soft)}
+.seg button.on{border-color:var(--red);background:var(--red-s);box-shadow:0 0 0 3px rgba(214,52,36,.08)}
+.seg button.on .t{color:var(--red)}
+.seg.err button{border-color:var(--red)}
+
+/* ---------- milestones page ---------- */
+.ms-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.ms-meta{display:flex;align-items:center;gap:14px}
+.prog-wrap{width:170px}
+.prog-lb{display:flex;justify-content:space-between;font-size:11.5px;color:var(--soft);font-weight:600;margin-bottom:5px}
+.prog-lb b{color:var(--navy)}
+.prog{height:6px;border-radius:20px;background:var(--bd);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--red);border-radius:20px;transition:width .4s ease}
+.ms-card{overflow:hidden}
+.ms-sec{padding:9px 26px;background:#fafbfc;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.ms-sec:first-child{border-top:0}
+.mrow{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:15px 26px;border-top:1px solid var(--bd);transition:.15s;position:relative}
+.mrow:first-child{border-top:0}
+.mrow:hover{background:#fafbfc}
+.mrow.done{background:linear-gradient(90deg,rgba(214,52,36,.035),transparent 55%)}
+.mrow.done::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red)}
+.mrow.sub{padding-left:52px}
+.mrow.haserr{background:#fffafa}
+.tick{width:24px;height:24px;border-radius:50%;border:1.6px solid var(--bd-2);background:#fff;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.tick:hover{border-color:var(--red)}
+.tick svg{width:12px;height:12px;stroke:#fff;stroke-width:3;fill:none;opacity:0;stroke-linecap:round;stroke-linejoin:round}
+.mrow.done .tick{background:var(--red);border-color:var(--red);animation:pop .25s ease}
+.mrow.done .tick svg{opacity:1}
+.mrow .nm{font-weight:600;font-size:14px;color:var(--ink)}
+.mrow .ds{font-size:12px;color:var(--soft)}
+.mrow .side{display:flex;align-items:center;gap:12px}
+.mrow .typ{font-size:11.5px;color:var(--faint);white-space:nowrap}
+.mrow input[type=date]{display:none;border:1px solid var(--bd-2);border-radius:8px;padding:7px 10px;font-size:13px;outline:none;background:#fff}
+.mrow.done input[type=date]{display:block}
+.mrow input[type=date]:focus{border-color:var(--red)}
+.mrow .errline{grid-column:2/4;display:none;font-size:12px;color:var(--red);font-weight:600;margin-top:-4px}
+.mrow.haserr .errline{display:block}
+/* pvo inset */
+.pvo{display:none;border-top:1px solid var(--bd);background:#fbfbfd;padding:20px 26px 22px}
+.pvo.show{display:block}
+.pvo h3{font-size:14.5px;font-weight:800;color:var(--navy)}
+.pvo .why{font-size:12.5px;color:var(--soft);margin:2px 0 12px}
+.callout{display:flex;gap:11px;background:var(--amber-s);border:1px solid #efd9a8;border-radius:11px;padding:12px 14px;font-size:12.5px;line-height:1.55;margin-bottom:14px;color:#5b4a1e}
+.callout svg{margin-top:1px;color:var(--amber)}
+.callout a{color:var(--red);font-weight:700;text-decoration:none;white-space:nowrap}
+
+/* ---------- dashboard ---------- */
+.hero{background:var(--navy);border-radius:18px;padding:6px;color:#fff;box-shadow:var(--sh)}
+.hero-in{display:grid;grid-template-columns:1fr 1fr 1fr;border-radius:14px}
+@media(max-width:820px){.hero-in{grid-template-columns:1fr}}
+.hcell{padding:24px 28px;position:relative}
+.hcell+.hcell::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:1px;background:rgba(255,255,255,.12)}
+@media(max-width:820px){.hcell+.hcell::before{left:8%;right:8%;top:0;bottom:auto;width:auto;height:1px}}
+.hcell .lb{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8b99a8}
+.hcell .big{font-family:var(--disp);font-weight:800;font-size:44px;letter-spacing:-.03em;line-height:1.1;margin-top:4px}
+.hcell .big small{font-size:17px;font-weight:700;color:#aeb9c5;margin-left:4px}
+.hcell .accent{color:#ff8d80}
+.hcell .sub{font-size:12px;color:#8b99a8;margin-top:4px}
+.dash-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:20px;margin-top:20px;align-items:start}
+@media(max-width:900px){.dash-grid{grid-template-columns:1fr}}
+.pane{padding:22px 26px}
+.pane h2{font-size:16px;font-weight:800;letter-spacing:-.02em;color:var(--navy)}
+.pane .s{font-size:12.5px;color:var(--soft);margin:2px 0 14px}
+
+/* timeline */
+.tl{margin-top:14px}
+.trow{display:grid;grid-template-columns:26px 1fr auto;gap:14px;align-items:center;padding:11px 0;border-top:1px solid var(--bd)}
+.trow:first-child{border-top:0}
+.trow.sub{padding-left:34px}
+.tdot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.6px solid var(--bd-2);background:#fff}
+.trow.d .tdot{background:var(--green);border-color:var(--green)}
+.trow.d .tdot svg{width:11px;height:11px;stroke:#fff;stroke-width:3}
+.trow.up .tdot{border-style:dashed;border-color:var(--faint)}
+.trow .nm{font-weight:600;font-size:13.5px}
+.trow.sub .nm{font-weight:500;font-size:13px;color:var(--soft)}
+.trow .when{text-align:right}
+.trow .dt{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green)}
+.trow .ago{font-size:11px;color:var(--faint)}
+.chip{display:inline-block;font-size:11.5px;border-radius:7px;padding:3px 9px;font-weight:600}
+.chip.est{background:var(--blue-s);color:var(--blue)}
+.chip.win{background:var(--amber-s);color:var(--amber)}
+.chip.red{background:var(--red-s);color:var(--red)}
+
+/* applicant details card */
+.ad-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--bd-2);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--soft);transition:.15s}
+.icon-btn:hover{border-color:var(--navy);color:var(--navy)}
+.ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+@media(max-width:640px){.ad-grid{grid-template-columns:1fr}}
+.adr{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--bd);min-height:46px}
+.adr .ic{color:var(--faint)}
+.adr .k{font-size:13px;color:var(--soft);flex:1}
+.adr .v{font-size:13px;font-weight:600;text-align:right}
+.adr .v.dim{color:var(--faint);font-weight:500}
+.adr input,.adr select{width:130px;border:1px solid var(--bd-2);border-radius:7px;padding:6px 8px;font-size:12.5px;outline:none;text-align:right}
+.adr input:focus,.adr select:focus{border-color:var(--red)}
+.ad-save{display:none;margin-top:14px;justify-content:flex-end;gap:9px}
+.editing .ad-save{display:flex}
+
+.share-link{font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:10px 12px;word-break:break-all;margin-bottom:11px;color:var(--soft)}
+.share-btns{display:flex;gap:8px;flex-wrap:wrap}
+.sb{border-radius:9px;padding:9px 15px;font-size:13px;font-weight:600;border:1px solid var(--bd-2);background:#fff;display:inline-flex;gap:8px;align-items:center;transition:.15s}
+.sb:hover{border-color:var(--faint)}
+.sb.wa{background:#25d366;border-color:#25d366;color:#fff}
+
+/* ---------- cohorts grid ---------- */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:16px;margin-top:22px}
+.cgc{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:20px;text-align:left;transition:.16s;position:relative;box-shadow:var(--sh)}
+.cgc:hover{transform:translateY(-2px);box-shadow:var(--sh-lg);border-color:var(--red-b)}
+.cgc.mine{border-color:var(--red);box-shadow:0 0 0 3px rgba(214,52,36,.08),var(--sh)}
+.cgc .mo{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--navy)}
+.cgc .np{font-size:12.5px;color:var(--soft);margin-top:2px}
+.cgc .np b{color:var(--ink)}
+.cgc .stage{display:inline-block;margin-top:12px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:20px}
+.cgc svg.spark{position:absolute;right:16px;top:18px;width:86px;height:36px}
+.cgc .yours{position:absolute;top:14px;right:14px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.08em;padding:3px 9px;border-radius:20px}
+.cgc.mine svg.spark{top:38px}
+
+/* ---------- cohort detail list ---------- */
+.cd-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.cd-head h1{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--navy)}
+.cd-head select{border:1px solid var(--bd-2);border-radius:10px;padding:9px 13px;font-size:13.5px;background:#fff;font-weight:600;color:var(--navy);outline:none}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.fc{border:1px solid var(--bd-2);background:#fff;border-radius:20px;padding:6px 13px;font-size:12px;font-weight:600;color:var(--soft);transition:.15s}
+.fc:hover{border-color:var(--faint);color:var(--ink)}
+.fc.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.ap-list{background:#fff;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.ap{display:grid;grid-template-columns:40px 1.4fr 1fr auto 22px;gap:14px;align-items:center;padding:13px 20px;border-top:1px solid var(--bd);width:100%;background:#fff;border-left:0;border-right:0;border-bottom:0;text-align:left;transition:.13s}
+.ap:first-child{border-top:0}
+.ap:hover{background:#fafbfc}
+.ap.you-row{background:var(--red-s)}
+.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;font-family:var(--disp)}
+.ap .n{font-weight:700;font-size:14px;color:var(--ink);font-family:var(--disp)}
+.ap .p{font-size:12px;color:var(--soft)}
+.ap .st{font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:20px;justify-self:start}
+.ap .aord{font-family:var(--mono);font-size:11.5px;color:var(--faint);white-space:nowrap}
+.ap .car{color:var(--faint)}
+@media(max-width:700px){.ap{grid-template-columns:40px 1fr 22px}.ap .st,.ap .aord{display:none}}
+.empty-co{background:#fff;border:1px dashed var(--bd-2);border-radius:var(--r);padding:36px;text-align:center}
+.empty-co h3{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:5px}
+.empty-co p{font-size:13px;color:var(--soft);max-width:440px;margin:0 auto}
+
+/* ---------- right drawer ---------- */
+.drawer-bg{position:fixed;inset:0;background:rgba(22,32,43,.38);z-index:90;display:none}
+.drawer-bg.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:94vw;background:#fff;z-index:95;box-shadow:var(--sh-lg);transform:translateX(105%);transition:transform .28s cubic-bezier(.3,.8,.3,1);display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.dw-head{padding:20px 24px;border-bottom:1px solid var(--bd);display:flex;gap:14px;align-items:center}
+.dw-head .av{width:46px;height:46px;font-size:15px}
+.dw-head .n{font-family:var(--disp);font-weight:800;font-size:17px;color:var(--navy)}
+.dw-head .p{font-size:12.5px;color:var(--soft)}
+.dw-close{margin-left:auto}
+.dw-body{overflow-y:auto;padding:20px 24px;flex:1}
+.dw-body h4{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:20px 0 8px}
+.dw-body h4:first-child{margin-top:0}
+.jt{position:relative;padding-left:22px}
+.jt::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--bd);border-radius:2px}
+.jrow{position:relative;display:flex;justify-content:space-between;gap:12px;padding:8px 0;align-items:baseline}
+.jrow::before{content:'';position:absolute;left:-19px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--green);outline:3px solid var(--green-s)}
+.jrow .t{font-size:13px;font-weight:600}
+.jrow .d{font-family:var(--mono);font-size:11.5px;color:var(--soft);white-space:nowrap}
+.jrow .d b{color:var(--ink)}
+.jrow.pending::before{background:#fff;outline:2px solid var(--bd-2)}
+.jrow.pending .t{color:var(--faint);font-weight:500}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:11px;font-size:13.5px;font-weight:500;box-shadow:var(--sh-lg);transition:.3s;opacity:0;z-index:130;max-width:92vw;text-align:center}
+.toast.show{transform:translateX(-50%);opacity:1}
+.toast.err{background:var(--red)}
+.footnote{margin-top:24px;font-size:12px;color:var(--faint);max-width:740px;display:flex;gap:8px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <button class="logo" onclick="go(state.submitted?'dash':'app')">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M12 2l1.8 3.9 3.4-1.4-.7 3.7 3.8.6-2.6 2.9 3 2.4-3.7 1.2.9 3.7-3.6-1-1.1 3.8-1.2-3.8-3.6 1 .9-3.7-3.7-1.2 3-2.4-2.6-2.9 3.8-.6-.7-3.7 3.4 1.4z"/></svg></span>
+      <span class="wm">AOR<span>Track</span></span>
+    </button>
+    <div class="hd-sp"></div>
+    <div class="nav-l" id="mainNav" style="display:none">
+      <button class="nl" id="nl-dash" onclick="go('dash')">My timeline</button>
+      <button class="nl" id="nl-co" onclick="openCohort(cohortKey())">My cohort</button>
+      <button class="nl" id="nl-all" onclick="go('cohorts')">All cohorts</button>
+    </div>
+    <button class="hb" id="navShare" style="display:none" onclick="copyLink()">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Share</button>
+    <button class="hb red" id="navEdit" style="display:none" onclick="go('ms')">Edit milestones</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ PHASE 1: APPLICATION ============ -->
+<div class="page on" id="pg-app">
+  <div class="flow">
+    <div>
+      <div class="kicker">GetNorthPath community tracker</div>
+      <h1 class="pg">Tell us about your application</h1>
+      <p class="pg-sub">Two quick minutes. This places you in the right cohort so your estimates come from people just like you.</p>
+    </div>
+    <div class="phases">
+      <div class="ph on" id="ph1"><span class="b">1</span> Application</div>
+      <div class="ph-line"></div>
+      <div class="ph" id="ph2"><span class="b">2</span> Milestones</div>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <div class="card app-card">
+      <h2>Application details</h2>
+      <p class="lead">Everything here shapes which timelines we compare you against.</p>
+
+      <div class="fld" id="f-res" style="margin-bottom:16px">
+        <label>Where are you applying from? <span class="req">*</span></label>
+        <div class="seg" id="segRes">
+          <button type="button" data-v="inland" onclick="setRes('inland')"><span class="t">Inland</span><small>You live in Canada right now</small></button>
+          <button type="button" data-v="outland" onclick="setRes('outland')"><span class="t">Outland</span><small>You live outside Canada</small></button>
+        </div>
+        <div class="emsg">Choose Inland or Outland.</div>
+      </div>
+
+      <div class="grid2">
+        <div class="fld" id="f-path">
+          <label>Pathway <span class="req">*</span></label>
+          <select id="fPathway" onchange="onPathway()">
+            <option value="EE" selected>Express Entry</option>
+            <option value="PNP">PNP, Provincial Nominee Program</option>
+          </select>
+        </div>
+        <div class="fld" id="f-eeprog">
+          <label>Express Entry program <span class="req">*</span></label>
+          <select id="fEEProg">
+            <option value="CEC" selected>CEC, Canadian Experience Class</option>
+            <option value="FSWP">FSWP, Federal Skilled Worker Program</option>
+            <option value="FSTP">FSTP, Federal Skilled Trades Program</option>
+          </select>
+        </div>
+        <div class="fld" id="f-cat" style="grid-column:1/-1">
+          <label>Draw category <span class="req">*</span></label>
+          <select id="fCat">
+            <option value="General" selected>General, all program draw</option>
+            <option>French language proficiency</option>
+            <option>Healthcare and social services occupations</option>
+            <option>Science, Technology, Engineering and Math (STEM) occupations</option>
+            <option>Trade occupations (carpenters, electricians, welders)</option>
+            <option>Transport occupations (truck drivers, pilots)</option>
+            <option>Education occupations</option>
+            <option>Physicians, senior managers, researchers and military recruits with Canadian work experience</option>
+          </select>
+        </div>
+        <div class="fld" id="f-ita">
+          <label>ITA date <span class="req">*</span></label>
+          <input type="date" id="fITA" onchange="onCoreDates()">
+          <div class="sub">The day IRCC invited you to apply.</div>
+          <div class="emsg" id="e-ita">Add your ITA date.</div>
+        </div>
+        <div class="fld" id="f-aor">
+          <label>AOR date <span class="req">*</span></label>
+          <input type="date" id="fAOR" onchange="onCoreDates()">
+          <div class="sub">The day IRCC acknowledged your application. Sets your cohort.</div>
+          <div class="emsg" id="e-aor">Add your AOR date.</div>
+        </div>
+        <div class="fld" id="f-email" style="grid-column:1/-1">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" id="fEmail" placeholder="you@example.com">
+          <div class="sub">Saves your timeline and sends milestone alerts. Never shown publicly.</div>
+          <div class="emsg" id="e-email">A valid email is required.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:22px">
+        <button class="btn red" onclick="toMilestones()">Continue
+          <svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PHASE 2: MILESTONES ============ -->
+<div class="page" id="pg-ms">
+  <div class="flow">
+    <div>
+      <div class="kicker">Step 2 of 2</div>
+      <h1 class="pg">Your milestones</h1>
+      <p class="pg-sub">Tick what has already happened and add its date. Skip what has not. We estimate the rest for you.</p>
+    </div>
+    <div class="phases">
+      <div class="ph done"><span class="b"><svg class="i" style="width:13px;height:13px;stroke-width:2.6" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span> Application</div>
+      <div class="ph-line"></div>
+      <div class="ph on"><span class="b">2</span> Milestones</div>
+    </div>
+  </div>
+
+  <div class="ms-top">
+    <div class="ms-meta">
+      <button class="btn ghost sm" onclick="go('app')">
+        <svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button>
+      <div class="prog-wrap">
+        <div class="prog-lb"><span>Logged</span><b><span id="msCount">0</span> of 13</b></div>
+        <div class="prog"><i id="progBar" style="width:0%"></i></div>
+      </div>
+    </div>
+    <button class="btn red" onclick="submitAll()">Submit</button>
+  </div>
+
+  <div class="card ms-card" id="msCard"></div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div class="page" id="pg-dash">
+  <div class="hero">
+    <div class="hero-in">
+      <div class="hcell">
+        <div class="lb">Days since AOR</div>
+        <div class="big" id="dDays">0</div>
+        <div class="sub" id="dDaysSub"></div>
+      </div>
+      <div class="hcell">
+        <div class="lb">Typical wait in your group</div>
+        <div class="big" id="dTypical">0<small>days</small></div>
+        <div class="sub" id="dTypicalSub">AOR to eCOPR, community median</div>
+      </div>
+      <div class="hcell">
+        <div class="lb">Expected approval around</div>
+        <div class="big accent" id="dExpected" style="font-size:32px;padding-top:8px">-</div>
+        <div class="sub" id="dExpectedSub">Typical eCOPR month for your stream</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div>
+      <div class="card pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <h2>Your timeline</h2>
+          <span class="chip est" id="tlOffice"></span>
+        </div>
+        <div class="tl" id="dashTL"></div>
+      </div>
+
+      <div class="card pane" id="adCard" style="margin-top:20px">
+        <div class="ad-head">
+          <h2>Applicant details</h2>
+          <button class="icon-btn" onclick="toggleAD()" title="Edit details">
+            <svg class="i" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </button>
+        </div>
+        <div class="ad-grid" id="adGrid"></div>
+        <div class="ad-save">
+          <button class="btn ghost sm" onclick="toggleAD(true)">Cancel</button>
+          <button class="btn red sm" onclick="saveAD()">Save details</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card pane">
+        <h2>Share my journey</h2>
+        <p class="s">Read only link. No personal data exposed.</p>
+        <div class="share-link" id="shareUrl"></div>
+        <div class="share-btns">
+          <button class="sb" onclick="copyLink()">
+            <svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy link</button>
+          <button class="sb wa" onclick="shareWA()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.3.4c-.1.2-.2.3-.1.6.2.2.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.3z"/></svg>
+            WhatsApp</button>
+        </div>
+      </div>
+      <div class="card pane" style="margin-top:20px">
+        <h2>Next up for you</h2>
+        <p class="s" id="nextUpSub"></p>
+        <div id="nextUpBox"></div>
+      </div>
+    </div>
+  </div>
+  <div class="footnote">
+    <svg class="i" style="margin-top:2px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    <span>Estimates are medians from verified community profiles in your stream, adjusted for your PVO and SVO where known. Biometrics completion is not estimated because IRCC gives you 30 days from your BIL. Community estimates, not IRCC guarantees.</span>
+  </div>
+</div>
+
+<!-- ============ ALL COHORTS ============ -->
+<div class="page" id="pg-cohorts">
+  <div class="kicker">Community</div>
+  <h1 class="pg">AOR cohorts</h1>
+  <p class="pg-sub">Applicants grouped by AOR month. Open a cohort to browse real journeys.</p>
+  <div class="cg" id="cohortGrid"></div>
+</div>
+
+<!-- ============ COHORT DETAIL ============ -->
+<div class="page" id="pg-cd">
+  <div class="cd-head">
+    <div>
+      <div class="kicker" id="cdEyebrow">Cohort</div>
+      <h1 id="cdTitle">-</h1>
+      <div style="font-size:13px;color:var(--soft)" id="cdCount"></div>
+    </div>
+    <select id="cdSelect" onchange="renderCohortDetail(this.value)"></select>
+  </div>
+  <div class="filters" id="cdFilters"></div>
+  <div id="cdList"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- APPLICANT DRAWER -->
+<div class="drawer-bg" id="drawerBg" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-label="Applicant details">
+  <div class="dw-head">
+    <span class="av" id="dwAv">?</span>
+    <div><div class="n" id="dwName">-</div><div class="p" id="dwProg">-</div></div>
+    <button class="icon-btn dw-close" onclick="closeDrawer()">
+      <svg class="i" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="dw-body" id="dwBody"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+<script>
+/* =============================================================
+   TIMING CONFIG. PLACEHOLDER MEDIANS.
+   Replace with medians from your 378 case CEC files.
+   Values are median days from AOR. BIL follows the 2 month rule.
+   eCOPR anchored to your live dashboard (216 days inland).
+   bio_done is never estimated (30 day user deadline).
+   ============================================================= */
+const STATS = {
+  inland:  { bil:58,  medical:74, bgc_start:96,  crim:122, info:133, sec:154, elig:165, final:182, p1:185, p2:189, ecopr:216, prcard:268 },
+  outland: { bil:66,  medical:88, bgc_start:110, crim:139, info:151, sec:174, elig:186, final:204, p1:208, p2:213, ecopr:241, prcard:300 }
+};
+const OFFICE_ADJ = { 'Ottawa':0,'Edmonton':-6,'Vancouver':-3,'Montreal':4,'Scarborough':8,'Etobicoke':6,'Mississauga':5,'Niagara Falls':2,'Sydney NS':-4,'New Delhi':18,'Chandigarh':16,'Manila':12,'London UK':8,'Abu Dhabi':10,'Ankara':14,'Mexico City':9,'Sao Paulo':11,'Other':0,'Not sure':0 };
+
+const MILESTONES = [
+  { id:'bil',       sec:'Biometrics', label:'Biometrics letter (BIL) received', desc:'The instruction letter from IRCC, usually about 2 months after AOR', est:true },
+  { id:'bio_done',  sec:'Biometrics', label:'Biometrics completed', desc:'You get 30 days from your BIL, so this one is in your hands', est:false, needs:'bil' },
+  { id:'medical',   sec:'Medical and background', label:'Medical passed', desc:'Your account shows medical results received', est:true },
+  { id:'bgc_start', sec:'Medical and background', label:'Background check initiated', desc:'BGC flips from not applicable to in progress', est:true },
+  { id:'crim',      sec:'Medical and background', label:'Criminality check completed', desc:'Part of the background check', est:true, sub:true, needs:'bgc_start' },
+  { id:'info',      sec:'Medical and background', label:'Information sharing completed', desc:'Part of the background check', est:true, sub:true, needs:'bgc_start' },
+  { id:'sec',       sec:'Medical and background', label:'Security check completed', desc:'Part of the background check', est:true, sub:true, needs:'bgc_start' },
+  { id:'elig',      sec:'Medical and background', label:'Eligibility check completed', desc:'Eligibility shows recommended or passed', est:true },
+  { id:'final',     sec:'Decision and portals', label:'Final decision received', desc:'Your application shows approved', est:true },
+  { id:'p1',        sec:'Decision and portals', label:'P1 Portal invitation received', desc:'First PR confirmation portal email', est:true },
+  { id:'p2',        sec:'Decision and portals', label:'P2 Portal invitation received', desc:'Photo and address portal email', est:true },
+  { id:'ecopr',     sec:'The finish line', label:'eCOPR received', desc:'Electronic Confirmation of Permanent Residence', est:true },
+  { id:'prcard',    sec:'The finish line', label:'PR card received', desc:'The physical card lands in your mailbox', est:true }
+];
+const MS_BY_ID = Object.fromEntries(MILESTONES.map(m=>[m.id,m]));
+const VISA_OFFICES = Object.keys(OFFICE_ADJ);
+
+const state = {
+  submitted:false, res:'', pathway:'EE', eeProg:'CEC', cat:'General',
+  ita:'', aor:'', email:'', pvo:'', svo:'',
+  ms:{}, profile:{nat:'',crs:'',mar:'',spouse:'',dep:'',cw:'',cwy:'',fw:'',fwy:'',cres:'',med:''},
+  shareId:[...crypto.getRandomValues(new Uint8Array(20))].map(b=>b.toString(16).padStart(2,'0')).join('')
+};
+MILESTONES.forEach(m=>state.ms[m.id]={done:false,date:''});
+
+const $=id=>document.getElementById(id);
+const iso=d=>d.toISOString().slice(0,10);
+const D=s=>new Date(s+'T00:00:00');
+const today=()=>new Date(new Date().toDateString());
+const addD=(s,n)=>{const d=D(s);d.setDate(d.getDate()+n);return d};
+const fmt=s=>s?D(s).toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'}):'';
+const fmtD=d=>d.toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'});
+const fmtMY=d=>d.toLocaleDateString('en-CA',{month:'long',year:'numeric'});
+const ago=s=>Math.max(0,Math.round((today()-D(s))/864e5));
+const stream=()=>state.res||'inland';
+const streamLabel=()=>stream()==='inland'?'Inland':'Outland';
+const progLabel=()=>state.pathway==='EE'?state.eeProg:'PNP';
+const cohortKey=()=>state.aor?state.aor.slice(0,7)+'|'+stream():'';
+const cohortName=k=>{const[ym,s]=k.split('|');return D(ym+'-15').toLocaleDateString('en-CA',{month:'short',year:'numeric'})+' · '+(s==='inland'?'Inland':'Outland')};
+const CHECK='<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+
+/* ---------------- phase 1 ---------------- */
+function setRes(v){state.res=v;$('f-res').classList.remove('err');
+  document.querySelectorAll('#segRes button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function onPathway(){state.pathway=$('fPathway').value;$('f-eeprog').style.display=state.pathway==='EE'?'block':'none';}
+function fieldErr(w,e,msg){$(w).classList.add('err');if(e&&msg)$(e).textContent=msg;}
+function onCoreDates(){
+  state.ita=$('fITA').value;state.aor=$('fAOR').value;
+  $('f-ita').classList.remove('err');$('f-aor').classList.remove('err');
+  if(state.ita&&state.aor&&D(state.aor)<=D(state.ita))
+    fieldErr('f-aor','e-aor','AOR comes after your ITA. Check both dates.');
+  if(state.aor&&D(state.aor)>today())fieldErr('f-aor','e-aor','AOR cannot be in the future.');
+}
+function validatePhase1(){
+  let ok=true;
+  if(!state.res){$('f-res').classList.add('err');ok=false;}
+  if(!$('fITA').value){fieldErr('f-ita','e-ita','Add your ITA date.');ok=false;}
+  if(!$('fAOR').value){fieldErr('f-aor','e-aor','Add your AOR date.');ok=false;}
+  state.ita=$('fITA').value;state.aor=$('fAOR').value;
+  if(state.ita&&state.aor&&D(state.aor)<=D(state.ita)){fieldErr('f-aor','e-aor','AOR comes after your ITA. Check both dates.');ok=false;}
+  if(state.aor&&D(state.aor)>today()){fieldErr('f-aor','e-aor','AOR cannot be in the future.');ok=false;}
+  const em=$('fEmail').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){fieldErr('f-email','e-email','A valid email is required.');ok=false;}
+  else{$('f-email').classList.remove('err');state.email=em;}
+  return ok;
+}
+function toMilestones(){
+  if(!validatePhase1()){toastErr('Fix the highlighted fields to continue.');return;}
+  state.pathway=$('fPathway').value;state.eeProg=$('fEEProg').value;state.cat=$('fCat').value;
+  buildMilestones();go('ms');
+}
+
+/* ---------------- phase 2: milestones ---------------- */
+function buildMilestones(){
+  const C=$('msCard');C.innerHTML='';
+  let lastSec='';
+  MILESTONES.forEach(m=>{
+    if(m.sec!==lastSec){C.insertAdjacentHTML('beforeend',`<div class="ms-sec">${m.sec}</div>`);lastSec=m.sec;}
+    const st=state.ms[m.id];
+    C.insertAdjacentHTML('beforeend',`
+      <div class="mrow${m.sub?' sub':''}${st.done?' done':''}" id="j-${m.id}">
+        <button class="tick" onclick="toggleMs('${m.id}')" aria-label="Mark ${m.label}">${CHECK}</button>
+        <div><div class="nm">${m.label}</div><div class="ds">${m.desc}</div></div>
+        <div class="side">
+          <span class="typ">${typLabel(m)}</span>
+          <input type="date" value="${st.date}" onchange="setMsDate('${m.id}',this.value)" aria-label="${m.label} date">
+        </div>
+        <div class="errline" id="err-${m.id}"></div>
+      </div>`);
+    if(m.id==='bio_done')C.insertAdjacentHTML('beforeend',pvoHTML());
+  });
+  syncPVO();paintProgress();
+}
+function typLabel(m){
+  if(!state.aor)return'';
+  if(!m.est)return'no estimate';
+  const S=STATS[stream()],adj=m.id==='bil'?0:(OFFICE_ADJ[state.pvo]||0);
+  return'typical day '+(S[m.id]+adj);
+}
+function pvoHTML(){
+  const opts=s=>VISA_OFFICES.map(o=>`<option ${s===o?'selected':''}>${o}</option>`).join('');
+  return`<div class="pvo" id="pvoBlock">
+    <h3>Which offices hold your file?</h3>
+    <div class="why">After biometrics your file moves to a visa office. Telling us which one sharpens every estimate below.</div>
+    <div class="callout">
+      <svg class="i" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Not sure about your PVO or SVO? Call IRCC at <a href="tel:18882422100">1 888 242 2100</a> if you are within Canada, or <a href="tel:16139444000">1 613 944 4000</a> if you are outside Canada.</span>
+    </div>
+    <div class="grid2">
+      <div class="fld"><label>Primary Visa Office (PVO)</label>
+        <select onchange="state.pvo=this.value;refreshTyps()"><option value="">Select</option>${opts(state.pvo)}</select></div>
+      <div class="fld"><label>Secondary Visa Office (SVO)</label>
+        <select onchange="state.svo=this.value"><option value="">Select</option>${opts(state.svo)}</select></div>
+    </div>
+  </div>`;
+}
+function refreshTyps(){MILESTONES.forEach(m=>{const r=$('j-'+m.id);if(r)r.querySelector('.typ').textContent=typLabel(m);});}
+function syncPVO(){const b=$('pvoBlock');if(b)b.classList.toggle('show',!!(state.ms.bio_done.done&&state.ms.bio_done.date));}
+function toggleMs(id){
+  const m=MS_BY_ID[id],st=state.ms[id];
+  if(!st.done&&m.needs&&!state.ms[m.needs].done){
+    toastErr(id==='bio_done'?'Log your BIL first. You cannot complete biometrics without the letter.'
+      :'Mark background check initiated first. Sub checks come after it starts.');return;}
+  st.done=!st.done;
+  if(!st.done){st.date='';$('j-'+id).querySelector('input').value='';
+    if(id==='bil'&&state.ms.bio_done.done)forceOff('bio_done');
+    if(id==='bgc_start')['crim','info','sec'].forEach(s=>state.ms[s].done&&forceOff(s));}
+  $('j-'+id).classList.toggle('done',st.done);
+  clearErr(id);syncPVO();paintProgress();
+}
+function forceOff(id){state.ms[id]={done:false,date:''};const el=$('j-'+id);el.classList.remove('done');el.querySelector('input').value='';clearErr(id);}
+function setMsDate(id,v){state.ms[id].date=v;validateMs(id,true);syncPVO();paintProgress();}
+function validateMs(id,paint){
+  const st=state.ms[id];let msg='';
+  if(st.done&&st.date){
+    const d=D(st.date),aor=state.aor?D(state.aor):null;
+    if(d>today())msg='This date is in the future. Log milestones once they happen.';
+    else if(aor&&id==='bil'&&+d===+aor)msg='Your BIL cannot land the same day as your AOR. It typically arrives about 2 months later. Check both dates.';
+    else if(aor&&id==='bil'&&d<aor)msg='Your BIL cannot come before your AOR.';
+    else if(aor&&id!=='bil'&&d<=aor)msg='This cannot be on or before your AOR date.';
+    else if(id==='bio_done'&&state.ms.bil.date&&d<D(state.ms.bil.date))msg='Biometrics cannot be completed before your BIL arrived.';
+    else if(id==='bio_done'&&state.ms.bil.date&&+d===+D(state.ms.bil.date))msg='Same day BIL and biometrics is almost never possible. You need to book an appointment first.';
+    else if(['crim','info','sec'].includes(id)&&state.ms.bgc_start.date&&d<D(state.ms.bgc_start.date))msg='This check cannot finish before your background check started.';
+    else if(id==='bgc_start'&&state.ms.bio_done.date&&d<D(state.ms.bio_done.date))msg='Background checks start after biometrics. Check this date.';
+    else if(id==='final'&&state.ms.elig.date&&d<D(state.ms.elig.date))msg='Final decision cannot come before eligibility passed.';
+    else if(id==='p2'&&state.ms.p1.date&&d<D(state.ms.p1.date))msg='P2 cannot arrive before P1.';
+    else if(id==='ecopr'&&state.ms.p2.date&&d<D(state.ms.p2.date))msg='eCOPR cannot come before your P2 invite.';
+    else if(id==='prcard'&&state.ms.ecopr.date&&d<=D(state.ms.ecopr.date))msg='Your PR card arrives after your eCOPR.';
+  }
+  if(paint){$('j-'+id).classList.toggle('haserr',!!msg);$('err-'+id).textContent=msg;}
+  return msg;
+}
+function clearErr(id){$('j-'+id).classList.remove('haserr');$('err-'+id).textContent='';}
+function paintProgress(){
+  const done=MILESTONES.filter(m=>state.ms[m.id].done&&state.ms[m.id].date).length;
+  $('msCount').textContent=done;
+  $('progBar').style.width=Math.round(done/13*100)+'%';
+}
+function submitAll(){
+  let bad=null;
+  MILESTONES.forEach(m=>{
+    const st=state.ms[m.id];
+    if(!bad&&st.done&&!st.date)bad={id:m.id,msg:'Add the date for '+m.label+'.'};
+    const msg=validateMs(m.id,true);
+    if(!bad&&msg)bad={id:m.id,msg};
+  });
+  if(bad){toastErr(bad.msg);$('j-'+bad.id).scrollIntoView({block:'center',behavior:'smooth'});return;}
+  state.submitted=true;
+  $('mainNav').style.display='flex';
+  ['navShare','navEdit'].forEach(i=>$(i).style.display='inline-flex');
+  buildCommunity();
+  go('dash');
+  toast('Timeline saved. Welcome to your dashboard.');
+}
+
+/* ---------------- estimates ---------------- */
+function estimates(){
+  const S=STATS[stream()],adj=OFFICE_ADJ[state.pvo]||0,out={};
+  let prev=D(state.aor);
+  MILESTONES.forEach(m=>{
+    const st=state.ms[m.id];
+    if(st.done&&st.date){out[m.id]={done:true,date:D(st.date)};prev=out[m.id].date;return;}
+    if(!m.est){out[m.id]={done:false,noEst:true,
+      note:state.ms.bil.date?('due by '+fmtD(addD(state.ms.bil.date,30))):'30 day window after your BIL'};return;}
+    let est=addD(state.aor,S[m.id]+(m.id==='bil'?0:adj));
+    if(est<=prev)est=new Date(prev.getTime()+3*864e5);
+    out[m.id]={done:false,date:est};prev=est;
+  });
+  /* keep every pending estimate in the future: shift the whole pending
+     chain forward if the community median has already passed */
+  const pend=MILESTONES.filter(m=>out[m.id]&&!out[m.id].done&&!out[m.id].noEst);
+  if(pend.length){
+    const first=out[pend[0].id].date;
+    if(first<today()){
+      const delta=Math.round((today()-first)/864e5)+5;
+      pend.forEach(m=>{const d=out[m.id].date;d.setDate(d.getDate()+delta);});
+    }
+  }
+  return out;
+}
+/* ---------------- dashboard ---------------- */
+function renderDash(){
+  const S=STATS[stream()],est=estimates(),days=ago(state.aor);
+  $('dDays').textContent=days;
+  $('dDaysSub').textContent='AOR on '+fmt(state.aor);
+  $('dTypical').innerHTML=(S.ecopr+(OFFICE_ADJ[state.pvo]||0))+'<small>days</small>';
+  $('dTypicalSub').textContent='AOR to eCOPR · '+progLabel()+' · '+streamLabel();
+  $('dExpected').textContent=est.ecopr.done?fmtD(est.ecopr.date):fmtMY(est.ecopr.date);
+  $('dExpectedSub').textContent=est.ecopr.done?'Your eCOPR is already in. Congratulations.':'Typical eCOPR month for your stream';
+  $('shareUrl').textContent='track.getnorthpath.com/s/'+state.shareId;
+  $('tlOffice').textContent=state.pvo?('PVO '+state.pvo+(state.svo?' · SVO '+state.svo:'')):'Add your PVO to sharpen estimates';
+
+  const TL=$('dashTL');TL.innerHTML='';
+  const items=[{id:'aor',label:'AOR received'},...MILESTONES];
+  items.forEach(m=>{
+    const isAOR=m.id==='aor';
+    const e=isAOR?{done:true,date:D(state.aor)}:est[m.id];
+    let cls='trow'+(m.sub?' sub':''),when;
+    if(e.done){cls+=' d';when=`<div class="dt">${fmtD(e.date)}</div><div class="ago">${ago(iso(e.date))} days ago</div>`;}
+    else if(e.noEst){cls+=' up';when=`<span class="chip win">${e.note}</span>`;}
+    else{cls+=' up';when=`<span class="chip est">Est. ${fmtD(e.date)}</span>`;}
+    TL.insertAdjacentHTML('beforeend',`
+      <div class="${cls}">
+        <div class="tdot">${e.done?CHECK:''}</div>
+        <div class="nm">${m.label}</div>
+        <div class="when">${when}</div>
+      </div>`);
+  });
+
+  const next=MILESTONES.find(m=>!est[m.id].done);
+  if(next){
+    const e=est[next.id];
+    $('nextUpSub').textContent='Based on your cohort\u2019s pace so far.';
+    $('nextUpBox').innerHTML=`
+      <div style="border:1px solid var(--bd);border-radius:12px;padding:15px 16px">
+        <div style="font-family:var(--disp);font-weight:800;font-size:15px;color:var(--navy)">${next.label}</div>
+        <div style="margin-top:7px">${e.noEst?`<span class="chip win">${e.note}</span>`:`<span class="chip red">Est. ${fmtD(e.date)}</span>`}</div>
+      </div>`;
+  } else {
+    $('nextUpSub').textContent='';
+    $('nextUpBox').innerHTML='<div style="border:1px solid var(--bd);border-radius:12px;padding:15px 16px;font-weight:600;color:var(--green)">Journey complete. Enjoy Canada.</div>';
+  }
+  renderAD();
+}
+
+/* ---------------- applicant details card ---------------- */
+const IC={
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  branch:'<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+  tag:'<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  pin:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>',
+  chart:'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
+  heart:'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  brief:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  bank:'<rect x="4" y="8" width="16" height="13" rx="1"/><path d="M2 8l10-5 10 5"/><line x1="9" y1="12" x2="9" y2="17"/><line x1="15" y1="12" x2="15" y2="17"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  med:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'
+};
+const icon=n=>`<svg class="i ic" viewBox="0 0 24 24">${IC[n]}</svg>`;
+let adEditing=false;
+function adFields(){
+  const p=state.profile;
+  const off=v=>VISA_OFFICES.map(o=>`<option ${v===o?'selected':''}>${o}</option>`).join('');
+  const selopt=(v,arr)=>arr.map(o=>`<option ${v===o?'selected':''}>${o}</option>`).join('');
+  return[
+    ['file','Application type',state.pathway==='EE'?'Express Entry':'PNP',`<select id="ad-path"><option value="EE" ${state.pathway==='EE'?'selected':''}>Express Entry</option><option value="PNP" ${state.pathway==='PNP'?'selected':''}>PNP</option></select>`],
+    ['branch','EE program',state.pathway==='EE'?state.eeProg:'-',`<select id="ad-prog">${selopt(state.eeProg,['CEC','FSWP','FSTP'])}</select>`],
+    ['tag','Draw category',state.cat==='General'?'General':state.cat,`<select id="ad-cat">${selopt(state.cat,['General','French language proficiency','Healthcare and social services occupations','Science, Technology, Engineering and Math (STEM) occupations','Trade occupations (carpenters, electricians, welders)','Transport occupations (truck drivers, pilots)','Education occupations','Physicians, senior managers, researchers and military recruits with Canadian work experience'])}</select>`],
+    ['cal','ITA date',fmt(state.ita)||'-',`<input type="date" id="ad-ita" value="${state.ita}">`],
+    ['pin','Location',streamLabel(),`<select id="ad-res">${selopt(stream(),['inland','outland']).replace('>inland<','>Inland<').replace('>outland<','>Outland<')}</select>`],
+    ['flag','Nationality',p.nat||'-',`<select id="ad-nat"><option value="">Select</option>${selopt(p.nat,['India','Philippines','Nigeria','China','Brazil','Pakistan','Iran','United States','United Kingdom','Sri Lanka','Vietnam','Mexico','Other'])}</select>`],
+    ['chart','CRS score',p.crs||'-',`<input type="number" id="ad-crs" min="0" max="1200" value="${p.crs}" placeholder="e.g. 512">`],
+    ['heart','Marital status',p.mar||'-',`<select id="ad-mar"><option value="">Select</option>${selopt(p.mar,['Single','Married','Common law'])}</select>`],
+    ['users','Spouse status',p.spouse||'-',`<select id="ad-spouse"><option value="">Select</option>${selopt(p.spouse,['Accompanying','Not accompanying','No spouse'])}</select>`],
+    ['brief','Foreign work',p.fw?(p.fw+(p.fw==='Yes'&&p.fwy?', '+p.fwy+' yrs':'')):'-',`<select id="ad-fw"><option value="">Select</option>${selopt(p.fw,['Yes','No'])}</select>`],
+    ['brief','Canadian work',p.cw?(p.cw+(p.cw==='Yes'&&p.cwy?', '+p.cwy+' yrs':'')):'-',`<select id="ad-cw"><option value="">Select</option>${selopt(p.cw,['Yes','No'])}</select>`],
+    ['users','Dependants',p.dep===''?'-':p.dep,`<input type="number" id="ad-dep" min="0" max="12" value="${p.dep}" placeholder="0">`],
+    ['bank','PVO',state.pvo||'-',`<select id="ad-pvo"><option value="">Select</option>${off(state.pvo)}</select>`],
+    ['bank','SVO',state.svo||'-',`<select id="ad-svo"><option value="">Select</option>${off(state.svo)}</select>`],
+    ['globe','Country of residence',p.cres||'-',`<select id="ad-cres"><option value="">Select</option>${selopt(p.cres,['Canada','India','Philippines','Nigeria','United States','United Kingdom','United Arab Emirates','Other'])}</select>`],
+    ['med','Medical type',p.med||'-',`<select id="ad-med"><option value="">Select</option>${selopt(p.med,['Old medical','New medical'])}</select>`]
+  ];
+}
+function renderAD(){
+  const g=$('adGrid');g.innerHTML='';
+  adFields().forEach(([ic,k,v,editor])=>{
+    g.insertAdjacentHTML('beforeend',`
+      <div class="adr">${icon(ic)}<span class="k">${k}</span>
+        ${adEditing?editor:`<span class="v${v==='-'?' dim':''}">${v}</span>`}
+      </div>`);
+  });
+  $('adCard').classList.toggle('editing',adEditing);
+}
+function toggleAD(cancel){adEditing=cancel?false:!adEditing;renderAD();}
+function saveAD(){
+  const p=state.profile,gv=id=>{const el=$(id);return el?el.value:''};
+  state.pathway=gv('ad-path')||state.pathway;
+  state.eeProg=gv('ad-prog')||state.eeProg;
+  state.cat=gv('ad-cat')||state.cat;
+  const ita=gv('ad-ita');if(ita){if(state.aor&&D(state.aor)<=D(ita)){toastErr('ITA must be before your AOR.');return;}state.ita=ita;}
+  const res=gv('ad-res');if(res)state.res=res.toLowerCase();
+  p.nat=gv('ad-nat');p.crs=gv('ad-crs');p.mar=gv('ad-mar');p.spouse=gv('ad-spouse');
+  p.fw=gv('ad-fw');p.cw=gv('ad-cw');p.dep=gv('ad-dep');
+  state.pvo=gv('ad-pvo');state.svo=gv('ad-svo');
+  p.cres=gv('ad-cres');p.med=gv('ad-med');
+  adEditing=false;renderDash();toast('Details saved.');
+}
+
+/* =============================================================
+   COMMUNITY DATA. SAMPLE, generated on load.
+   On deploy, replace genCommunity with applicants from your
+   378 case CEC files (one object per applicant, same shape).
+   ============================================================= */
+let COMMUNITY={};
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function genCommunity(){
+  const rng=mulberry(20260717);
+  const pick=a=>a[Math.floor(rng()*a.length)];
+  const NATS=['India','India','India','Philippines','Nigeria','China','Brazil','Pakistan','Iran','United Kingdom','Sri Lanka','United States','Vietnam','Mexico'];
+  const SYL=['ja','ka','me','sha','ro','ta','ni','dev','ar','lu','pri','san','vi','no','ha','ze','du','ol','fe','mi'];
+  const CATS=['General','General','General','French language proficiency','Healthcare and social services occupations','Science, Technology, Engineering and Math (STEM) occupations','Trade occupations (carpenters, electricians, welders)','Transport occupations (truck drivers, pilots)','Education occupations'];
+  const OFFICES=['Ottawa','Edmonton','Vancouver','Montreal','Scarborough','New Delhi','Manila','Mississauga'];
+  const defs=[['2025-11',18,5],['2025-12',41,9],['2026-01',96,22],['2026-02',148,34],['2026-03',171,46],['2026-04',126,29],['2026-05',93,17],['2026-06',52,8]];
+  const handle=()=>{let h=pick(SYL)+pick(SYL)+(rng()<.4?pick(SYL):'');h=h[0].toUpperCase()+h.slice(1);return rng()<.25?h.slice(0,3)+Math.ceil(rng()*9):h;};
+  defs.forEach(([ym,ni,no])=>{
+    [['inland',ni],['outland',no]].forEach(([str,n])=>{
+      const S=STATS[str],list=[];
+      for(let i=0;i<n;i++){
+        const day=1+Math.floor(rng()*27),aor=ym+'-'+String(day).padStart(2,'0');
+        if(D(aor)>today())continue;
+        const pace=0.72+rng()*0.62,office=pick(OFFICES);
+        const a={h:handle(),nat:pick(NATS),prog:rng()<.78?'CEC':'PNP',cat:pick(CATS),str,aor,office,
+          crs:460+Math.floor(rng()*110),mar:rng()<.55?'Single':'Married',dep:rng()<.75?0:Math.ceil(rng()*3),
+          med:rng()<.5?'Old medical':'New medical',ms:{}};
+        let prev=D(aor);
+        for(const m of MILESTONES){
+          let gap=m.id==='bio_done'?(S.bil*pace+4+rng()*22):S[m.id]*pace+(m.id==='bil'?0:(OFFICE_ADJ[office]||0));
+          let d=addD(aor,Math.round(gap+(rng()*10-5)));
+          if(d<=prev)d=new Date(prev.getTime()+Math.ceil(1+rng()*4)*864e5);
+          if(d>today())break;
+          a.ms[m.id]=iso(d);prev=d;
+        }
+        list.push(a);
+      }
+      if(list.length)COMMUNITY[ym+'|'+str]=list.sort((x,y)=>x.aor<y.aor?-1:1);
+    });
+  });
+}
+function buildCommunity(){if(!Object.keys(COMMUNITY).length)genCommunity();}
+function furthest(a){let f=null;for(const m of MILESTONES)if(a.ms[m.id])f=m;return f;}
+const STAGE_STYLE={null:['AOR received','#eef1f4','#68727e'],bil:['BIL received','#ecf2fe','#2f6fed'],bio_done:['Biometrics completed','#ecf2fe','#2f6fed'],medical:['Medical passed','#e8f6ef','#1f9d61'],bgc_start:['Background check','#fdf4e2','#b97f16'],crim:['Background check','#fdf4e2','#b97f16'],info:['Background check','#fdf4e2','#b97f16'],sec:['Background check','#fdf4e2','#b97f16'],elig:['Eligibility passed','#e8f6ef','#1f9d61'],final:['Final decision','#f0ebfa','#7c5cbf'],p1:['Portal 1','#f0ebfa','#7c5cbf'],p2:['Portal 2','#f0ebfa','#7c5cbf'],ecopr:['eCOPR received','#e8f6ef','#1f9d61'],prcard:['PR card','#141f2c','#e9a13b']};
+function stageOf(a){const f=furthest(a);return STAGE_STYLE[f?f.id:null];}
+
+/* ---------------- cohorts grid ---------------- */
+function allCohortKeys(){
+  const keys=new Set(Object.keys(COMMUNITY));if(state.aor)keys.add(cohortKey());
+  return[...keys].sort().reverse();
+}
+function renderCohorts(){
+  const g=$('cohortGrid');g.innerHTML='';
+  allCohortKeys().forEach(k=>{
+    const list=COMMUNITY[k]||[],mine=k===cohortKey();
+    const total=list.length+(mine?1:0);
+    const cnt={};list.forEach(a=>{const f=furthest(a);const key=f?f.id:'null';cnt[key]=(cnt[key]||0)+1});
+    const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+    const st=STAGE_STYLE[top?(top[0]==='null'?null:top[0]):null];
+    const stages=['null',...MILESTONES.map(m=>m.id)];
+    const dist=stages.map(s=>cnt[s]||0),mx=Math.max(1,...dist);
+    const pts=dist.map((v,i)=>((i/(dist.length-1))*82+2).toFixed(1)+','+(32-(v/mx)*26).toFixed(1)).join(' ');
+    g.insertAdjacentHTML('beforeend',`
+      <button class="cgc${mine?' mine':''}" onclick="openCohort('${k}')">
+        ${mine?'<span class="yours">YOURS</span>':''}
+        <svg class="spark" viewBox="0 0 86 36"><polyline points="${pts}" fill="none" stroke="#d63424" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/></svg>
+        <div class="mo">${cohortName(k)}</div>
+        <div class="np"><b>${total}</b> applicant${total!==1?'s':''}${mine?', including you':''}</div>
+        <span class="stage" style="background:${st[1]};color:${st[2]}">${list.length?('Most at '+st[0]):'Be the first'}</span>
+      </button>`);
+  });
+}
+
+/* ---------------- cohort detail + drawer ---------------- */
+let cdKey='',cdFilter='all',cdIndex=[];
+function openCohort(k){if(!state.submitted){toastErr('Submit your milestones first to unlock cohorts.');return;}cdKey=k;cdFilter='all';go('cd');renderCohortDetail(k);}
+function renderCohortDetail(k){
+  cdKey=k;
+  const sel=$('cdSelect');sel.innerHTML='';
+  allCohortKeys().forEach(x=>sel.insertAdjacentHTML('beforeend',`<option value="${x}" ${x===k?'selected':''}>${cohortName(x)}${x===cohortKey()?' (yours)':''}</option>`));
+  const mine=k===cohortKey(),list=(COMMUNITY[k]||[]).slice();
+  $('cdEyebrow').textContent=mine?'Your cohort':'Cohort';
+  $('cdTitle').textContent=cohortName(k);
+  const total=list.length+(mine?1:0);
+  $('cdCount').textContent=total+' verified applicant'+(total!==1?'s':'')+(mine?', including you':'');
+  const F=[['all','All'],...MILESTONES.map(m=>[m.id,shortLabel(m.id)])];
+  $('cdFilters').innerHTML=F.map(([v,l])=>`<button class="fc${cdFilter===v?' on':''}" onclick="cdFilter='${v}';renderCohortDetail('${k}')">${l}</button>`).join('');
+  const L=$('cdList');L.innerHTML='';cdIndex=[];
+  const rows=[];
+  if(mine)rows.push(youAsApplicant());
+  rows.push(...list.filter(a=>cdFilter==='all'||a.ms[cdFilter]));
+  if(!rows.length){L.innerHTML='<div class="empty-co"><h3>No journeys here yet</h3><p>This cohort is waiting for its first applicant.</p></div>';return;}
+  if(mine&&rows.length===1&&!list.length){
+    L.insertAdjacentHTML('beforeend','<div class="empty-co" style="margin-bottom:14px"><h3>You are the first one here</h3><p>You are the pioneer of this cohort. Your estimates still hold, they come from the full community dataset for your stream, and this page fills up as others join.</p></div>');
+  }
+  const wrap=document.createElement('div');wrap.className='ap-list';
+  rows.forEach((a,i)=>{cdIndex.push(a);wrap.insertAdjacentHTML('beforeend',apRow(a,i));});
+  L.appendChild(wrap);
+}
+function shortLabel(id){return{bil:'BIL received',bio_done:'Biometrics done',medical:'Medical passed',bgc_start:'BGC initiated',crim:'Criminality',info:'Info sharing',sec:'Security',elig:'Eligibility',final:'Final decision',p1:'Portal 1',p2:'Portal 2',ecopr:'eCOPR',prcard:'PR card'}[id];}
+function youAsApplicant(){
+  const ms={};MILESTONES.forEach(m=>{if(state.ms[m.id].done&&state.ms[m.id].date)ms[m.id]=state.ms[m.id].date});
+  const p=state.profile;
+  return{h:'You',nat:p.nat||'-',prog:progLabel(),cat:state.cat,str:stream(),aor:state.aor,office:state.pvo||'-',
+    crs:p.crs||'-',mar:p.mar||'-',dep:p.dep===''?'-':p.dep,med:p.med||'-',ms,you:true};
+}
+function avColor(h){let x=0;for(const c of h)x=(x*31+c.charCodeAt(0))>>>0;const hues=[8,205,152,262,28,338];return`hsl(${hues[x%hues.length]},48%,44%)`;}
+function apRow(a,i){
+  const st=stageOf(a);
+  const cat=a.cat&&a.cat!=='General'?a.cat.split(' ')[0]+(a.cat.includes('STEM')?' / STEM':''):'General';
+  return`
+  <button class="ap${a.you?' you-row':''}" onclick="openDrawer(${i})">
+    <span class="av" style="background:${a.you?'var(--red)':avColor(a.h)}">${a.you?'YOU':a.h.slice(0,2).toUpperCase()}</span>
+    <span><span class="n">${a.h}</span><br><span class="p">${a.prog} · ${cat} · ${a.str==='inland'?'Inland':'Outland'}</span></span>
+    <span class="st" style="background:${st[1]};color:${st[2]}">${st[0]}</span>
+    <span class="aord">AOR ${fmt(a.aor)}</span>
+    <svg class="i car" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+  </button>`;
+}
+function openDrawer(i){
+  const a=cdIndex[i];if(!a)return;
+  $('dwAv').textContent=a.you?'YOU':a.h.slice(0,2).toUpperCase();
+  $('dwAv').style.background=a.you?'var(--red)':avColor(a.h);
+  $('dwName').textContent=a.h;
+  const cat=a.cat&&a.cat!=='General'?a.cat.split(' ')[0]:'General';
+  $('dwProg').textContent=a.prog+' · '+cat+' · '+(a.str==='inland'?'Inland':'Outland');
+  const rows=[{label:'AOR received',date:a.aor},...MILESTONES.filter(m=>a.ms[m.id]).map(m=>({label:m.label,date:a.ms[m.id]}))];
+  const pendings=MILESTONES.filter(m=>!a.ms[m.id]);
+  $('dwBody').innerHTML=`
+    <h4>Timeline</h4>
+    <div class="jt">
+      ${rows.map(r=>`<div class="jrow"><span class="t">${r.label}</span><span class="d"><b>${fmt(r.date)}</b> · ${ago(r.date)}d ago</span></div>`).join('')}
+      ${pendings.slice(0,3).map(m=>`<div class="jrow pending"><span class="t">${m.label}</span><span class="d">not yet</span></div>`).join('')}
+    </div>
+    <h4>Applicant details</h4>
+    ${[['AOR date',fmt(a.aor)],['Program',a.prog],['Draw category',a.cat||'General'],['Location',a.str==='inland'?'Inland':'Outland'],['PVO',a.office],['Nationality',a.nat],['CRS score',a.crs],['Marital status',a.mar],['Dependants',a.dep],['Medical type',a.med]]
+      .map(([k,v])=>`<div class="adr">${''}<span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}`;
+  $('drawerBg').classList.add('open');$('drawer').classList.add('open');
+}
+function closeDrawer(){$('drawerBg').classList.remove('open');$('drawer').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+
+/* ---------------- share / nav / toast ---------------- */
+function copyLink(){
+  const url='https://track.getnorthpath.com/s/'+state.shareId;
+  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject())
+    .then(()=>toast('Link copied.')).catch(()=>prompt('Copy your link:',url));
+}
+function shareWA(){
+  const est=estimates(),next=MILESTONES.find(m=>!est[m.id].done&&!est[m.id].noEst);
+  const msg='My Canada PR journey ('+progLabel()+' · '+streamLabel()+'): Day '+ago(state.aor)+' since AOR. '+
+    (next?('Next up: '+next.label+' (est. '+fmtD(est[next.id].date)+'). '):'Journey complete. ')+
+    'Track yours: https://track.getnorthpath.com/s/'+state.shareId;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function go(pg){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  $('pg-'+pg).classList.add('on');
+  document.querySelectorAll('.nl').forEach(n=>n.classList.remove('on'));
+  if(pg==='dash')$('nl-dash')?.classList.add('on');
+  if(pg==='cd'&&cdKey===cohortKey())$('nl-co')?.classList.add('on');
+  if(pg==='cohorts')$('nl-all')?.classList.add('on');
+  if(pg==='dash')renderDash();
+  if(pg==='cohorts'){buildCommunity();renderCohorts();}
+  closeDrawer();
+  window.scrollTo({top:0});
+}
+let tT;
+function toast(m,err){const t=$('toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),4000);}
+function toastErr(m){toast(m,true);}
+</script>
+</body>
+</html>
