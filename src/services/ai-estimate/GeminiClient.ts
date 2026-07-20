@@ -1,9 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ESTIMATE_BUCKETS, MILESTONES } from "@/lib/schema/constants";
 import type { MilestoneEstimate, MilestoneId } from "@/lib/schema/types";
-import type { EstimateConfig } from "../EstimateConfig";
-import type { EstimatePromptPayload } from "../models";
-import { EstimateProvider } from "./EstimateProvider";
+import type { EstimateConfig } from "./EstimateConfig";
+import type { EstimatePromptPayload } from "./models";
 
 type GeminiEstimateRow = {
   milestoneId: string;
@@ -13,20 +12,12 @@ type GeminiEstimateRow = {
   estimatedYearTo: number;
 };
 
-/**
- * Gemini 2.5 Flash provider — structured JSON estimates per SCHEMA_V3.
- */
-export class GeminiEstimateProvider extends EstimateProvider {
-  readonly name = "gemini";
-
+/** Calls Gemini 2.5 Flash with SCHEMA_V3 estimate JSON schema. */
+export class GeminiClient {
   private readonly client: GoogleGenAI;
   private readonly model: string;
 
   constructor(config: EstimateConfig) {
-    super();
-    if (!config.geminiApiKey) {
-      throw new Error("GEMINI_API_KEY is not set");
-    }
     this.client = new GoogleGenAI({ apiKey: config.geminiApiKey });
     this.model = config.model;
   }
@@ -37,7 +28,7 @@ export class GeminiEstimateProvider extends EstimateProvider {
 
     const response = await this.client.models.generateContent({
       model: this.model,
-      contents: this.buildUserPrompt(prompt, pending),
+      contents: this.buildPrompt(prompt, pending),
       config: {
         temperature: 0.2,
         responseMimeType: "application/json",
@@ -71,9 +62,7 @@ export class GeminiEstimateProvider extends EstimateProvider {
     });
 
     const text = response.text?.trim();
-    if (!text) {
-      throw new Error("Gemini returned an empty response.");
-    }
+    if (!text) throw new Error("Gemini returned an empty response.");
 
     const parsed = JSON.parse(text) as { estimates?: GeminiEstimateRow[] };
     if (!Array.isArray(parsed.estimates)) {
@@ -98,7 +87,7 @@ export class GeminiEstimateProvider extends EstimateProvider {
     }));
   }
 
-  private buildUserPrompt(
+  private buildPrompt(
     prompt: EstimatePromptPayload,
     pending: ReadonlyArray<{ id: string; label: string; desc: string }>,
   ): string {

@@ -5,11 +5,11 @@ import type {
   ProfileMilestone,
 } from "@/lib/schema/types";
 import { UserModel } from "@/models/User";
-import { UserEstimateSnapshot } from "../models";
-import { UserEstimateRepository } from "./UserEstimateRepository";
+import { UserEstimateSnapshot } from "./models";
 
-export class MongooseUserEstimateRepository extends UserEstimateRepository {
-  async loadSnapshot(userId: string): Promise<UserEstimateSnapshot | null> {
+/** Load / save estimate fields on the User document. */
+export class UserEstimateStore {
+  async load(userId: string): Promise<UserEstimateSnapshot | null> {
     await connectDb();
     if (!/^[a-f\d]{24}$/i.test(userId)) return null;
 
@@ -41,7 +41,7 @@ export class MongooseUserEstimateRepository extends UserEstimateRepository {
     );
   }
 
-  async saveEstimates(
+  async save(
     userId: string,
     estimates: MilestoneEstimate[],
     meta: EstimateMeta,

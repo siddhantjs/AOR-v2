@@ -10,7 +10,6 @@ import type {
   VisaOffice,
 } from "@/lib/schema/types";
 
-/** Immutable input snapshot for one estimate run (class, not a plain bag). */
 export class UserEstimateSnapshot {
   constructor(
     readonly userId: string,
@@ -49,19 +48,17 @@ export class EstimatePromptPayload {
   ) {}
 }
 
-export type EstimateRunStatus = "pending" | "skipped" | "completed" | "failed";
-
 export class EstimateRunResult {
   constructor(
-    readonly status: EstimateRunStatus,
+    readonly status: "skipped" | "completed" | "failed",
     readonly phase: EstimatePhase | null,
     readonly inputsHash: string | null,
     readonly estimates: MilestoneEstimate[],
     readonly reason: string | null = null,
   ) {}
 
-  static skipped(reason: string, inputsHash: string | null = null): EstimateRunResult {
-    return new EstimateRunResult("skipped", null, inputsHash, [], reason);
+  static skipped(reason: string, hash: string | null = null): EstimateRunResult {
+    return new EstimateRunResult("skipped", null, hash, [], reason);
   }
 
   static failed(reason: string): EstimateRunResult {
@@ -70,9 +67,9 @@ export class EstimateRunResult {
 
   static completed(
     phase: EstimatePhase,
-    inputsHash: string,
+    hash: string,
     estimates: MilestoneEstimate[],
   ): EstimateRunResult {
-    return new EstimateRunResult("completed", phase, inputsHash, estimates, null);
+    return new EstimateRunResult("completed", phase, hash, estimates, null);
   }
 }
