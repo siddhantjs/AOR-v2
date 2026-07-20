@@ -16,6 +16,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Shared UI primitives live in `src/components/ui/` (e.g. `Select`, `DashboardDatePicker`) — theme via globals tokens; reuse across pages.
 - Username availability: `GET /api/username/check?username=` (unique among live users, `seededData: false`). Requires `MONGODB_URI` (+ optional `MONGODB_DB_NAME`, default `aor-v2`).
 - Track start: `POST /api/track/start` — create user + cohort, run `AiEstimateService` (aor-only), return estimates for milestones UI. Requires `MONGODB_URI` + `GEMINI_API_KEY`.
+- Track submit: `POST /api/track/submit` — save logged milestone dates + offices, re-estimate, set `submittedAt` / `shareToken`, then client redirects to `/dashboard/[userId]`.
+- Login: `POST /api/auth/login` — email + username lookup (`seededData: false`) → `/dashboard/[userId]`. UI: `/login`.
+- Dashboard: `/dashboard/[userId]` — `src/components/pages/dashboard/DashboardPage.tsx` (HTML `#pg-dash` layout; AI estimate chips instead of community medians).
 - AI estimates (SCHEMA_V3 §7): `src/services/ai-estimate/` — `AiEstimateService.run(userId)` (load → phase/hash skip → Gemini → validate → save). Requires `GEMINI_API_KEY`; model default `gemini-2.5-flash`.
 
 ## HTML prototype → routes
@@ -26,7 +29,7 @@ Source prototype: `aor-tracker-final-version.html`.
 | ----------------- | ----- | -------------- |
 | “Tell us about your application” (`#pg-app`) | `/track` | `src/components/pages/track/TrackPage.tsx` |
 | “Your milestones” (`#pg-ms`) | `/track` (phase 2) | `src/components/pages/track/MilestonesStep.tsx` |
-| Dashboard (`#pg-dash`) | TBD | — |
+| Dashboard (`#pg-dash`) | `/dashboard/[userId]` | `src/components/pages/dashboard/DashboardPage.tsx` |
 | Cohorts | TBD | — |
 
 Schema / types: see `SCHEMA_V3.md` and `src/lib/schema/`.

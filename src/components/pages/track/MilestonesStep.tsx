@@ -151,7 +151,7 @@ type MilestonesStepProps = {
   estimates?: MilestoneEstimate[];
   estimateNotice?: string | null;
   onBack: () => void;
-  onSubmit?: (state: MilestonesFormState) => void;
+  onSubmit: (state: MilestonesFormState) => void | Promise<void>;
 };
 
 export function MilestonesStep({
@@ -168,7 +168,8 @@ export function MilestonesStep({
   }));
   const [errors, setErrors] = useState<Partial<Record<MilestoneId, string>>>({});
   const [notice, setNotice] = useState<string | null>(null);
-  const [submitNotice, setSubmitNotice] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const estimatesById = useMemo(() => {
     const map = new Map<MilestoneId, MilestoneEstimate>();
@@ -253,7 +254,7 @@ export function MilestonesStep({
       delete copy[id];
       return copy;
     });
-    setSubmitNotice(null);
+    setSubmitError(null);
   }
 
   function setDate(id: MilestoneId, date: string) {
@@ -274,10 +275,12 @@ export function MilestonesStep({
       });
       return next;
     });
-    setSubmitNotice(null);
+    setSubmitError(null);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    if (submitting) return;
+
     const nextErrors: Partial<Record<MilestoneId, string>> = {};
     let firstBad: { id: MilestoneId; msg: string } | null = null;
 
@@ -306,8 +309,18 @@ export function MilestonesStep({
       return;
     }
 
-    setSubmitNotice("Timeline ready. Backend save will be wired next.");
-    onSubmit?.(state);
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await onSubmit(state);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Could not save your timeline. Try again.",
+      );
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -367,10 +380,11 @@ export function MilestonesStep({
 
         <button
           type="button"
-          onClick={handleSubmit}
-          className="inline-flex items-center gap-2 rounded-[10px] bg-[var(--red)] px-[22px] py-[11px] font-[family-name:var(--font-display)] text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--red2)]"
+          onClick={() => void handleSubmit()}
+          disabled={submitting}
+          className="inline-flex items-center gap-2 rounded-[10px] bg-[var(--red)] px-[22px] py-[11px] font-[family-name:var(--font-display)] text-sm font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:bg-[var(--red2)] disabled:cursor-not-allowed disabled:opacity-45"
         >
-          Submit
+          {submitting ? "Saving…" : "Submit"}
         </button>
       </div>
 
@@ -538,9 +552,9 @@ export function MilestonesStep({
         ))}
       </div>
 
-      {submitNotice ? (
-        <p className="mt-4 text-sm font-semibold text-[var(--green)]" role="status">
-          {submitNotice}
+      {submitError ? (
+        <p className="mt-4 text-sm font-semibold text-[var(--red)]" role="alert">
+          {submitError}
         </p>
       ) : null}
     </div>
