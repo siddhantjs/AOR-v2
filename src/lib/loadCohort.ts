@@ -9,7 +9,6 @@ import {
   type CohortOption,
 } from "@/lib/cohortBrowse";
 import { toIsoDate } from "@/lib/dates";
-import { MILESTONE_IDS } from "@/lib/schema/constants";
 import type { User } from "@/lib/schema/types";
 import { CohortModel } from "@/models/Cohort";
 import { UserModel } from "@/models/User";
@@ -131,7 +130,6 @@ export type AllCohortCard = {
   stageBg: string;
   stageFg: string;
   empty: boolean;
-  sparkPoints: string;
 };
 
 export type AllCohortsPageData = {
@@ -195,8 +193,6 @@ export async function loadAllCohortsPageData(
     b.stageCounts[stage] = (b.stageCounts[stage] ?? 0) + 1;
   }
 
-  const stageOrder = ["aor", ...MILESTONE_IDS];
-
   const cards: AllCohortCard[] = [...keySet]
     .sort()
     .reverse()
@@ -207,15 +203,6 @@ export async function loadAllCohortsPageData(
       const top = Object.entries(b.stageCounts).sort((a, c) => c[1] - a[1])[0];
       const topKey = top?.[0] ?? "aor";
       const st = stageStyle(topKey);
-      const dist = stageOrder.map((s) => b.stageCounts[s] ?? 0);
-      const mx = Math.max(1, ...dist);
-      const sparkPoints = dist
-        .map((v, i) => {
-          const x = ((i / Math.max(1, dist.length - 1)) * 82 + 2).toFixed(1);
-          const y = (32 - (v / mx) * 26).toFixed(1);
-          return `${x},${y}`;
-        })
-        .join(" ");
 
       return {
         cohortKey,
@@ -229,7 +216,6 @@ export async function loadAllCohortsPageData(
         stageBg: st.bg,
         stageFg: st.fg,
         empty: total === 0,
-        sparkPoints,
       };
     });
 

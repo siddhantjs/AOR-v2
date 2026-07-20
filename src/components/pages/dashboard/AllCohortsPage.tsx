@@ -46,25 +46,6 @@ export function AllCohortsPage({ data }: AllCohortsPageProps) {
                 </span>
               ) : null}
 
-              <svg
-                className={[
-                  "absolute right-4 h-9 w-[86px]",
-                  card.isYours ? "top-10" : "top-[18px]",
-                ].join(" ")}
-                viewBox="0 0 86 36"
-                aria-hidden
-              >
-                <polyline
-                  points={card.sparkPoints}
-                  fill="none"
-                  stroke="#d63424"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  opacity="0.85"
-                />
-              </svg>
-
               <div className="font-[family-name:var(--font-display)] text-[19px] font-extrabold tracking-[-0.02em] text-[var(--navy)]">
                 {card.title}
               </div>
