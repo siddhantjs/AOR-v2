@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import type { DashboardView } from "@/lib/dashboardView";
+import { ApplicantDetailsCard } from "./ApplicantDetailsCard";
 
 const CHECK = (
   <svg
@@ -152,34 +153,10 @@ export function DashboardPage({ data }: DashboardPageProps) {
             </div>
           </section>
 
-          {/* Applicant details (read-only for now) */}
-          <section className="mt-5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] px-[26px] py-[22px] shadow-[var(--shadow-md)]">
-            <h2 className="m-0 mb-1.5 text-base font-extrabold tracking-[-0.02em] text-[var(--navy)]">
-              Applicant details
-            </h2>
-            <div className="grid grid-cols-1 gap-x-[26px] min-[641px]:grid-cols-2">
-              {data.details.map((d) => (
-                <div
-                  key={d.key}
-                  className="flex min-h-[46px] items-center gap-2.5 border-b border-[var(--border)] py-[11px]"
-                >
-                  <span className="flex-1 text-[13px] text-[var(--muted)]">
-                    {d.label}
-                  </span>
-                  <span
-                    className={[
-                      "text-right text-[13px] font-semibold",
-                      d.value === "—"
-                        ? "font-medium text-[var(--muted2)]"
-                        : "text-[var(--ink)]",
-                    ].join(" ")}
-                  >
-                    {d.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
+          <ApplicantDetailsCard
+            userId={data.userId}
+            initialForm={data.applicantForm}
+          />
         </div>
 
         <div>

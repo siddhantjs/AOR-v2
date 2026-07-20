@@ -1,9 +1,6 @@
 import { randomBytes } from "crypto";
 import {
-  DRAW_CATEGORIES,
   MILESTONES,
-  type ApplyingFrom,
-  type DrawCategory,
   type EstimateBucket,
   type ExpressEntryProgram,
   type MilestoneId,
@@ -11,6 +8,11 @@ import {
   type VisaOffice,
 } from "@/lib/schema/constants";
 import type { ProfileMilestone, User } from "@/lib/schema/types";
+import {
+  displayApplicantDetails,
+  toApplicantDetailsForm,
+  type ApplicantDetailsForm,
+} from "@/lib/applicantDetails";
 import { formatEstimateRange } from "@/lib/estimateFormat";
 import {
   daysBetween,
@@ -20,11 +22,6 @@ import {
   parseIsoDate,
   toIsoDate,
 } from "@/lib/dates";
-
-const PATHWAY_LABEL: Record<Pathway, string> = {
-  "express-entry": "Express Entry",
-  "provincial-nominee-program": "PNP",
-};
 
 const EE_LABEL: Record<ExpressEntryProgram, string> = {
   cec: "CEC",
@@ -81,14 +78,11 @@ export type DashboardView = {
   sharePath: string;
   shareToken: string | null;
   details: DetailRowView[];
+  applicantForm: ApplicantDetailsForm;
   footnote: string;
 };
 
-function drawLabel(value: DrawCategory): string {
-  return DRAW_CATEGORIES.find((c) => c.value === value)?.label ?? value;
-}
-
-function streamLabel(applyingFrom: ApplyingFrom): string {
+function streamLabel(applyingFrom: "inland" | "outland"): string {
   return applyingFrom === "inland" ? "Inland" : "Outland";
 }
 
@@ -270,111 +264,13 @@ export function buildDashboardView(user: User): DashboardView {
       }`
     : "Add your PVO to sharpen estimates";
 
-  const details: DetailRowView[] = [
-    {
-      key: "pathway",
-      label: "Application type",
-      value: PATHWAY_LABEL[user.pathway],
-    },
-    {
-      key: "ee",
-      label: "EE program",
-      value:
-        user.pathway === "express-entry" && user.expressEntryProgram
-          ? EE_LABEL[user.expressEntryProgram]
-          : "—",
-    },
-    {
-      key: "draw",
-      label: "Draw category",
-      value: drawLabel(user.drawCategory),
-    },
-    { key: "ita", label: "ITA date", value: formatLongDate(itaIso) },
-    {
-      key: "loc",
-      label: "Location",
-      value: streamLabel(user.applyingFrom),
-    },
-    {
-      key: "nat",
-      label: "Nationality",
-      value: user.userDetails?.nationality ?? "—",
-    },
-    {
-      key: "crs",
-      label: "CRS score",
-      value:
-        user.userDetails?.crsScore != null
-          ? String(user.userDetails.crsScore)
-          : "—",
-    },
-    {
-      key: "mar",
-      label: "Marital status",
-      value: user.userDetails?.maritalStatus ?? "—",
-    },
-    {
-      key: "spouse",
-      label: "Spouse status",
-      value: user.userDetails?.spouseStatus ?? "—",
-    },
-    {
-      key: "fw",
-      label: "Foreign work",
-      value:
-        user.userDetails?.foreignWork == null
-          ? "—"
-          : user.userDetails.foreignWork
-            ? `Yes${
-                user.userDetails.foreignWorkYears != null
-                  ? `, ${user.userDetails.foreignWorkYears} yrs`
-                  : ""
-              }`
-            : "No",
-    },
-    {
-      key: "cw",
-      label: "Canadian work",
-      value:
-        user.userDetails?.canadianWork == null
-          ? "—"
-          : user.userDetails.canadianWork
-            ? `Yes${
-                user.userDetails.canadianWorkYears != null
-                  ? `, ${user.userDetails.canadianWorkYears} yrs`
-                  : ""
-              }`
-            : "No",
-    },
-    {
-      key: "dep",
-      label: "Dependants",
-      value:
-        user.userDetails?.dependants != null
-          ? String(user.userDetails.dependants)
-          : "—",
-    },
-    {
-      key: "pvo",
-      label: "PVO",
-      value: user.primaryVisaOffice ?? "—",
-    },
-    {
-      key: "svo",
-      label: "SVO",
-      value: user.secondaryVisaOffice ?? "—",
-    },
-    {
-      key: "cres",
-      label: "Country of residence",
-      value: user.userDetails?.countryOfResidence ?? "—",
-    },
-    {
-      key: "med",
-      label: "Medical type",
-      value: user.userDetails?.medicalType ?? "—",
-    },
-  ];
+  const applicantForm = toApplicantDetailsForm(user);
+  const details: DetailRowView[] = displayApplicantDetails(applicantForm).map(
+    (row) =>
+      row.key === "ita"
+        ? { ...row, value: formatLongDate(itaIso) }
+        : row,
+  );
 
   return {
     userId: String(user._id),
@@ -392,6 +288,7 @@ export function buildDashboardView(user: User): DashboardView {
       ? `track.getnorthpath.com/s/${user.shareToken}`
       : "Share link will appear after submit",
     details,
+    applicantForm,
     footnote:
       "Estimates are AI windows for your profile (pathway, dates, offices, and logged milestones). Biometrics completion is not estimated because IRCC gives you 30 days from your BIL. Estimates are guidance, not IRCC guarantees.",
   };
