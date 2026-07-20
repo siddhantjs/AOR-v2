@@ -29,6 +29,7 @@ type SelectProps<T extends string = string> = {
   id?: string;
   name?: string;
   className?: string;
+  "aria-label"?: string;
   onChange: (value: T) => void;
 };
 
@@ -44,6 +45,7 @@ export function Select<T extends string = string>({
   id: idProp,
   name,
   className,
+  "aria-label": ariaLabel,
   onChange,
 }: SelectProps<T>) {
   const reactId = useId();
@@ -138,6 +140,7 @@ export function Select<T extends string = string>({
           type="button"
           id={id}
           disabled={disabled}
+          aria-label={ariaLabel}
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-controls={listboxId}

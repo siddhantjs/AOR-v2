@@ -9,6 +9,7 @@ import {
 } from "@/lib/cohortBrowse";
 import type { CohortPageData } from "@/lib/loadCohort";
 import type { MilestoneId } from "@/lib/schema/constants";
+import { Select } from "@/components/ui";
 
 type CohortPageProps = {
   data: CohortPageData;
@@ -21,6 +22,10 @@ export function CohortPage({ data }: CohortPageProps) {
   const [filter, setFilter] = useState<FilterValue>("all");
   const [openId, setOpenId] = useState<string | null>(null);
   const filters = useMemo(() => cohortFilterOptions(), []);
+  const cohortOptions = useMemo(
+    () => data.options.map((o) => ({ value: o.cohortKey, label: o.label })),
+    [data.options],
+  );
 
   const rows = useMemo(() => {
     if (filter === "all") return data.applicants;
@@ -56,18 +61,15 @@ export function CohortPage({ data }: CohortPageProps) {
           </h1>
           <div className="text-[13px] text-[var(--muted)]">{data.countLabel}</div>
         </div>
-        <select
-          className="rounded-[10px] border border-[var(--border2)] bg-[var(--bg-elevated)] px-3.5 py-2.5 text-[13.5px] font-semibold text-[var(--navy)] outline-none"
-          value={data.activeCohortKey}
-          onChange={(e) => onCohortChange(e.target.value)}
+        <Select
+          className="w-full min-w-0 sm:w-[min(100%,320px)]"
+          id="cohort-picker"
           aria-label="Choose cohort"
-        >
-          {data.options.map((o) => (
-            <option key={o.cohortKey} value={o.cohortKey}>
-              {o.label}
-            </option>
-          ))}
-        </select>
+          value={data.activeCohortKey}
+          options={cohortOptions}
+          placeholder="Choose cohort"
+          onChange={onCohortChange}
+        />
       </div>
 
       <div className="mb-4 flex flex-wrap gap-1.5">
