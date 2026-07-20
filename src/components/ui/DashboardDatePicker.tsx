@@ -120,6 +120,8 @@ type Props = {
   className?: string;
   /** When false, the calendar popover closes. */
   active?: boolean;
+  /** Anchor the fixed-width popover to the start or end of the trigger. */
+  popoverAlign?: "start" | "end";
   "aria-labelledby"?: string;
 };
 
@@ -141,6 +143,7 @@ export function DashboardDatePicker({
   disabled,
   className,
   active = true,
+  popoverAlign = "start",
   "aria-labelledby": ariaLabelledBy,
 }: Props) {
   const autoId = useId();
@@ -254,7 +257,10 @@ export function DashboardDatePicker({
   const display = value ? formatDisplay(value) : placeholder;
 
   return (
-    <div ref={rootRef} className={["relative", className].filter(Boolean).join(" ")}>
+    <div
+      ref={rootRef}
+      className={["relative", open ? "z-50" : "", className].filter(Boolean).join(" ")}
+    >
       {label ? (
         <label id={labelId} htmlFor={rootId} className={labelClass()}>
           {label}
@@ -298,7 +304,10 @@ export function DashboardDatePicker({
 
       {open ? (
         <div
-          className="absolute z-50 mt-1.5 w-[min(100%,288px)] rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-[var(--shadow-md)]"
+          className={[
+            "absolute z-50 mt-1.5 w-[288px] min-w-[288px] rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-[var(--shadow-md)]",
+            popoverAlign === "end" ? "right-0" : "left-0",
+          ].join(" ")}
           role="dialog"
           aria-modal="false"
           aria-label="Choose date"

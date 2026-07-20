@@ -457,6 +457,7 @@ export function MilestonesStep({
                             min={application.aorDate ? aorMinNext : undefined}
                             max={todayIso()}
                             placeholder="dd-mm-yyyy"
+                            popoverAlign="end"
                           />
                         </div>
                       ) : null}

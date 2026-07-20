@@ -8,7 +8,7 @@ import {
   type ApplicantDetailsForm,
 } from "@/lib/applicantDetails";
 import { formatLongDate } from "@/lib/dates";
-import { Select } from "@/components/ui";
+import { DashboardDatePicker, Select } from "@/components/ui";
 
 const editControl = "w-[168px] shrink-0 [&_button]:py-1.5 [&_button]:text-[12.5px]";
 
@@ -209,12 +209,12 @@ function FieldEditor({
       );
     case "ita":
       return (
-        <input
-          type="date"
-          className={inputControl}
+        <DashboardDatePicker
+          className={editControl}
           value={draft.itaDate}
           max={draft.aorDate || undefined}
-          onChange={(e) => onChange("itaDate", e.target.value)}
+          popoverAlign="end"
+          onChange={(v) => onChange("itaDate", v)}
         />
       );
     case "loc":
