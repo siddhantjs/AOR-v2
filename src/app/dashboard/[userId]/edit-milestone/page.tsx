@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DashboardPage } from "@/components/pages/dashboard";
+import { EditMilestonesPage } from "@/components/pages/dashboard/EditMilestonesPage";
 import { LogoMark } from "@/components/common/LogoMark";
-import { loadDashboardView } from "@/lib/loadDashboard";
+import { loadEditMilestonesData } from "@/lib/loadDashboard";
 
 type PageProps = {
   params: Promise<{ userId: string }>;
 };
 
-export default async function DashboardRoute({ params }: PageProps) {
+export default async function EditMilestoneRoute({ params }: PageProps) {
   const { userId } = await params;
+
   let data;
   try {
-    data = await loadDashboardView(userId);
+    data = await loadEditMilestonesData(userId);
   } catch {
     notFound();
   }
@@ -29,21 +30,21 @@ export default async function DashboardRoute({ params }: PageProps) {
             </span>
           </Link>
           <nav className="flex items-center gap-1 text-[13px] font-semibold">
-            <span className="rounded-[9px] bg-[var(--bg-muted)] px-3.5 py-2 text-[var(--navy)]">
-              My timeline
-            </span>
             <Link
-              href={`/dashboard/${userId}/edit-milestone`}
+              href={`/dashboard/${userId}`}
               className="rounded-[9px] px-3.5 py-2 text-[var(--muted)] transition-[var(--ease)] hover:text-[var(--navy)]"
             >
-              Edit milestones
+              My timeline
             </Link>
+            <span className="rounded-[9px] bg-[var(--bg-muted)] px-3.5 py-2 text-[var(--navy)]">
+              Edit milestones
+            </span>
           </nav>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[var(--max)] px-[22px] pt-6 pb-[80px]">
-        <DashboardPage data={data} />
+      <main className="mx-auto max-w-[var(--max)] px-[22px] pt-8 pb-[100px]">
+        <EditMilestonesPage data={data} />
       </main>
     </div>
   );

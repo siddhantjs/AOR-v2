@@ -10,8 +10,16 @@ import {
 } from "@/lib/schema/constants";
 import type { MilestoneEstimate } from "@/lib/schema/types";
 import { formatEstimateRange } from "@/lib/estimateFormat";
+import {
+  emptyMilestonesFormState,
+  type MilestoneEntry,
+  type MilestonesFormState,
+} from "@/lib/milestonesForm";
 import { DashboardDatePicker, Select } from "@/components/ui";
 import type { ApplicationFormValues } from "./ApplicationDetailsCard";
+
+export type { MilestoneEntry, MilestonesFormState };
+export { emptyMilestonesFormState };
 
 const SECTION_LABELS: Record<MilestoneSection, string> = {
   biometrics: "Biometrics",
@@ -23,17 +31,6 @@ const SECTION_LABELS: Record<MilestoneSection, string> = {
 const OFFICE_OPTIONS: { value: VisaOffice; label: string }[] = OFFICE_LIST.map(
   (o) => ({ value: o, label: o }),
 );
-
-export type MilestoneEntry = {
-  done: boolean;
-  date: string;
-};
-
-export type MilestonesFormState = {
-  milestones: Record<MilestoneId, MilestoneEntry>;
-  primaryVisaOffice: VisaOffice | "";
-  secondaryVisaOffice: VisaOffice | "";
-};
 
 function todayIso(): string {
   const d = new Date();
@@ -47,12 +44,6 @@ function dayAfterIso(iso: string): string {
   const dt = new Date(y, m, d);
   dt.setDate(dt.getDate() + 1);
   return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
-}
-
-function initialMilestones(): Record<MilestoneId, MilestoneEntry> {
-  return Object.fromEntries(
-    MILESTONES.map((m) => [m.id, { done: false, date: "" }]),
-  ) as Record<MilestoneId, MilestoneEntry>;
 }
 
 function needsOf(id: MilestoneId): MilestoneId | null {
@@ -150,6 +141,9 @@ type MilestonesStepProps = {
   application: ApplicationFormValues;
   estimates?: MilestoneEstimate[];
   estimateNotice?: string | null;
+  /** Prefill when editing an existing timeline. */
+  initialState?: MilestonesFormState;
+  backLabel?: string;
   onBack: () => void;
   onSubmit: (state: MilestonesFormState) => void | Promise<void>;
 };
@@ -158,14 +152,14 @@ export function MilestonesStep({
   application,
   estimates = [],
   estimateNotice = null,
+  initialState,
+  backLabel = "Back",
   onBack,
   onSubmit,
 }: MilestonesStepProps) {
-  const [state, setState] = useState<MilestonesFormState>(() => ({
-    milestones: initialMilestones(),
-    primaryVisaOffice: "",
-    secondaryVisaOffice: "",
-  }));
+  const [state, setState] = useState<MilestonesFormState>(
+    () => initialState ?? emptyMilestonesFormState(),
+  );
   const [errors, setErrors] = useState<Partial<Record<MilestoneId, string>>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -357,7 +351,7 @@ export function MilestonesStep({
             >
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
-            Back
+            {backLabel}
           </button>
 
           <div className="w-[170px]">
