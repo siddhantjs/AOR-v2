@@ -4,15 +4,15 @@ import { GUIDE_URL, Kicker } from "./landingShared";
 const FAQ: { q: string; a: ReactNode }[] = [
   {
     q: "What exactly is a cohort group?",
-    a: "Everyone who received AOR in the same month, on the same stream (inland or outland). Because IRCC broadly processes files in intake order, your AOR-month cohort is the most meaningful comparison group there is. Enter your AOR date and you're in — no joining step.",
+    a: "Everyone who received AOR in the same month, on the same stream (inland or outland). Because IRCC broadly processes files in intake order, your AOR-month cohort is the most meaningful comparison group there is. Enter your AOR date and you're in - no joining step.",
   },
   {
     q: "Can I see other people's timelines?",
-    a: "Yes — every tracked application becomes an anonymous community timeline showing pathway, AOR month, and milestone days. Filter to your cohort to see exactly what statuses people around your AOR date are getting. Names, emails and application numbers are never shown.",
+    a: "Yes - every tracked application becomes an anonymous community timeline showing pathway, AOR month, and milestone days. Filter to your cohort to see exactly what statuses people around your AOR date are getting. Names, emails and application numbers are never shown.",
   },
   {
     q: "Do I have to join WhatsApp or Facebook to use the tracker?",
-    a: "No — the tracker is fully functional on its own. The communities are optional and free; most people join once their file hits the background-check stage and the questions start piling up.",
+    a: "No - the tracker is fully functional on its own. The communities are optional and free; most people join once their file hits the background-check stage and the questions start piling up.",
   },
   {
     q: "Does this connect to my IRCC account?",
@@ -37,7 +37,7 @@ const FAQ: { q: string; a: ReactNode }[] = [
     a: (
       <>
         Community medians from tracked timelines with your pathway and stream. They&apos;re reference
-        points, not IRCC promises — official standards (like the 6-month Express Entry standard) live
+        points, not IRCC promises - official standards (like the 6-month Express Entry standard) live
         on canada.ca, and our{" "}
         <a
           href={GUIDE_URL}
@@ -55,7 +55,7 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: "Is it really free?",
     a: (
       <>
-        Yes — free forever, no card, no signup to start. It&apos;s a community tool from GetNorthPath.
+        Yes - free forever, no card, no signup to start. It&apos;s a community tool from GetNorthPath.
         If you&apos;re still <em>before</em> AOR, our{" "}
         <a
           href="https://www.getnorthpath.com/pathways"

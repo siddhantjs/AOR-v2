@@ -27,7 +27,7 @@ export function CheckList({ items }: { items: { title: string; body: string }[] 
             <LuCheck size={16} strokeWidth={2.5} />
           </span>
           <span>
-            <b className="font-semibold text-ink">{item.title}</b> — {item.body}
+            <b className="font-semibold text-ink">{item.title}</b>: {item.body}
           </span>
         </li>
       ))}

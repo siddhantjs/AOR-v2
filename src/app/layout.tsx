@@ -22,7 +22,7 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Canada PR Milestone Tracker — Cohort Groups & Community Timelines | AORTrack",
+  title: "Canada PR Milestone Tracker - Cohort Groups & Community Timelines | AORTrack",
   description:
     "Track every PR milestone from AOR to PR card, join your AOR-month cohort, browse real community timelines, and connect on WhatsApp & Facebook. Free.",
 };

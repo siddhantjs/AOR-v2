@@ -15,7 +15,7 @@ export function LandingFooter() {
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-xs">
-              The free community tracker from GetNorthPath — precision immigration for the modern age.
+              The free community tracker from GetNorthPath - precision immigration for the modern age.
             </p>
           </div>
           <div>
@@ -92,7 +92,7 @@ export function LandingFooter() {
               rel="noopener noreferrer"
               className="block py-1 hover:text-white"
             >
-              IRCC — canada.ca
+              IRCC - canada.ca
             </a>
           </div>
         </div>

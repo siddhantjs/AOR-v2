@@ -12,7 +12,7 @@ export function LandingHowItWorks() {
           </h2>
           <p className="text-base text-muted">
             No account, no GCKey, no application number. You check your status in your own IRCC
-            account — this is where you make sense of it.
+            account - this is where you make sense of it.
           </p>
         </div>
         <div className="grid max-w-4xl gap-5 md:grid-cols-2">
@@ -49,7 +49,7 @@ export function LandingHowItWorks() {
             <h3 className="mb-2 text-base font-extrabold text-navy">Your milestones</h3>
             <p className="text-sm text-muted">
               Tick milestones as they appear in your IRCC account. Your dashboard tracks days since
-              AOR, journey progress, your expected decision window and what&apos;s next — while your
+              AOR, journey progress, your expected decision window and what&apos;s next - while your
               cohort view updates live.
             </p>
             <div

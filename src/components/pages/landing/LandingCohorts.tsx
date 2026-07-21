@@ -89,7 +89,7 @@ export function LandingCohorts() {
               <em className="text-red not-italic sm:italic">See exactly what it&apos;s getting.</em>
             </h2>
             <p className="mb-3.5 text-sm text-muted">
-              IRCC broadly works through files in intake order — so the only comparison that means
+              IRCC broadly works through files in intake order - so the only comparison that means
               anything is people who got AOR the same month as you, on the same stream. The moment you
               enter your AOR date, you&apos;re placed in that cohort automatically.
             </p>
@@ -101,7 +101,7 @@ export function LandingCohorts() {
                 },
                 {
                   title: "Your position, pinned",
-                  body: "instantly see if you're ahead of, level with, or behind the pack — and by how many milestones.",
+                  body: "instantly see if you're ahead of, level with, or behind the pack - and by how many milestones.",
                 },
                 {
                   title: "Browse any month",

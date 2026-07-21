@@ -16,7 +16,7 @@ export function LandingCta() {
           something you can actually see moving.
         </p>
         <Button href="/track" arrow>
-          Track my PR — free
+          Track my PR - free
         </Button>
         <p className="mt-4 text-xs font-semibold text-white/45">
           New to the process? Read the{" "}

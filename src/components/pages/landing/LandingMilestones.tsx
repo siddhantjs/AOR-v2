@@ -15,7 +15,7 @@ export function LandingMilestones() {
             <p className="mb-3.5 text-sm text-muted">
               Your IRCC account tells you a status changed. Our checklist tells you whether
               that&apos;s early, on time, or worth a follow-up. Every milestone carries a typical-day
-              marker — the community median for files with your exact pathway and stream.
+              marker - the community median for files with your exact pathway and stream.
             </p>
             <CheckList
               items={[
@@ -84,7 +84,7 @@ export function LandingMilestones() {
               {
                 d: false,
                 t: "Final decision",
-                s: "Approved — then portal emails",
+                s: "Approved - then portal emails",
                 typ: "typ ~day 125",
               },
             ].map((m) => (

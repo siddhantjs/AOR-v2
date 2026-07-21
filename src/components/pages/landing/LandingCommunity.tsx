@@ -31,7 +31,7 @@ export function LandingCommunity() {
           </h2>
           <p className="text-base text-muted">
             Numbers tell you where your file is. The community tells you what it felt like, what to do
-            next, and celebrates with you when the golden email lands. Join free — the tracker works
+            next, and celebrates with you when the golden email lands. Join free - the tracker works
             fully without it, but it&apos;s better with it.
           </p>
         </div>
@@ -43,12 +43,12 @@ export function LandingCommunity() {
             </span>
             <h3 className="mb-2 text-xl font-extrabold text-white">WhatsApp cohort groups</h3>
             <p className="mb-4 max-w-sm text-sm text-white/80">
-              Fast-moving groups organized by AOR month — the same people you&apos;re grouped with in
+              Fast-moving groups organized by AOR month - the same people you&apos;re grouped with in
               the tracker, talking in real time.
             </p>
             <Bubbles
               messages={[
-                { label: "Mar 2026 · Inland", text: 'BGC just flipped to "In progress" — day 64! 🙌' },
+                { label: "Mar 2026 · Inland", text: 'BGC just flipped to "In progress" - day 64! 🙌' },
                 {
                   label: "Mar 2026 · Inland",
                   text: "Anyone else's medical still pending after day 70?",
@@ -87,7 +87,7 @@ export function LandingCommunity() {
             </span>
             <h3 className="mb-2 text-xl font-extrabold text-white">Facebook community</h3>
             <p className="mb-4 max-w-sm text-sm text-white/80">
-              The slower, searchable side — detailed timeline posts, stage-by-stage guides from
+              The slower, searchable side - detailed timeline posts, stage-by-stage guides from
               members, and threads you can find months later.
             </p>
             <Bubbles
@@ -99,7 +99,7 @@ export function LandingCommunity() {
                 { label: "Guide", text: 'What "info sharing completed" looked like on my tracker' },
                 {
                   label: "Milestone",
-                  text: "eCOPR after 11 months outland FSW — don't lose hope!",
+                  text: "eCOPR after 11 months outland FSW - don't lose hope!",
                 },
               ]}
             />

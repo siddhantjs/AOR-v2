@@ -126,7 +126,7 @@ export function LandingHero() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Button href="/track" arrow>
-              Track my PR — free
+              Track my PR - free
             </Button>
             <Button href="#cohorts" variant="ghost">
               See cohort groups

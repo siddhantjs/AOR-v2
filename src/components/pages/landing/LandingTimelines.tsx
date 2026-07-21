@@ -148,7 +148,7 @@ export function LandingTimelines() {
           <div>
             <Kicker>Community timelines</Kicker>
             <h2 className="mt-2 mb-3.5 text-2xl font-extrabold text-navy sm:text-3xl">
-              Real applicants, real timelines —{" "}
+              Real applicants, real timelines  - {" "}
               <em className="text-red not-italic sm:italic">anonymous, always.</em>
             </h2>
             <p className="mb-3.5 text-sm text-muted">
