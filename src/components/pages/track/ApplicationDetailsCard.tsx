@@ -18,6 +18,7 @@ import {
   errorClass,
   hintClass,
   labelClass,
+  PageLoader,
   Select,
 } from "@/components/ui";
 
@@ -501,6 +502,7 @@ export function ApplicationDetailsCard({ onContinue, initialValues }: Applicatio
           </button>
         </div>
       </div>
+      <PageLoader open={submitting} message="Building your estimates…" />
     </div>
   );
 }

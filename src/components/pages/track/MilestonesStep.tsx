@@ -15,7 +15,7 @@ import {
   type MilestoneEntry,
   type MilestonesFormState,
 } from "@/lib/milestonesForm";
-import { DashboardDatePicker, Select } from "@/components/ui";
+import { DashboardDatePicker, PageLoader, Select } from "@/components/ui";
 import type { ApplicationFormValues } from "./ApplicationDetailsCard";
 
 export type { MilestoneEntry, MilestonesFormState };
@@ -541,6 +541,8 @@ export function MilestonesStep({
           {submitError}
         </p>
       ) : null}
+
+      <PageLoader open={submitting} message="Saving your timeline…" />
     </div>
   );
 }
