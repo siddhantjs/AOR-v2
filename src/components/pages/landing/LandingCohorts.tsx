@@ -41,27 +41,27 @@ function CohortBars() {
   return (
     <div
       ref={ref}
-      className="overflow-hidden rounded-2xl border border-border bg-bg-elevated shadow-md"
+      className="border-border bg-bg-elevated overflow-hidden rounded-2xl border shadow-md"
       aria-hidden
     >
-      <div className="flex items-center justify-between border-b border-border bg-bg-muted px-4 py-3">
-        <b className="text-sm font-extrabold text-navy">March 2026 cohort · Inland</b>
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-red-pale bg-red-pale px-2 py-0.5 text-xs text-red">
+      <div className="border-border bg-bg-muted flex items-center justify-between border-b px-4 py-3">
+        <b className="text-navy text-sm font-extrabold">March 2026 cohort · Inland</b>
+        <span className="border-red-pale bg-red-pale text-red inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs">
           ● YOU ARE HERE
         </span>
       </div>
       {COHORT_BARS.map((row) => (
         <div
           key={row.label}
-          className="flex items-center gap-3 border-b border-dashed border-border px-4 py-2.5 text-xs last:border-0"
+          className="border-border flex items-center gap-3 border-b border-dashed px-4 py-2.5 text-xs last:border-0"
         >
           <div className="w-36 shrink-0 font-semibold">
             {row.label}
             {"sub" in row && row.sub ? (
-              <small className="block text-xs font-medium text-muted2">{row.sub}</small>
+              <small className="text-muted2 block text-xs font-medium">{row.sub}</small>
             ) : null}
           </div>
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-bg-muted">
+          <div className="bg-bg-muted h-2 flex-1 overflow-hidden rounded-full">
             <i
               className={`block h-full rounded-full transition-all duration-1000 ease-out ${
                 "hl" in row && row.hl ? "bg-red" : "bg-navy"
@@ -69,7 +69,7 @@ function CohortBars() {
               style={{ width: on ? `${row.pct}%` : "0%" }}
             />
           </div>
-          <div className="w-11 shrink-0 text-right text-xs text-muted">{row.pct}%</div>
+          <div className="text-muted w-11 shrink-0 text-right text-xs">{row.pct}%</div>
         </div>
       ))}
     </div>
@@ -78,20 +78,20 @@ function CohortBars() {
 
 export function LandingCohorts() {
   return (
-    <section className="border-y border-border bg-bg-elevated py-20" id="cohorts">
+    <section className="border-border bg-bg-elevated border-y py-20" id="cohorts">
       <div className="wrap">
         <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-12">
           <CohortBars />
           <div>
             <Kicker>Cohort groups</Kicker>
-            <h2 className="mt-2 mb-3.5 text-2xl font-extrabold text-navy sm:text-3xl">
+            <h2 className="text-navy mt-2 mb-3.5 text-2xl font-extrabold sm:text-3xl">
               Your AOR month is your group.{" "}
               <em className="text-red not-italic sm:italic">See exactly what it&apos;s getting.</em>
             </h2>
-            <p className="mb-3.5 text-sm text-muted">
+            <p className="text-muted mb-3.5 text-sm">
               IRCC broadly works through files in intake order - so the only comparison that means
-              anything is people who got AOR the same month as you, on the same stream. The moment you
-              enter your AOR date, you&apos;re placed in that cohort automatically.
+              anything is people who got AOR the same month as you, on the same stream. The moment
+              you enter your AOR date, you&apos;re placed in that cohort automatically.
             </p>
             <CheckList
               items={[

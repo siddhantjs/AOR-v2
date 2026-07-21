@@ -35,7 +35,7 @@ export function LandingStrip() {
   ];
 
   return (
-    <div className="w-full bg-navy text-white">
+    <div className="bg-navy w-full text-white">
       <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-evenly gap-3 p-4 text-center">
         {stats.map((s) => (
           <div key={s.sub}>

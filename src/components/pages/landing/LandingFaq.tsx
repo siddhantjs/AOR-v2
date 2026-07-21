@@ -18,13 +18,13 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: "Does this connect to my IRCC account?",
     a: (
       <>
-        No, and be cautious of any tool that claims to. You check your status in your IRCC account or
-        the{" "}
+        No, and be cautious of any tool that claims to. You check your status in your IRCC account
+        or the{" "}
         <a
           href="https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-status.html"
           rel="noopener noreferrer"
           target="_blank"
-          className="font-semibold text-red"
+          className="text-red font-semibold"
         >
           official status tracker on canada.ca
         </a>
@@ -36,12 +36,12 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: 'Where do the "typical day" numbers come from?',
     a: (
       <>
-        Community medians from tracked timelines with your pathway and stream. They&apos;re reference
-        points, not IRCC promises - official standards (like the 6-month Express Entry standard) live
-        on canada.ca, and our{" "}
+        Community medians from tracked timelines with your pathway and stream. They&apos;re
+        reference points, not IRCC promises - official standards (like the 6-month Express Entry
+        standard) live on canada.ca, and our{" "}
         <a
           href={GUIDE_URL}
-          className="font-semibold text-red"
+          className="text-red font-semibold"
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -55,11 +55,11 @@ const FAQ: { q: string; a: ReactNode }[] = [
     q: "Is it really free?",
     a: (
       <>
-        Yes - free forever, no card, no signup to start. It&apos;s a community tool from GetNorthPath.
-        If you&apos;re still <em>before</em> AOR, our{" "}
+        Yes - free forever, no card, no signup to start. It&apos;s a community tool from
+        GetNorthPath. If you&apos;re still <em>before</em> AOR, our{" "}
         <a
           href="https://www.getnorthpath.com/pathways"
-          className="font-semibold text-red"
+          className="text-red font-semibold"
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -73,26 +73,26 @@ const FAQ: { q: string; a: ReactNode }[] = [
 
 export function LandingFaq() {
   return (
-    <section className="border-y border-border bg-bg-elevated py-20" id="faq">
+    <section className="border-border bg-bg-elevated border-y py-20" id="faq">
       <div className="wrap">
         <div className="mb-11 max-w-2xl">
           <Kicker>Common questions</Kicker>
-          <h2 className="mt-2 text-3xl font-extrabold text-navy sm:text-4xl">Before you start</h2>
+          <h2 className="text-navy mt-2 text-3xl font-extrabold sm:text-4xl">Before you start</h2>
         </div>
         <div className="max-w-3xl">
           {FAQ.map((item, i) => (
             <details
               key={item.q}
               open={i === 0}
-              className="group mb-2.5 rounded-xl border border-border bg-bg-elevated"
+              className="group border-border bg-bg-elevated mb-2.5 rounded-xl border"
             >
-              <summary className="display flex cursor-pointer list-none items-center justify-between gap-3.5 px-5 py-4 text-sm font-bold text-navy">
+              <summary className="display text-navy flex cursor-pointer list-none items-center justify-between gap-3.5 px-5 py-4 text-sm font-bold">
                 {item.q}
-                <span className="shrink-0 text-xl text-red transition-transform duration-200 group-open:rotate-45">
+                <span className="text-red shrink-0 text-xl transition-transform duration-200 group-open:rotate-45">
                   +
                 </span>
               </summary>
-              <div className="px-5 pb-4 text-sm text-muted">{item.a}</div>
+              <div className="text-muted px-5 pb-4 text-sm">{item.a}</div>
             </details>
           ))}
         </div>

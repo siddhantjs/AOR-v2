@@ -78,14 +78,14 @@ function TimelineCard({ item }: { item: (typeof FEED_ITEMS)[number] }) {
   const total = 12;
 
   return (
-    <div className="rounded-xl border border-border bg-bg-elevated p-4 shadow-md">
+    <div className="border-border bg-bg-elevated rounded-xl border p-4 shadow-md">
       <div className="mb-2.5 flex items-center gap-2.5">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-navy text-xs font-extrabold text-white">
+        <span className="bg-navy flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white">
           {item.av}
         </span>
         <span className="min-w-0">
-          <b className="block text-xs font-extrabold text-navy">{item.who}</b>
-          <small className="text-xs text-muted2">{item.meta}</small>
+          <b className="text-navy block text-xs font-extrabold">{item.who}</b>
+          <small className="text-muted2 text-xs">{item.meta}</small>
         </span>
         <span className={`ml-auto rounded-md px-2 py-0.5 text-xs font-semibold ${badgeClass}`}>
           {item.text}
@@ -117,7 +117,7 @@ function TimelineCard({ item }: { item: (typeof FEED_ITEMS)[number] }) {
           );
         })}
       </div>
-      <div className="mt-1.5 flex justify-between text-xs text-muted2">
+      <div className="text-muted2 mt-1.5 flex justify-between text-xs">
         <span>AOR</span>
         <span>PR CARD</span>
       </div>
@@ -129,9 +129,9 @@ function TimelineFeed() {
   const items = [...FEED_ITEMS, ...FEED_ITEMS];
   return (
     <div className="relative h-96 overflow-hidden rounded-2xl" aria-hidden>
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-14 bg-gradient-to-b from-bg-muted to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-14 bg-gradient-to-t from-bg-muted to-transparent" />
-      <div className="flex animate-landing-feed flex-col gap-3 motion-reduce:animate-none">
+      <div className="from-bg-muted pointer-events-none absolute inset-x-0 top-0 z-10 h-14 bg-gradient-to-b to-transparent" />
+      <div className="from-bg-muted pointer-events-none absolute inset-x-0 bottom-0 z-10 h-14 bg-gradient-to-t to-transparent" />
+      <div className="animate-landing-feed flex flex-col gap-3 motion-reduce:animate-none">
         {items.map((item, i) => (
           <TimelineCard key={`${item.who}-${i}`} item={item} />
         ))}
@@ -147,11 +147,11 @@ export function LandingTimelines() {
         <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-12">
           <div>
             <Kicker>Community timelines</Kicker>
-            <h2 className="mt-2 mb-3.5 text-2xl font-extrabold text-navy sm:text-3xl">
-              Real applicants, real timelines  - {" "}
+            <h2 className="text-navy mt-2 mb-3.5 text-2xl font-extrabold sm:text-3xl">
+              Real applicants, real timelines -{" "}
               <em className="text-red not-italic sm:italic">anonymous, always.</em>
             </h2>
-            <p className="mb-3.5 text-sm text-muted">
+            <p className="text-muted mb-3.5 text-sm">
               Every person who tracks their PR with GetNorthPath adds one more anonymous timeline to
               the community. Scroll the live feed to see who just got a PPR, whose background check
               just started, and how long each stage really took for files like yours.

@@ -12,7 +12,7 @@ export function CheckIcon({ className = "size-4 shrink-0" }: { className?: strin
 
 export function Kicker({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <span className={`text-xs font-bold tracking-widest text-red uppercase ${className}`}>
+    <span className={`text-red text-xs font-bold tracking-widest uppercase ${className}`}>
       {children}
     </span>
   );
@@ -22,12 +22,12 @@ export function CheckList({ items }: { items: { title: string; body: string }[] 
   return (
     <ul className="my-4 list-none space-y-0 p-0">
       {items.map((item) => (
-        <li key={item.title} className="flex gap-2.5 py-1.5 text-sm text-muted">
-          <span className="mt-0.5 shrink-0 text-green" aria-hidden>
+        <li key={item.title} className="text-muted flex gap-2.5 py-1.5 text-sm">
+          <span className="text-green mt-0.5 shrink-0" aria-hidden>
             <LuCheck size={16} strokeWidth={2.5} />
           </span>
           <span>
-            <b className="font-semibold text-ink">{item.title}</b>: {item.body}
+            <b className="text-ink font-semibold">{item.title}</b>: {item.body}
           </span>
         </li>
       ))}

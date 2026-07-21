@@ -14,7 +14,7 @@ import {
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-bg-muted text-ink">
+    <div className="bg-bg-muted text-ink min-h-screen">
       <LandingHeader />
       <LandingHero />
       <LandingStrip />

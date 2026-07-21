@@ -5,11 +5,11 @@ import { GUIDE_URL } from "./landingShared";
 
 export function LandingHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-bg-elevated">
-      <div className="w-full p-8 flex h-16 items-center gap-2.5">
+    <header className="border-border bg-bg-elevated sticky top-0 z-50 border-b">
+      <div className="flex h-16 w-full items-center gap-2.5 p-8">
         <Link href="/" className="flex items-center gap-2">
           <LogoMark />
-          <span className="display text-lg font-extrabold tracking-tight text-navy">
+          <span className="display text-navy text-lg font-extrabold tracking-tight">
             AOR<span className="text-red">Track</span>
           </span>
         </Link>
@@ -24,7 +24,7 @@ export function LandingHeader() {
             <a
               key={href}
               href={href}
-              className="rounded-lg px-3 py-2 text-sm font-semibold text-muted transition hover:bg-bg-muted hover:text-ink"
+              className="text-muted hover:bg-bg-muted hover:text-ink rounded-lg px-3 py-2 text-sm font-semibold transition"
             >
               {label}
             </a>
@@ -33,12 +33,16 @@ export function LandingHeader() {
             href={GUIDE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-muted transition hover:bg-bg-muted hover:text-ink"
+            className="text-muted hover:bg-bg-muted hover:text-ink rounded-lg px-3 py-2 text-sm font-semibold transition"
           >
             Guide
           </a>
         </nav>
-        <Button href="/login" size="sm" className="border-navy bg-transparent text-navy hover:bg-bg-muted hover:scale-105 hover:border-red hover:text-red">
+        <Button
+          href="/login"
+          size="sm"
+          className="border-navy text-navy hover:bg-bg-muted hover:border-red hover:text-red bg-transparent hover:scale-105"
+        >
           Sign in
         </Button>
         <Button href="/track" size="sm">

@@ -8,7 +8,7 @@ function Bubbles({ messages }: { messages: { label: string; text: string }[] }) 
       {messages.map((m, i) => (
         <div
           key={m.text}
-          className="absolute left-0 animate-landing-bub rounded-xl rounded-bl-sm border border-white/15 bg-white/15 px-3 py-2 text-xs text-white backdrop-blur-sm"
+          className="animate-landing-bub absolute left-0 rounded-xl rounded-bl-sm border border-white/15 bg-white/15 px-3 py-2 text-xs text-white backdrop-blur-sm"
           style={{ animationDelay: `${i * 4}s` }}
         >
           <b className="mb-0.5 block text-xs font-semibold opacity-75">{m.label}</b>
@@ -21,18 +21,18 @@ function Bubbles({ messages }: { messages: { label: string; text: string }[] }) 
 
 export function LandingCommunity() {
   return (
-    <section className="border-y border-border bg-bg-elevated py-20" id="community">
+    <section className="border-border bg-bg-elevated border-y py-20" id="community">
       <div className="wrap">
         <div className="mb-11 max-w-2xl">
           <Kicker>Beyond the dashboard</Kicker>
-          <h2 className="mt-2 mb-3 text-3xl font-extrabold text-navy sm:text-4xl">
+          <h2 className="text-navy mt-2 mb-3 text-3xl font-extrabold sm:text-4xl">
             The wait is easier with{" "}
             <em className="text-red not-italic sm:italic">people in it with you.</em>
           </h2>
-          <p className="text-base text-muted">
-            Numbers tell you where your file is. The community tells you what it felt like, what to do
-            next, and celebrates with you when the golden email lands. Join free - the tracker works
-            fully without it, but it&apos;s better with it.
+          <p className="text-muted text-base">
+            Numbers tell you where your file is. The community tells you what it felt like, what to
+            do next, and celebrates with you when the golden email lands. Join free - the tracker
+            works fully without it, but it&apos;s better with it.
           </p>
         </div>
         <div className="grid gap-5 md:grid-cols-2">
@@ -43,12 +43,15 @@ export function LandingCommunity() {
             </span>
             <h3 className="mb-2 text-xl font-extrabold text-white">WhatsApp cohort groups</h3>
             <p className="mb-4 max-w-sm text-sm text-white/80">
-              Fast-moving groups organized by AOR month - the same people you&apos;re grouped with in
-              the tracker, talking in real time.
+              Fast-moving groups organized by AOR month - the same people you&apos;re grouped with
+              in the tracker, talking in real time.
             </p>
             <Bubbles
               messages={[
-                { label: "Mar 2026 · Inland", text: 'BGC just flipped to "In progress" - day 64! 🙌' },
+                {
+                  label: "Mar 2026 · Inland",
+                  text: 'BGC just flipped to "In progress" - day 64! 🙌',
+                },
                 {
                   label: "Mar 2026 · Inland",
                   text: "Anyone else's medical still pending after day 70?",
@@ -74,7 +77,7 @@ export function LandingCommunity() {
               arrow
               target="_blank"
               rel="noopener noreferrer"
-              className="relative z-10 self-start text-green"
+              className="text-green relative z-10 self-start"
             >
               Join on WhatsApp
             </Button>
@@ -121,7 +124,7 @@ export function LandingCommunity() {
               arrow
               target="_blank"
               rel="noopener noreferrer"
-              className="relative z-10 self-start text-blue"
+              className="text-blue relative z-10 self-start"
             >
               Join on Facebook
             </Button>

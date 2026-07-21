@@ -8,14 +8,15 @@ export function LandingMilestones() {
         <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-12">
           <div>
             <Kicker>Milestone tracking</Kicker>
-            <h2 className="mt-2 mb-3.5 text-2xl font-extrabold tracking-tight text-navy sm:text-3xl">
+            <h2 className="text-navy mt-2 mb-3.5 text-2xl font-extrabold tracking-tight sm:text-3xl">
               One tap per milestone.{" "}
               <em className="text-red not-italic sm:italic">Context on every single one.</em>
             </h2>
-            <p className="mb-3.5 text-sm text-muted">
+            <p className="text-muted mb-3.5 text-sm">
               Your IRCC account tells you a status changed. Our checklist tells you whether
-              that&apos;s early, on time, or worth a follow-up. Every milestone carries a typical-day
-              marker - the community median for files with your exact pathway and stream.
+              that&apos;s early, on time, or worth a follow-up. Every milestone carries a
+              typical-day marker - the community median for files with your exact pathway and
+              stream.
             </p>
             <CheckList
               items={[
@@ -46,22 +47,32 @@ export function LandingMilestones() {
             </Button>
           </div>
           <div
-            className="overflow-hidden rounded-2xl border border-border bg-bg-elevated shadow-md"
+            className="border-border bg-bg-elevated overflow-hidden rounded-2xl border shadow-md"
             aria-hidden
           >
-            <div className="flex items-center justify-between border-b border-border bg-bg-muted px-4 py-3">
-              <b className="text-sm font-extrabold text-navy">CEC · Inland · AOR Mar 14, 2026</b>
-              <span className="text-xs text-muted2">Day 128</span>
+            <div className="border-border bg-bg-muted flex items-center justify-between border-b px-4 py-3">
+              <b className="text-navy text-sm font-extrabold">CEC · Inland · AOR Mar 14, 2026</b>
+              <span className="text-muted2 text-xs">Day 128</span>
             </div>
             {[
-              { d: true, t: "Biometrics letter (BIL)", s: "Received Mar 29", typ: "day 15 · typ ~14" },
+              {
+                d: true,
+                t: "Biometrics letter (BIL)",
+                s: "Received Mar 29",
+                typ: "day 15 · typ ~14",
+              },
               {
                 d: true,
                 t: "Biometrics completed",
                 s: "Done Apr 8 at Service Canada",
                 typ: "day 25 · typ ~26",
               },
-              { d: true, t: "Medical passed", s: '"Results received" May 12', typ: "day 59 · typ ~58" },
+              {
+                d: true,
+                t: "Medical passed",
+                s: '"Results received" May 12',
+                typ: "day 59 · typ ~58",
+              },
               {
                 d: true,
                 t: "Background check started",
@@ -90,27 +101,25 @@ export function LandingMilestones() {
             ].map((m) => (
               <div
                 key={m.t}
-                className="flex gap-3 border-b border-dashed border-border px-4 py-3 text-sm last:border-0"
+                className="border-border flex gap-3 border-b border-dashed px-4 py-3 text-sm last:border-0"
               >
                 <span
                   className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border-2 ${
                     m.d ? "border-green bg-green" : "border-border2 bg-bg-elevated"
                   }`}
                 >
-                  <CheckIcon
-                    className={`size-3 text-white ${m.d ? "opacity-100" : "opacity-0"}`}
-                  />
+                  <CheckIcon className={`size-3 text-white ${m.d ? "opacity-100" : "opacity-0"}`} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <b className="text-sm font-bold">
                     {m.t}
                     {m.tag ? (
-                      <span className="ml-1.5 rounded bg-abg px-1.5 py-0.5 text-xs font-semibold text-amber">
+                      <span className="bg-abg text-amber ml-1.5 rounded px-1.5 py-0.5 text-xs font-semibold">
                         SELF-REPORTED
                       </span>
                     ) : null}
                   </b>
-                  <small className="mt-0.5 block text-xs text-muted2">{m.s}</small>
+                  <small className="text-muted2 mt-0.5 block text-xs">{m.s}</small>
                 </div>
                 <span
                   className={`shrink-0 text-xs whitespace-nowrap ${m.d ? "text-green" : "text-muted2"}`}

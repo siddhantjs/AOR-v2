@@ -4,7 +4,7 @@ import { DISCORD_URL, FACEBOOK_URL, GUIDE_URL, WHATSAPP_URL } from "./landingSha
 
 export function LandingFooter() {
   return (
-    <footer className="border-t border-white/10 bg-navy3 px-0 pt-11 pb-8 text-sm text-white/55">
+    <footer className="bg-navy3 border-t border-white/10 px-0 pt-11 pb-8 text-sm text-white/55">
       <div className="wrap">
         <div className="mb-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -15,7 +15,8 @@ export function LandingFooter() {
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-xs">
-              The free community tracker from GetNorthPath - precision immigration for the modern age.
+              The free community tracker from GetNorthPath - precision immigration for the modern
+              age.
             </p>
           </div>
           <div>
@@ -69,7 +70,9 @@ export function LandingFooter() {
             </a>
           </div>
           <div>
-            <h4 className="mb-3 text-xs tracking-wider text-white/80 uppercase">Official sources</h4>
+            <h4 className="mb-3 text-xs tracking-wider text-white/80 uppercase">
+              Official sources
+            </h4>
             <a
               href="https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-status.html"
               target="_blank"

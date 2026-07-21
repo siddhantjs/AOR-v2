@@ -3,7 +3,7 @@ import { GUIDE_URL, Kicker } from "./landingShared";
 
 export function LandingCta() {
   return (
-    <section className="relative overflow-hidden bg-navy3 py-20 text-white">
+    <section className="bg-navy3 relative overflow-hidden py-20 text-white">
       <div aria-hidden className="landing-band-glow" />
       <div className="wrap relative z-10 text-center">
         <Kicker className="text-red">Free · 2 steps · your cohort is waiting</Kicker>

@@ -37,21 +37,21 @@ function HeroDemo() {
 
   return (
     <div
-      className="landing-demo-shadow overflow-hidden rounded-2xl bg-bg-elevated text-ink"
+      className="landing-demo-shadow bg-bg-elevated text-ink overflow-hidden rounded-2xl"
       aria-hidden
     >
-      <div className="flex items-center gap-1.5 border-b border-border bg-bg-muted px-4 py-2.5">
-        <i className="size-2.5 rounded-full bg-red" />
-        <i className="size-2.5 rounded-full bg-green" />
-        <i className="size-2.5 rounded-full bg-border2" />
-        <span className="ml-2 text-xs text-muted2">aortrack.app</span>
+      <div className="border-border bg-bg-muted flex items-center gap-1.5 border-b px-4 py-2.5">
+        <i className="bg-red size-2.5 rounded-full" />
+        <i className="bg-green size-2.5 rounded-full" />
+        <i className="bg-border2 size-2.5 rounded-full" />
+        <span className="text-muted2 ml-2 text-xs">aortrack.app</span>
       </div>
       <div className="px-5 py-4">
         <div className="mb-4 flex gap-1.5">
-          <span className="rounded-lg border border-red-pale bg-red-pale px-3 py-1.5 text-xs font-bold text-red">
+          <span className="border-red-pale bg-red-pale text-red rounded-lg border px-3 py-1.5 text-xs font-bold">
             My milestones
           </span>
-          <span className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-muted2">
+          <span className="border-border text-muted2 rounded-lg border px-3 py-1.5 text-xs font-bold">
             My cohort · Mar 2026
           </span>
         </div>
@@ -61,7 +61,7 @@ function HeroDemo() {
           return (
             <div
               key={row.label}
-              className={`flex items-center gap-2.5 border-b border-dashed border-border py-2 transition-opacity duration-500 last:border-0 ${
+              className={`border-border flex items-center gap-2.5 border-b border-dashed py-2 transition-opacity duration-500 last:border-0 ${
                 hit || now ? "opacity-100" : "opacity-35"
               }`}
             >
@@ -70,24 +70,22 @@ function HeroDemo() {
                   hit
                     ? "border-green bg-green"
                     : now
-                      ? "animate-landing-spin-border border-dashed border-red bg-bg-elevated"
+                      ? "animate-landing-spin-border border-red bg-bg-elevated border-dashed"
                       : "border-border2 bg-bg-elevated"
                 }`}
               >
-                <CheckIcon
-                  className={`size-3 text-white ${hit ? "opacity-100" : "opacity-0"}`}
-                />
+                <CheckIcon className={`size-3 text-white ${hit ? "opacity-100" : "opacity-0"}`} />
               </span>
               <span className={`flex-1 text-xs font-semibold ${now ? "text-red" : ""}`}>
                 {row.label}
               </span>
-              <span className="text-xs text-muted2">{row.co}</span>
+              <span className="text-muted2 text-xs">{row.co}</span>
             </div>
           );
         })}
-        <div className="mt-3.5 flex items-center gap-2 rounded-lg border border-border bg-bg-muted px-3.5 py-2.5 text-xs text-muted">
+        <div className="border-border bg-bg-muted text-muted mt-3.5 flex items-center gap-2 rounded-lg border px-3.5 py-2.5 text-xs">
           <span>
-            You&apos;re <b className="font-semibold text-red">{pace}</b> with your AOR-month group
+            You&apos;re <b className="text-red font-semibold">{pace}</b> with your AOR-month group
           </span>
           <span className="ml-auto flex gap-0.5">
             {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -107,12 +105,12 @@ function HeroDemo() {
 
 export function LandingHero() {
   return (
-    <section className="relative overflow-hidden bg-navy3 text-white">
+    <section className="bg-navy3 relative overflow-hidden text-white">
       <div aria-hidden className="landing-hero-glow" />
       <div className="wrap relative z-10 grid items-center gap-10 pt-14 pb-16 lg:grid-cols-2 lg:gap-12">
         <div>
           <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white/80">
-            <span className="size-1.5 animate-landing-dot-pulse rounded-full bg-green" />
+            <span className="animate-landing-dot-pulse bg-green size-1.5 rounded-full" />
             Free · every PR pathway · inland &amp; outland
           </span>
           <h1 className="text-4xl leading-tight font-extrabold tracking-tight text-white sm:text-5xl">
@@ -139,7 +137,7 @@ export function LandingHero() {
               "Timelines are always anonymous",
             ].map((t) => (
               <span key={t} className="flex items-center gap-1.5">
-                <CheckIcon className="size-4 text-green" />
+                <CheckIcon className="text-green size-4" />
                 {t}
               </span>
             ))}

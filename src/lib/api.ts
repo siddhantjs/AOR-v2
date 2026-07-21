@@ -75,10 +75,7 @@ function apiErrorMessage(err: unknown, fallback: string): string {
 export class ApiClient {
   private http: AxiosInstance;
 
-
-  constructor(
-    baseURL = `${API_URL}${API_PREFIX}`,
-  ) {
+  constructor(baseURL = `${API_URL}${API_PREFIX}`) {
     this.http = axios.create({
       baseURL,
       headers: { "Content-Type": "application/json" },
@@ -175,9 +172,7 @@ export class ApiClient {
 
   async getAllCohorts(userId: string): Promise<AllCohortsPageData> {
     try {
-      const { data } = await this.http.get<AllCohortsPageData>(
-        `/dashboard/${userId}/all-cohorts`,
-      );
+      const { data } = await this.http.get<AllCohortsPageData>(`/dashboard/${userId}/all-cohorts`);
       return data;
     } catch (err) {
       throw new Error(apiErrorMessage(err, "Could not load cohorts."));

@@ -22,17 +22,17 @@ npm run dev   # Next :3000
 
 ### API contract (`/api/aor-track/v1`)
 
-| Method | Path | Notes |
-|--------|------|--------|
-| POST | `/api/aor-track/v1/auth/login` | email + username → `/dashboard/[userId]` |
-| GET | `/api/aor-track/v1/username/check?username=` | unique among live users (`seededData: false`) |
-| POST | `/api/aor-track/v1/track/start` | create user + cohort + AI estimates |
-| POST | `/api/aor-track/v1/track/submit` | save milestones / offices, re-estimate |
-| POST | `/api/aor-track/v1/dashboard/:userId/details` | update applicant details |
-| GET | `/api/aor-track/v1/dashboard/:userId` | dashboard view |
-| GET | `/api/aor-track/v1/dashboard/:userId/edit-milestone` | edit milestones payload |
-| GET | `/api/aor-track/v1/dashboard/:userId/cohort` | cohort page (`?c=`) |
-| GET | `/api/aor-track/v1/dashboard/:userId/all-cohorts` | all cohorts |
+| Method | Path                                                 | Notes                                         |
+| ------ | ---------------------------------------------------- | --------------------------------------------- |
+| POST   | `/api/aor-track/v1/auth/login`                       | email + username → `/dashboard/[userId]`      |
+| GET    | `/api/aor-track/v1/username/check?username=`         | unique among live users (`seededData: false`) |
+| POST   | `/api/aor-track/v1/track/start`                      | create user + cohort + AI estimates           |
+| POST   | `/api/aor-track/v1/track/submit`                     | save milestones / offices, re-estimate        |
+| POST   | `/api/aor-track/v1/dashboard/:userId/details`        | update applicant details                      |
+| GET    | `/api/aor-track/v1/dashboard/:userId`                | dashboard view                                |
+| GET    | `/api/aor-track/v1/dashboard/:userId/edit-milestone` | edit milestones payload                       |
+| GET    | `/api/aor-track/v1/dashboard/:userId/cohort`         | cohort page (`?c=`)                           |
+| GET    | `/api/aor-track/v1/dashboard/:userId/all-cohorts`    | all cohorts                                   |
 
 ## Component structure
 
