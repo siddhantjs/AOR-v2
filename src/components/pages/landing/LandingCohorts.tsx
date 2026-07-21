@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { LuCircle } from "react-icons/lu";
 import { Button } from "@/components/ui";
 import { CheckList, Kicker } from "./landingShared";
 
@@ -47,7 +48,8 @@ function CohortBars() {
       <div className="border-border bg-bg-muted flex items-center justify-between border-b px-4 py-3">
         <b className="text-navy text-sm font-extrabold">March 2026 cohort · Inland</b>
         <span className="border-red-pale bg-red-pale text-red inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs">
-          ● YOU ARE HERE
+          <LuCircle className="size-2.5 fill-current" aria-hidden />
+          YOU ARE HERE
         </span>
       </div>
       {COHORT_BARS.map((row) => (

@@ -1,8 +1,15 @@
 import { FaFacebookF, FaWhatsapp } from "react-icons/fa";
+import { LuFlag, LuPartyPopper } from "react-icons/lu";
 import { Button } from "@/components/ui";
 import { CheckIcon, FACEBOOK_URL, Kicker, WHATSAPP_URL } from "./landingShared";
 
-function Bubbles({ messages }: { messages: { label: string; text: string }[] }) {
+type BubbleMessage = {
+  label: string;
+  text: string;
+  icon?: "party" | "flag";
+};
+
+function Bubbles({ messages }: { messages: BubbleMessage[] }) {
   return (
     <div className="relative my-1 mb-5 min-h-24">
       {messages.map((m, i) => (
@@ -12,7 +19,15 @@ function Bubbles({ messages }: { messages: { label: string; text: string }[] }) 
           style={{ animationDelay: `${i * 4}s` }}
         >
           <b className="mb-0.5 block text-xs font-semibold opacity-75">{m.label}</b>
-          {m.text}
+          <span className="inline-flex items-start gap-1.5">
+            <span>{m.text}</span>
+            {m.icon === "party" ? (
+              <LuPartyPopper className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+            ) : null}
+            {m.icon === "flag" ? (
+              <LuFlag className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+            ) : null}
+          </span>
         </div>
       ))}
     </div>
@@ -50,13 +65,18 @@ export function LandingCommunity() {
               messages={[
                 {
                   label: "Mar 2026 · Inland",
-                  text: 'BGC just flipped to "In progress" - day 64! 🙌',
+                  text: 'BGC just flipped to "In progress" - day 64!',
+                  icon: "party",
                 },
                 {
                   label: "Mar 2026 · Inland",
                   text: "Anyone else's medical still pending after day 70?",
                 },
-                { label: "Mar 2026 · Inland", text: "P1 RECEIVED!! Day 126. It's happening 🇨🇦" },
+                {
+                  label: "Mar 2026 · Inland",
+                  text: "P1 RECEIVED!! Day 126. It's happening",
+                  icon: "flag",
+                },
               ]}
             />
             <ul className="mb-5 space-y-1">
