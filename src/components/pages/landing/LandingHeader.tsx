@@ -43,7 +43,7 @@ export function LandingHeader() {
           size="sm"
           className="border-navy text-navy hover:bg-bg-muted hover:border-red hover:text-red bg-transparent hover:scale-105"
         >
-          Sign in
+          Login
         </Button>
         <Button href="/track" size="sm">
           Track my PR

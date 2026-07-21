@@ -78,7 +78,7 @@ export function TrackPage() {
             href="/login"
             className="ml-auto text-[13px] font-semibold text-[var(--muted)] transition-[var(--ease)] hover:text-[var(--navy)]"
           >
-            Sign in
+            Login
           </Link>
         </div>
       </header>
