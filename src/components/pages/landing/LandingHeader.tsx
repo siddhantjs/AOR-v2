@@ -6,14 +6,11 @@ import { GUIDE_URL } from "./landingShared";
 export function LandingHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg-elevated">
-      <div className="wrap flex h-16 items-center gap-2.5">
+      <div className="w-full p-8 flex h-16 items-center gap-2.5">
         <Link href="/" className="flex items-center gap-2">
           <LogoMark />
           <span className="display text-lg font-extrabold tracking-tight text-navy">
             AOR<span className="text-red">Track</span>
-          </span>
-          <span className="ml-1 hidden rounded-md border border-border2 px-1.5 py-0.5 text-xs font-semibold text-muted2 sm:inline">
-            PR TRACKER
           </span>
         </Link>
         <div className="flex-1" />
@@ -41,12 +38,9 @@ export function LandingHeader() {
             Guide
           </a>
         </nav>
-        <Link
-          href="/login"
-          className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-muted transition hover:text-navy sm:inline"
-        >
+        <Button href="/login" size="sm" className="border-navy bg-transparent text-navy hover:bg-bg-muted hover:scale-105 hover:border-red hover:text-red">
           Sign in
-        </Link>
+        </Button>
         <Button href="/track" size="sm">
           Track my PR
         </Button>

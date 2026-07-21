@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { LuArrowRight } from "react-icons/lu";
+import { twMerge } from "tailwind-merge";
 
 const variants = {
   primary: "border-transparent bg-red text-white hover:bg-red2",
@@ -41,14 +42,12 @@ function classes({
   size = "md",
   className = "",
 }: Pick<ButtonBase, "variant" | "size" | "className">) {
-  return [
+  return twMerge(
     "inline-flex items-center justify-center gap-2 border font-bold transition",
     variants[variant],
     sizes[size],
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 }
 
 export function Button(props: ButtonProps) {

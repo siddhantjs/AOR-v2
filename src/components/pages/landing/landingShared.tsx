@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { LuCheck } from "react-icons/lu";
 
-export const GUIDE_URL = "https://www.getnorthpath.com/prtracker";
+export const GUIDE_URL = "https://www.getnorthpath.com/tools/pr-tracker";
 export const WHATSAPP_URL = "https://chat.whatsapp.com/REPLACE-WITH-INVITE";
 export const FACEBOOK_URL = "https://www.facebook.com/groups/REPLACE-WITH-GROUP";
 export const DISCORD_URL = "https://discord.gg/7cd2dHVNX2";

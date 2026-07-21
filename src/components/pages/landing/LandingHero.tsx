@@ -41,8 +41,8 @@ function HeroDemo() {
       aria-hidden
     >
       <div className="flex items-center gap-1.5 border-b border-border bg-bg-muted px-4 py-2.5">
-        <i className="size-2.5 rounded-full bg-red-pale" />
-        <i className="size-2.5 rounded-full bg-border2" />
+        <i className="size-2.5 rounded-full bg-red" />
+        <i className="size-2.5 rounded-full bg-green" />
         <i className="size-2.5 rounded-full bg-border2" />
         <span className="ml-2 text-xs text-muted2">aortrack.app</span>
       </div>
