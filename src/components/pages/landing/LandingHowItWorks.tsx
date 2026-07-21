@@ -15,7 +15,7 @@ export function LandingHowItWorks() {
             account - this is where you make sense of it.
           </p>
         </div>
-        <div className="grid max-w-4xl gap-5 md:grid-cols-2">
+        <div className="grid max-w-7xl gap-5 md:grid-cols-2">
           <div className="border-border bg-bg-elevated rounded-xl border p-7 shadow-md">
             <span className="bg-red-pale text-red mb-3.5 inline-block rounded-lg px-2.5 py-1 text-xs font-semibold">
               Step 1
