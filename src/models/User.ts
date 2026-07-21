@@ -91,7 +91,8 @@ const UserSchema = new Schema(
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email"],
     },
     emailNorm: { type: String, required: true, unique: true },
-    caseNo: { type: String, default: null },
+    /** Tracker Case # — omit for live users so sparse unique index skips them. */
+    caseNo: { type: String },
     shareToken: { type: String, default: null },
     seededData: { type: Boolean, required: true, default: false },
 
@@ -155,6 +156,10 @@ UserSchema.index({ applyingFrom: 1 });
 UserSchema.pre("validate", function () {
   if (this.email) {
     this.emailNorm = this.email.trim().toLowerCase();
+  }
+  // Sparse unique index indexes null; leave the field unset for live users.
+  if (this.caseNo == null || this.caseNo === "") {
+    this.caseNo = undefined;
   }
 });
 
