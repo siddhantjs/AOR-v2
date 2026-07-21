@@ -5,7 +5,7 @@ export function LandingHowItWorks() {
   return (
     <section className="py-20">
       <div className="wrap">
-        <div className="mb-11 max-w-2xl">
+        <div className="mb-11 max-w-5xl">
           <Kicker>Getting started</Kicker>
           <h2 className="text-navy mt-2 mb-3 text-3xl font-extrabold sm:text-4xl">
             Two steps. About two minutes.

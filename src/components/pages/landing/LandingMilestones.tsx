@@ -6,7 +6,7 @@ export function LandingMilestones() {
     <section className="py-20" id="milestones">
       <div className="wrap">
         <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-12">
-          <div>
+          <div className="max-w-5xl">
             <Kicker>Milestone tracking</Kicker>
             <h2 className="text-navy mt-2 mb-3.5 text-2xl font-extrabold tracking-tight sm:text-3xl">
               One tap per milestone.{" "}

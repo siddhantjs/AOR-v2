@@ -84,7 +84,7 @@ export function LandingCohorts() {
       <div className="wrap">
         <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-12">
           <CohortBars />
-          <div>
+          <div className="max-w-5xl">
             <Kicker>Cohort groups</Kicker>
             <h2 className="text-navy mt-2 mb-3.5 text-2xl font-extrabold sm:text-3xl">
               Your AOR month is your group.{" "}

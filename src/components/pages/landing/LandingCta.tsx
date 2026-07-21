@@ -7,11 +7,11 @@ export function LandingCta() {
       <div aria-hidden className="landing-band-glow" />
       <div className="wrap relative z-10 text-center">
         <Kicker className="text-red">Free · 2 steps · your cohort is waiting</Kicker>
-        <h2 className="mx-auto mt-2 mb-3.5 max-w-2xl text-3xl font-extrabold text-white sm:text-4xl">
+        <h2 className="mx-auto mt-2 mb-3.5 max-w-5xl text-3xl font-extrabold text-white sm:text-4xl">
           Somewhere out there is your cohort,{" "}
           <em className="text-red not-italic sm:italic">tracking without you.</em>
         </h2>
-        <p className="mx-auto mb-8 max-w-lg text-base text-white/65">
+        <p className="mx-auto mb-8 max-w-5xl text-base text-white/65">
           Add your AOR date, tick your milestones, and turn the longest wait of your life into
           something you can actually see moving.
         </p>
