@@ -119,6 +119,34 @@
   --ease-out: 0.25s ease;
 }
 
+/* Tailwind utilities from our tokens — use bg-navy, max-w-page, etc. (no [var(--…)] in TSX) */
+@theme inline {
+  --color-cream: var(--cream);
+  --color-navy: var(--navy);
+  --color-navy2: var(--navy2);
+  --color-navy3: var(--navy3);
+  --color-red: var(--red);
+  --color-red2: var(--red2);
+  --color-red-pale: var(--red-pale);
+  --color-green: var(--green);
+  --color-amber: var(--amber);
+  --color-blue: var(--blue);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-muted2: var(--muted2);
+  --color-border: var(--border);
+  --color-border2: var(--border2);
+  --color-bg: var(--bg);
+  --color-bg-muted: var(--bg-muted);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-on-navy: var(--on-navy);
+  --color-gbg: var(--gbg);
+  --color-abg: var(--abg);
+  --color-bbg: var(--bbg);
+  --max-width-page: var(--max);
+  --max-width-narrow: var(--max-narrow);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
      3. BASE RESET & DOCUMENT
      Fonts are set per tag (no inherit / browser default).
@@ -137,7 +165,7 @@ html {
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  font-family: var(--fb);
+  font-family: var(--fh);
 }
 
 body {
@@ -153,23 +181,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Display — Fraunces */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--fh);
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
+/* Display — Fraunces (color inherits so dark sections can use text-white) */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--fh);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 /* Mono — DM Mono */
@@ -179,6 +208,30 @@ samp,
 pre,
 .mono {
   font-family: var(--fm);
+}
+
+/* Display — for brand marks / CTAs that aren't heading tags */
+.display {
+  font-family: var(--fh);
+}
+
+/* Page width container */
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: 22px;
+}
+
+.wrap-narrow {
+  width: 100%;
+  max-width: var(--max-narrow);
+  margin-inline: auto;
+  padding-inline: 22px;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
 }
 
 img,
@@ -262,5 +315,114 @@ video {
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes landing-dot-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(45, 106, 79, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+@keyframes landing-spin-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes landing-feed {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes landing-bub {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  4%,
+  29% {
+    opacity: 1;
+    transform: none;
+  }
+  33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.animate-landing-dot-pulse {
+  animation: landing-dot-pulse 2s ease-in-out infinite;
+}
+.animate-landing-spin-border {
+  animation: landing-spin-border 5s linear infinite;
+}
+.animate-landing-feed {
+  animation: landing-feed 26s linear infinite;
+}
+.animate-landing-bub {
+  animation: landing-bub 12s ease-in-out infinite;
+}
+
+.landing-hero-glow {
+  position: absolute;
+  top: -180px;
+  right: -180px;
+  width: 560px;
+  height: 560px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(200, 40, 30, 0.16), transparent 65%);
+}
+
+.landing-band-glow {
+  position: absolute;
+  bottom: -200px;
+  left: -160px;
+  width: 520px;
+  height: 520px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(200, 40, 30, 0.15), transparent 65%);
+}
+
+.landing-demo-shadow {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.landing-card-wa {
+  background: linear-gradient(140deg, #0d3d22, #14683a);
+}
+
+.landing-card-fb {
+  background: linear-gradient(140deg, #102a4d, #1a4d94);
+}
+
+.landing-card-orb {
+  position: absolute;
+  right: -70px;
+  bottom: -70px;
+  width: 230px;
+  height: 230px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-landing-feed,
+  .animate-landing-bub,
+  .animate-landing-dot-pulse,
+  .animate-landing-spin-border {
+    animation: none;
   }
 }
