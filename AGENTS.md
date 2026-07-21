@@ -27,15 +27,15 @@ Tracker/DB scripts: `cd backend && npm run tracker:seed` (etc.).
 
 | Method | Path | Notes |
 |--------|------|--------|
-| POST | `/api/auth/login` | email + username → `/dashboard/[userId]` |
-| GET | `/api/username/check?username=` | unique among live users (`seededData: false`) |
-| POST | `/api/track/start` | create user + cohort + AI estimates |
-| POST | `/api/track/submit` | save milestones / offices, re-estimate |
-| POST | `/api/dashboard/:userId/details` | update applicant details |
-| GET | `/api/dashboard/:userId` | dashboard view |
-| GET | `/api/dashboard/:userId/edit-milestone` | edit milestones payload |
-| GET | `/api/dashboard/:userId/cohort` | cohort page (`?c=`) |
-| GET | `/api/dashboard/:userId/all-cohorts` | all cohorts |
+| POST | `/api/aor-track/v1/auth/login` | email + username → `/dashboard/[userId]` |
+| GET | `/api/aor-track/v1/username/check?username=` | unique among live users (`seededData: false`) |
+| POST | `/api/aor-track/v1/track/start` | create user + cohort + AI estimates |
+| POST | `/api/aor-track/v1/track/submit` | save milestones / offices, re-estimate |
+| POST | `/api/aor-track/v1/dashboard/:userId/details` | update applicant details |
+| GET | `/api/aor-track/v1/dashboard/:userId` | dashboard view |
+| GET | `/api/aor-track/v1/dashboard/:userId/edit-milestone` | edit milestones payload |
+| GET | `/api/aor-track/v1/dashboard/:userId/cohort` | cohort page (`?c=`) |
+| GET | `/api/aor-track/v1/dashboard/:userId/all-cohorts` | all cohorts |
 
 AI estimates live in `backend/src/services/ai-estimate/` (`AiEstimateService.run`).
 

@@ -6,6 +6,9 @@ import type { EditMilestonesData } from "@/lib/loadDashboard";
 import type { MilestoneEstimate } from "@/lib/schema/types";
 import type { MilestoneId } from "@/lib/schema/constants";
 
+const API_PREFIX = "/api/aor-track/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+
 export type LoginRequest = {
   email: string;
   username: string;
@@ -71,7 +74,10 @@ function apiErrorMessage(err: unknown, fallback: string): string {
 export class ApiClient {
   private http: AxiosInstance;
 
-  constructor(baseURL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000") {
+
+  constructor(
+    baseURL = `${API_URL}${API_PREFIX}`,
+  ) {
     this.http = axios.create({
       baseURL,
       headers: { "Content-Type": "application/json" },
@@ -81,7 +87,7 @@ export class ApiClient {
 
   async login(body: LoginRequest): Promise<LoginResponse> {
     try {
-      const { data } = await this.http.post<LoginResponse>("/api/auth/login", body);
+      const { data } = await this.http.post<LoginResponse>("/auth/login", body);
       return data;
     } catch (err) {
       throw new Error(apiErrorMessage(err, "Could not sign in. Try again."));
@@ -90,7 +96,7 @@ export class ApiClient {
 
   async checkUsername(username: string): Promise<UsernameCheckResponse> {
     try {
-      const { data } = await this.http.get<UsernameCheckResponse>("/api/username/check", {
+      const { data } = await this.http.get<UsernameCheckResponse>("/username/check", {
         params: { username },
       });
       return data;
@@ -104,7 +110,7 @@ export class ApiClient {
 
   async trackStart(body: TrackStartRequest): Promise<TrackStartResponse> {
     try {
-      const { data } = await this.http.post<TrackStartResponse>("/api/track/start", body);
+      const { data } = await this.http.post<TrackStartResponse>("/track/start", body);
       return data;
     } catch (err) {
       throw new Error(apiErrorMessage(err, "Could not start your timeline. Try again."));
@@ -113,7 +119,7 @@ export class ApiClient {
 
   async trackSubmit(body: TrackSubmitRequest): Promise<TrackSubmitResponse> {
     try {
-      const { data } = await this.http.post<TrackSubmitResponse>("/api/track/submit", body);
+      const { data } = await this.http.post<TrackSubmitResponse>("/track/submit", body);
       return data;
     } catch (err) {
       throw new Error(apiErrorMessage(err, "Could not save your timeline. Try again."));
@@ -126,7 +132,7 @@ export class ApiClient {
   ): Promise<UpdateDetailsResponse> {
     try {
       const { data } = await this.http.post<UpdateDetailsResponse>(
-        `/api/dashboard/${userId}/details`,
+        `/dashboard/${userId}/details`,
         body,
       );
       return data;
@@ -137,7 +143,7 @@ export class ApiClient {
 
   async getDashboard(userId: string): Promise<DashboardView> {
     try {
-      const { data } = await this.http.get<DashboardView>(`/api/dashboard/${userId}`);
+      const { data } = await this.http.get<DashboardView>(`/dashboard/${userId}`);
       return data;
     } catch (err) {
       throw new Error(apiErrorMessage(err, "Could not load dashboard."));
@@ -147,7 +153,7 @@ export class ApiClient {
   async getEditMilestones(userId: string): Promise<EditMilestonesData> {
     try {
       const { data } = await this.http.get<EditMilestonesData>(
-        `/api/dashboard/${userId}/edit-milestone`,
+        `/dashboard/${userId}/edit-milestone`,
       );
       return data;
     } catch (err) {
@@ -157,7 +163,7 @@ export class ApiClient {
 
   async getCohort(userId: string, cohortKey?: string | null): Promise<CohortPageData> {
     try {
-      const { data } = await this.http.get<CohortPageData>(`/api/dashboard/${userId}/cohort`, {
+      const { data } = await this.http.get<CohortPageData>(`/dashboard/${userId}/cohort`, {
         params: cohortKey ? { c: cohortKey } : undefined,
       });
       return data;
@@ -169,7 +175,7 @@ export class ApiClient {
   async getAllCohorts(userId: string): Promise<AllCohortsPageData> {
     try {
       const { data } = await this.http.get<AllCohortsPageData>(
-        `/api/dashboard/${userId}/all-cohorts`,
+        `/dashboard/${userId}/all-cohorts`,
       );
       return data;
     } catch (err) {
