@@ -10,20 +10,27 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Architecture
 
 - **Frontend**: Next.js App Router under [`frontend/`](frontend/) (UI only).
-- **Backend**: Express API under [`backend/`](backend/) (MongoDB, Gemini, all HTTP APIs). Tracker/DB scripts live in [`backend/scripts/`](backend/scripts/).
-- **HTTP client**: [`frontend/src/lib/api.ts`](frontend/src/lib/api.ts) — `ApiClient` class (axios). All FE calls go through `api.*`.
-- Set `NEXT_PUBLIC_API_URL` in `frontend/.env.local` (default `http://localhost:4000`). Backend uses `MONGODB_URI`, `MONGODB_DB_NAME`, `GEMINI_API_KEY`, `PORT`, `CORS_ORIGIN` in `backend/.env`.
+- **API**: Live HTTP APIs are served by an **external immigration server** (not this repo). The FE talks to it via [`frontend/src/lib/api.ts`](frontend/src/lib/api.ts) (`ApiClient` / axios). All FE calls go through `api.*`.
+- Set `NEXT_PUBLIC_API_URL` in `frontend/.env.local` to that host only (no path). The client appends `/api/aor-track/v1`. Example: `https://api.example.com` → `https://api.example.com/api/aor-track/v1/...`.
+- **[`backend/`](backend/)**: Optional local / reference Express implementation of the same route contract (MongoDB, Gemini). Not required when pointing the FE at the external server. Tracker/DB scripts (if used) live in [`backend/scripts/`](backend/scripts/).
 
-### Dev
+### Dev (frontend against external API)
 
 ```bash
-cd backend && npm run dev    # Express :4000
-cd frontend && npm run dev   # Next :3000
+cd frontend
+# .env.local → NEXT_PUBLIC_API_URL=<immigration-api-host>
+npm run dev   # Next :3000
 ```
 
-Tracker/DB scripts: `cd backend && npm run tracker:seed` (etc.).
+Optional local API stub:
 
-### APIs (Express)
+```bash
+cd backend && npm run dev   # Express :4000 — then NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+### API contract (`/api/aor-track/v1`)
+
+Same paths on the external host and on the optional `backend/` stub:
 
 | Method | Path | Notes |
 |--------|------|--------|
@@ -36,8 +43,6 @@ Tracker/DB scripts: `cd backend && npm run tracker:seed` (etc.).
 | GET | `/api/aor-track/v1/dashboard/:userId/edit-milestone` | edit milestones payload |
 | GET | `/api/aor-track/v1/dashboard/:userId/cohort` | cohort page (`?c=`) |
 | GET | `/api/aor-track/v1/dashboard/:userId/all-cohorts` | all cohorts |
-
-AI estimates live in `backend/src/services/ai-estimate/` (`AiEstimateService.run`).
 
 ## Component structure
 
@@ -64,4 +69,4 @@ Source prototype: `aor-tracker-final-version.html`.
 | All cohorts (`#pg-cohorts`)                  | `/dashboard/[userId]/all-cohorts`    | `frontend/src/components/pages/dashboard/AllCohortsPage.tsx`     |
 | Cohorts                                      | TBD                                  | —                                                       |
 
-Schema / types: see `SCHEMA_V3.md` and `frontend/src/lib/schema/` (FE) / `backend/src/lib/schema/` (BE).
+Schema / types: see `SCHEMA_V3.md` and `frontend/src/lib/schema/` (FE). Optional BE mirror under `backend/src/lib/schema/`.

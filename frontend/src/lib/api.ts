@@ -6,6 +6,7 @@ import type { EditMilestonesData } from "@/lib/loadDashboard";
 import type { MilestoneEstimate } from "@/lib/schema/types";
 import type { MilestoneId } from "@/lib/schema/constants";
 
+/** Mounted on the immigration API host (NEXT_PUBLIC_API_URL = host only, no path). */
 const API_PREFIX = "/api/aor-track/v1";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
