@@ -79,7 +79,7 @@ export function LandingFaq() {
           <Kicker>Common questions</Kicker>
           <h2 className="text-navy mt-2 text-3xl font-extrabold sm:text-4xl">Before you start</h2>
         </div>
-        <div className="max-w-3xl">
+        <div className="w-full max-w-5xl">
           {FAQ.map((item, i) => (
             <details
               key={item.q}
