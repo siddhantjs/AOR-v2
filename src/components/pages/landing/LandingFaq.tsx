@@ -65,7 +65,7 @@ const FAQ: { q: string; a: ReactNode }[] = [
         >
           $299 CAD flat-fee service
         </a>{" "}
-        handles the application itself with AI-validated documents and licensed-consultant review.
+        handles the application itself with document validation and licensed-consultant review.
       </>
     ),
   },
