@@ -14,6 +14,7 @@
  * | GET    | /dashboard/:userId/edit-milestone |
  * | GET    | /dashboard/:userId/cohort |
  * | GET    | /dashboard/:userId/all-cohorts |
+ * | GET    | /share/:shareToken |
  */
 
 import type { ApplicantDetailsForm } from "@/lib/applicantDetails";
@@ -88,3 +89,34 @@ export type UpdateDetailsResponse = {
   ok: boolean;
   form: ApplicantDetailsForm;
 };
+
+/** Public read-only journey snapshot for `/s/[shareID]`. */
+export type ShareMilestoneStatus = "done" | "now" | "est";
+
+export type ShareMilestone = {
+  label: string;
+  /** ISO YYYY-MM-DD for logged milestones only. */
+  date: string | null;
+  /** Days after AOR for logged milestones. */
+  day: number | null;
+  /** Bucket window label for pending milestones (e.g. "Early March to Mid April"). */
+  estimateLabel: string | null;
+  status: ShareMilestoneStatus;
+};
+
+export type ShareJourneyView = {
+  publicId: string;
+  pathway: string;
+  stream: string;
+  /** AOR date ISO YYYY-MM-DD. */
+  aor: string;
+  cohortSlug: string;
+  cohortLabel: string;
+  cohortN: number;
+  /** Last updated ISO YYYY-MM-DD. */
+  updated: string;
+  milestones: ShareMilestone[];
+};
+
+/** GET /share/:shareToken */
+export type GetShareJourneyResponse = ShareJourneyView;

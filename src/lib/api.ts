@@ -1,6 +1,7 @@
 import axios, { AxiosError, type AxiosInstance } from "axios";
 import type { ApplicantDetailsForm } from "@/lib/applicantDetails";
 import type {
+  GetShareJourneyResponse,
   LoginRequest,
   LoginResponse,
   TrackOfficesRequest,
@@ -17,8 +18,11 @@ import type { AllCohortsPageData, CohortPageData } from "@/lib/loadCohort";
 import type { EditMilestonesData } from "@/lib/loadDashboard";
 
 export type {
+  GetShareJourneyResponse,
   LoginRequest,
   LoginResponse,
+  ShareJourneyView,
+  ShareMilestone,
   TrackOfficesRequest,
   TrackOfficesResponse,
   TrackStartRequest,
@@ -155,6 +159,17 @@ export class ApiClient {
       return data;
     } catch (err) {
       throw new Error(apiErrorMessage(err, "Could not load cohorts."));
+    }
+  }
+
+  async getShareJourney(shareToken: string): Promise<GetShareJourneyResponse> {
+    try {
+      const { data } = await this.http.get<GetShareJourneyResponse>(
+        `/share/${encodeURIComponent(shareToken)}`,
+      );
+      return data;
+    } catch (err) {
+      throw new Error(apiErrorMessage(err, "Could not load shared journey."));
     }
   }
 }

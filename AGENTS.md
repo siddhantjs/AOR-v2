@@ -27,12 +27,15 @@ npm run dev   # Next :3000
 | POST   | `/api/aor-track/v1/auth/login`                       | email + username → `/dashboard/[userId]`      |
 | GET    | `/api/aor-track/v1/username/check?username=`         | unique among live users (`seededData: false`) |
 | POST   | `/api/aor-track/v1/track/start`                      | create user + cohort + AI estimates           |
+| POST   | `/api/aor-track/v1/track/offices`                    | lock PVO/SVO and refresh with-offices estimates |
 | POST   | `/api/aor-track/v1/track/submit`                     | save milestones / offices, re-estimate        |
 | POST   | `/api/aor-track/v1/dashboard/:userId/details`        | update applicant details                      |
 | GET    | `/api/aor-track/v1/dashboard/:userId`                | dashboard view                                |
 | GET    | `/api/aor-track/v1/dashboard/:userId/edit-milestone` | edit milestones payload                       |
 | GET    | `/api/aor-track/v1/dashboard/:userId/cohort`         | cohort page (`?c=`)                           |
 | GET    | `/api/aor-track/v1/dashboard/:userId/all-cohorts`    | all cohorts                                   |
+| GET    | `/api/aor-track/v1/share/:shareToken`                | public read-only shared journey (`/s/[id]`)   |
+| GET    | `/api/aor-track/v1/health`                           | service health check                          |
 
 ## Component structure
 
@@ -41,6 +44,7 @@ npm run dev   # Next :3000
 - **Page-level components** live in `src/components/pages/<route>/` — one folder per page, composed of that page’s sections.
 - Route files import the page component, e.g. `src/app/track/page.tsx` → `TrackPage`.
 - Styling: **Tailwind only** (no CSS modules). Colors/tokens come from [`src/app/globals.css`](src/app/globals.css) via `var(--…)`.
+- Icons: **`react-icons` only** (prefer `react-icons/lu`). Do not hand-roll inline SVG icons in UI components.
 - Shared UI primitives live in `src/components/ui/`.
 - Dashboard: `/dashboard/[userId]` — `src/components/pages/dashboard/DashboardPage.tsx`.
 
@@ -57,6 +61,7 @@ Source prototype: `aor-tracker-final-version.html`.
 | Edit milestones (`#pg-ms` from dash)         | `/dashboard/[userId]/edit-milestone` | `src/components/pages/dashboard/EditMilestonesPage.tsx` |
 | My cohort (`#pg-cd`)                         | `/dashboard/[userId]/cohort`         | `src/components/pages/dashboard/CohortPage.tsx`         |
 | All cohorts (`#pg-cohorts`)                  | `/dashboard/[userId]/all-cohorts`    | `src/components/pages/dashboard/AllCohortsPage.tsx`     |
+| Shared journey (`shared-journey-view.html`)  | `/s/[shareID]`                       | `src/components/pages/share/ShareJourneyPage.tsx`       |
 | Cohorts                                      | TBD                                  | —                                                       |
 
 Schema / types: see `SCHEMA_V3.md` and `src/lib/schema/`.
