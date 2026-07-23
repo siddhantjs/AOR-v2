@@ -298,8 +298,8 @@ USER_SCHEMA = {
   username: string | null;             // unique for live users; not enforced while seeding
   email: string;                       // email validation & unique
   emailNorm: string;                   // lowercased; unique index
-  caseNo: string | null;               // tracker Case # — unique (sparse)
-  shareToken: string | null;           // public /s/[token] — unique (sparse)
+  caseNo: string | null;               // tracker Case # - unique (sparse)
+  shareToken: string | null;           // public /s/[token] - unique (sparse)
   seededData: boolean;                 // true = scraped/imported from tracker
 
   // Application
@@ -318,7 +318,7 @@ USER_SCHEMA = {
   cohortKey: ref("Cohort");            // always ObjectId → COHORT._id
   currentStatus: string | null;
 
-  // AI estimates (cached on profile — do not call on every page load)
+  // AI estimates (cached on profile - do not call on every page load)
   estimateMeta: ESTIMATE_META | null;
 
   // Optional extras
@@ -356,7 +356,7 @@ No medians / percentiles. Cohorts group peers for the browse UI.
 
 COHORT = {
   _id: ObjectId;
-  cohortKey: string;                   // unique — "{YYYY-MM}|{inland|outland}"
+  cohortKey: string;                   // unique - "{YYYY-MM}|{inland|outland}"
   aorMonth: string;                    // "YYYY-MM"
   applyingFrom: enum[inland, outland];
 
@@ -387,9 +387,9 @@ No `STREAM_PACE`. No community median tables. Estimates live only on `PROFILE_MI
 | ------------------------------------------------------- | ---------------------------- | ------------------------------ |
 | ITA + AOR first complete, PVO **and** SVO still missing | **Call 1**                   | `"aor-only"`                   |
 | Later PVO and/or SVO set (after call 1)                 | **Call 2**                   | `"with-offices"`               |
-| ITA + AOR first complete, PVO **and** SVO already set   | **One call only**            | `"with-offices"` — skip call 2 |
-| `inputsHash` unchanged                                  | Skip                         | —                              |
-| ITA / AOR change                                        | Re-run (same rules as above) | —                              |
+| ITA + AOR first complete, PVO **and** SVO already set   | **One call only**            | `"with-offices"` - skip call 2 |
+| `inputsHash` unchanged                                  | Skip                         | -                              |
+| ITA / AOR change                                        | Re-run (same rules as above) | -                              |
 | PVO / SVO change after `"with-offices"`                 | Re-run call 2                | `"with-offices"`               |
 
 Max **2** AI runs per user in the happy path; **1** if offices are already filled when ITA+AOR land.
@@ -418,7 +418,7 @@ Write onto matching `PROFILE_MILESTONE` rows; update `estimateMeta`.
 ### Rules
 
 - Never AI-estimate `bio_done`
-- Do not call on every dashboard load — only when hash/phase rules say so
+- Do not call on every dashboard load - only when hash/phase rules say so
 - When user logs a real `milestoneDate`, clear that row’s estimate fields
 - Optional: after new logged dates, refresh remaining estimates if you want tighter windows (counts as another call; gate with hash)
 
@@ -426,7 +426,7 @@ Write onto matching `PROFILE_MILESTONE` rows; update `estimateMeta`.
 
 ## What needs to be added
 
-1. **Indexes** — unique on `emailNorm`; sparse unique on `caseNo` / `shareToken`; unique on `username` only for live users (`seededData: false`); index on `cohortKey` (ObjectId) and `applyingFrom`.
-2. **Tracker → milestone mapping** — which source columns fill which of the 13 ids; user-only vs tracker-filled (see decoder keys: inland eCOPR vs outland landing, `final` ← Decision Made, etc.).
-3. **Inland/outland on seed** — still needed for correct **cohort browse** grouping; not required for AI estimates (live users self-select `applyingFrom`).
-4. **AI provider wiring** — model, `promptVersion`, structured output validation for buckets, rate limits / retries.
+1. **Indexes** - unique on `emailNorm`; sparse unique on `caseNo` / `shareToken`; unique on `username` only for live users (`seededData: false`); index on `cohortKey` (ObjectId) and `applyingFrom`.
+2. **Tracker → milestone mapping** - which source columns fill which of the 13 ids; user-only vs tracker-filled (see decoder keys: inland eCOPR vs outland landing, `final` ← Decision Made, etc.).
+3. **Inland/outland on seed** - still needed for correct **cohort browse** grouping; not required for AI estimates (live users self-select `applyingFrom`).
+4. **AI provider wiring** - model, `promptVersion`, structured output validation for buckets, rate limits / retries.

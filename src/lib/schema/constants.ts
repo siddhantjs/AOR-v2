@@ -201,5 +201,5 @@ export type MedicalType = (typeof MEDICAL_TYPES)[number];
 export const ESTIMATE_PHASES = ["aor-only", "with-offices"] as const;
 export type EstimatePhase = (typeof ESTIMATE_PHASES)[number];
 
-/** Country list not defined in SCHEMA_V3 yet — free string until enumerated. */
+/** Country list not defined in SCHEMA_V3 yet - free string until enumerated. */
 export type Country = string;

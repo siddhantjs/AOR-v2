@@ -13,6 +13,6 @@ cp env.example .env.local
 npm run dev                    # :3000
 ```
 
-`ApiClient` calls `{NEXT_PUBLIC_API_URL}/api/aor-track/v1/...` — see `AGENTS.md` for the route table.
+`ApiClient` calls `{NEXT_PUBLIC_API_URL}/api/aor-track/v1/...` - see `AGENTS.md` for the route table.
 
 Open [http://localhost:3000](http://localhost:3000).

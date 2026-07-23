@@ -178,7 +178,7 @@ export function MilestonesStep({
     () => Boolean(initialState?.primaryVisaOffice || initialState?.secondaryVisaOffice),
   );
 
-  /** Milestone dates already persisted — not editable (toggle or date change). */
+  /** Milestone dates already persisted - not editable (toggle or date change). */
   const lockedDates = useMemo(() => {
     const locked = new Set<MilestoneId>();
     const seed = initialState?.milestones;

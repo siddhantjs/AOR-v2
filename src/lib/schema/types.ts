@@ -98,7 +98,7 @@ export type StageDistribution = Partial<Record<MilestoneId, number>>;
 
 export interface Cohort {
   _id: string;
-  /** Unique — "{YYYY-MM}|{inland|outland}" */
+  /** Unique - "{YYYY-MM}|{inland|outland}" */
   cohortKey: string;
   aorMonth: string;
   applyingFrom: ApplyingFrom;
