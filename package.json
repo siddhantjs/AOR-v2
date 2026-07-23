@@ -11,6 +11,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@microsoft/clarity": "^1.0.2",
     "axios": "^1.18.1",
     "next": "16.2.10",
     "react": "19.2.4",
