@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { DM_Mono, DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/seo/tags";
+import { buildPageMetadata } from "@/lib/marketing-metadata";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -22,11 +23,21 @@ const dmMono = DM_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Canada PR Milestone Tracker - Cohort Groups & Community Timelines | AORTrack",
   description:
     "Track every PR milestone from AOR to PR card, join your AOR-month cohort, browse real community timelines, and connect on WhatsApp & Facebook. Free.",
-};
+  path: "/",
+  keywords: [
+    "AOR tracker",
+    "Canada PR processing time",
+    "Express Entry timeline",
+    "AOR cohort",
+    "PR milestones",
+    "CEC processing time",
+    "AORTrack",
+  ],
+});
 
 export const viewport: Viewport = {
   width: "device-width",
