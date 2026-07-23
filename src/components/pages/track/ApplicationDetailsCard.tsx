@@ -260,7 +260,7 @@ export function ApplicationDetailsCard({ onContinue, initialValues }: Applicatio
     }
   }
 
-  /** Live date checks — same rules as HTML `onCoreDates`. */
+  /** Live date checks - same rules as HTML `onCoreDates`. */
   function updateDate(key: "itaDate" | "aorDate", value: string) {
     const next = { ...values, [key]: value };
     setDatesTouched(true);

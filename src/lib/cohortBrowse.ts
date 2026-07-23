@@ -188,18 +188,18 @@ export function toCohortApplicant(user: User, viewerId: string): CohortApplicant
         value: DRAW_CATEGORIES.find((c) => c.value === user.drawCategory)?.label ?? cat,
       },
       { label: "Location", value: streamLabel },
-      { label: "PVO", value: user.primaryVisaOffice ?? "—" },
-      { label: "Nationality", value: ud?.nationality ?? "—" },
+      { label: "PVO", value: user.primaryVisaOffice ?? "-" },
+      { label: "Nationality", value: ud?.nationality ?? "-" },
       {
         label: "CRS score",
-        value: ud?.crsScore != null ? String(ud.crsScore) : "—",
+        value: ud?.crsScore != null ? String(ud.crsScore) : "-",
       },
-      { label: "Marital status", value: ud?.maritalStatus ?? "—" },
+      { label: "Marital status", value: ud?.maritalStatus ?? "-" },
       {
         label: "Dependants",
-        value: ud?.dependants != null ? String(ud.dependants) : "—",
+        value: ud?.dependants != null ? String(ud.dependants) : "-",
       },
-      { label: "Medical type", value: ud?.medicalType ?? "—" },
+      { label: "Medical type", value: ud?.medicalType ?? "-" },
     ],
   };
 }

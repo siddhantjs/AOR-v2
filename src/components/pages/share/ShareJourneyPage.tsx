@@ -41,7 +41,7 @@ function MilestoneRight({ m }: { m: ShareMilestone }) {
     return (
       <>
         <div className="font-[family-name:var(--font-mono)] text-[12.5px] font-semibold whitespace-nowrap text-[var(--navy)]">
-          {m.date ? formatShortDate(m.date) : "—"}
+          {m.date ? formatShortDate(m.date) : "-"}
         </div>
         <div className="mt-px font-[family-name:var(--font-mono)] font-bold text-[10.5px] whitespace-nowrap text-[var(--green)]">
           Day {m.day ?? 0}
@@ -60,7 +60,7 @@ function MilestoneRight({ m }: { m: ShareMilestone }) {
 
   return (
     <div className="max-w-[160px] text-right font-[family-name:var(--font-mono)] text-[11.5px] leading-snug font-semibold text-[var(--blue)]">
-      {m.estimateLabel ? `Est. ${m.estimateLabel}` : "—"}
+      {m.estimateLabel ? `Est. ${m.estimateLabel}` : "-"}
     </div>
   );
 }
@@ -87,7 +87,7 @@ export function ShareJourneyPage({ data }: ShareJourneyPageProps) {
     ? ecopr.estimateLabel
     : ecopr?.date
       ? formatShortDate(ecopr.date)
-      : "—";
+      : "-";
   const firstEstIndex = data.milestones.findIndex((m) => m.status === "est");
 
   return (
@@ -298,7 +298,7 @@ export function ShareJourneyPage({ data }: ShareJourneyPageProps) {
           >
             IRCC processing times
           </a>
-          . Editing milestones requires signing in to your own dashboard — this link doesn&apos;t
+          . Editing milestones requires signing in to your own dashboard - this link doesn&apos;t
           expose the applicant&apos;s email, UCI or application number.
         </p>
 

@@ -1,6 +1,6 @@
 # AOR-v2 SEO / AEO / GEO
 
-How marketing pages get crawled, indexed, and structured — and what to do when you add a route.
+How marketing pages get crawled, indexed, and structured - and what to do when you add a route.
 
 **Site origin:** `NEXT_PUBLIC_SITE_URL` (see `env.example`). Resolved in [`src/lib/site-url.ts`](src/lib/site-url.ts).
 
@@ -33,7 +33,7 @@ Single source of truth for lists: [`src/lib/sitemap-paths.ts`](src/lib/sitemap-p
 | `src/app/sitemap.ts` | Sitemap XML |
 | `public/og/*.png` | Share cards (1200×630) |
 
-Analytics (GA / Clarity) live under `src/components/seo/tags/` — measurement only, not ranking.
+Analytics (GA / Clarity) live under `src/components/seo/tags/` - measurement only, not ranking.
 
 ---
 
@@ -41,8 +41,8 @@ Analytics (GA / Clarity) live under `src/components/seo/tags/` — measurement o
 
 Example: add `/aor-to-ppr` as a marketing guide.
 
-1. **Route** — `src/app/<path>/page.tsx` (thin page; UI in `src/components/pages/...`).
-2. **Metadata** — export metadata with `buildPageMetadata`:
+1. **Route** - `src/app/<path>/page.tsx` (thin page; UI in `src/components/pages/...`).
+2. **Metadata** - export metadata with `buildPageMetadata`:
 
    ```ts
    import type { Metadata } from "next";
@@ -57,10 +57,10 @@ Example: add `/aor-to-ppr` as a marketing guide.
    });
    ```
 
-3. **Sitemap** — add `"/your-path"` to `SITEMAP_PUBLIC_PATHS` in `sitemap-paths.ts`.
+3. **Sitemap** - add `"/your-path"` to `SITEMAP_PUBLIC_PATHS` in `sitemap-paths.ts`.
 4. **Do not** add the path to `ROBOTS_DISALLOW_PATHS`.
-5. **OG image** (recommended) — add `public/og/<name>.png` (1200×630) and pass `ogImage`.
-6. **On-page** — real H1/H2, short factual intro; if you have FAQ UI, add matching entries to `faq-content.ts` (plain strings).
+5. **OG image** (recommended) - add `public/og/<name>.png` (1200×630) and pass `ogImage`.
+6. **On-page** - real H1/H2, short factual intro; if you have FAQ UI, add matching entries to `faq-content.ts` (plain strings).
 7. **JSON-LD** (when useful):
 
    ```tsx
@@ -77,7 +77,7 @@ Example: add `/aor-to-ppr` as a marketing guide.
    ```
 
    Home already injects Organization + WebSite + FAQPage via `homeJsonLdGraph()`.
-8. **Freshness** — if you change YMYL marketing copy, bump usage of `MARKETING_CONTENT_DATE_MODIFIED` / last-updated UI as needed.
+8. **Freshness** - if you change YMYL marketing copy, bump usage of `MARKETING_CONTENT_DATE_MODIFIED` / last-updated UI as needed.
 
 ---
 
@@ -85,8 +85,8 @@ Example: add `/aor-to-ppr` as a marketing guide.
 
 Example: `/dashboard/...` sub-route or a new wizard step.
 
-1. **Metadata** — use `buildNoIndexMetadata` (or `buildPageMetadata({ …, noIndex: true })`).
-2. **robots** — ensure a matching prefix exists in `ROBOTS_DISALLOW_PATHS` (e.g. `/dashboard/`, `/track`).
+1. **Metadata** - use `buildNoIndexMetadata` (or `buildPageMetadata({ …, noIndex: true })`).
+2. **robots** - ensure a matching prefix exists in `ROBOTS_DISALLOW_PATHS` (e.g. `/dashboard/`, `/track`).
 3. **Do not** add the path to `SITEMAP_PUBLIC_PATHS`.
 4. Prefer a **segment `layout.tsx`** with shared noindex metadata for whole trees (see `src/app/dashboard/layout.tsx`).
 
@@ -106,7 +106,7 @@ export const metadata: Metadata = buildNoIndexMetadata(
 
 - Metadata: `src/app/page.tsx` + root defaults in `src/app/layout.tsx`
 - JSON-LD: `<JsonLd data={homeJsonLdGraph()} />` on the home route
-- FAQ UI: `LandingFaq` — keep [`src/lib/faq-content.ts`](src/lib/faq-content.ts) aligned when Q&As change
+- FAQ UI: `LandingFaq` - keep [`src/lib/faq-content.ts`](src/lib/faq-content.ts) aligned when Q&As change
 
 ---
 

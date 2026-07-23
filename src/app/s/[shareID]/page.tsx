@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const days = daysSince(data.aor);
 
     return buildPageMetadata({
-      title: `Applicant #${data.publicId} — day ${days} of the PR wait | AORTrack`,
+      title: `Applicant #${data.publicId} - day ${days} of the PR wait | AORTrack`,
       description: `Read-only PR milestone snapshot: ${data.pathway} · ${data.stream} · AOR ${data.aor}. ${done} of ${total} milestones done.`,
       path: `/s/${shareID}`,
       noIndex: true,

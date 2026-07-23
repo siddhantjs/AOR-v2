@@ -135,61 +135,61 @@ export function displayApplicantDetails(
       value:
         form.pathway === "express-entry" && form.expressEntryProgram
           ? EE_LABEL[form.expressEntryProgram]
-          : "—",
+          : "-",
     },
     { key: "draw", label: "Draw category", value: draw },
     {
       key: "ita",
       label: "ITA date",
-      value: form.itaDate || "—",
+      value: form.itaDate || "-",
     },
     {
       key: "loc",
       label: "Location",
       value: form.applyingFrom === "inland" ? "Inland" : "Outland",
     },
-    { key: "nat", label: "Nationality", value: form.nationality || "—" },
-    { key: "crs", label: "CRS score", value: form.crsScore || "—" },
+    { key: "nat", label: "Nationality", value: form.nationality || "-" },
+    { key: "crs", label: "CRS score", value: form.crsScore || "-" },
     {
       key: "mar",
       label: "Marital status",
-      value: form.maritalStatus ? MARITAL_LABEL[form.maritalStatus] : "—",
+      value: form.maritalStatus ? MARITAL_LABEL[form.maritalStatus] : "-",
     },
     {
       key: "spouse",
       label: "Spouse status",
-      value: form.spouseStatus ? SPOUSE_LABEL[form.spouseStatus] : "—",
+      value: form.spouseStatus ? SPOUSE_LABEL[form.spouseStatus] : "-",
     },
     {
       key: "fw",
       label: "Foreign work",
-      value: form.foreignWork === "" ? "—" : form.foreignWork === "yes" ? "Yes" : "No",
+      value: form.foreignWork === "" ? "-" : form.foreignWork === "yes" ? "Yes" : "No",
     },
     {
       key: "cw",
       label: "Canadian work",
-      value: form.canadianWork === "" ? "—" : form.canadianWork === "yes" ? "Yes" : "No",
+      value: form.canadianWork === "" ? "-" : form.canadianWork === "yes" ? "Yes" : "No",
     },
-    { key: "dep", label: "Dependants", value: form.dependants || "—" },
+    { key: "dep", label: "Dependants", value: form.dependants || "-" },
     {
       key: "pvo",
       label: "PVO",
-      value: form.primaryVisaOffice || "—",
+      value: form.primaryVisaOffice || "-",
     },
     {
       key: "svo",
       label: "SVO",
-      value: form.secondaryVisaOffice || "—",
+      value: form.secondaryVisaOffice || "-",
     },
     {
       key: "cres",
       label: "Country of residence",
-      value: form.countryOfResidence || "—",
+      value: form.countryOfResidence || "-",
     },
     {
       key: "med",
       label: "Medical type",
-      value: form.medicalType ? MEDICAL_LABEL[form.medicalType] : "—",
+      value: form.medicalType ? MEDICAL_LABEL[form.medicalType] : "-",
     },
   ];
 }

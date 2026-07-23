@@ -55,7 +55,7 @@ export function DashboardPage({ data }: DashboardPageProps) {
                   <small className="ml-1 text-[17px] font-bold text-[#aeb9c5]">days</small>
                 </>
               ) : (
-                "—"
+                "-"
               )
             }
             sub={data.typicalWaitSub}

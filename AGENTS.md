@@ -2,14 +2,14 @@
 
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This version has breaking changes - APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
 # AOR-v2 project conventions
 
 ## Architecture
 
-- **App**: Next.js App Router at the repo root (`src/`). UI only — no API routes for tracker data.
+- **App**: Next.js App Router at the repo root (`src/`). UI only - no API routes for tracker data.
 - **API**: Live HTTP APIs are served by an **external immigration server** (not this repo). The FE talks to it via [`src/lib/api.ts`](src/lib/api.ts) (`ApiClient` / axios). All FE calls go through `api.*`.
 - Set `NEXT_PUBLIC_API_URL` in `.env.local` to that host only (no path). The client appends `/api/aor-track/v1`. Example: `https://api.example.com` → `https://api.example.com/api/aor-track/v1/...`.
 
@@ -41,12 +41,12 @@ npm run dev   # Next :3000
 
 - App Router routes live under `src/app/` (thin pages only).
 - UI is component-based under `src/components/`.
-- **Page-level components** live in `src/components/pages/<route>/` — one folder per page, composed of that page’s sections.
+- **Page-level components** live in `src/components/pages/<route>/` - one folder per page, composed of that page’s sections.
 - Route files import the page component, e.g. `src/app/track/page.tsx` → `TrackPage`.
 - Styling: **Tailwind only** (no CSS modules). Colors/tokens come from [`src/app/globals.css`](src/app/globals.css) via `var(--…)`.
 - Icons: **`react-icons` only** (prefer `react-icons/lu`). Do not hand-roll inline SVG icons in UI components.
 - Shared UI primitives live in `src/components/ui/`.
-- Dashboard: `/dashboard/[userId]` — `src/components/pages/dashboard/DashboardPage.tsx`.
+- Dashboard: `/dashboard/[userId]` - `src/components/pages/dashboard/DashboardPage.tsx`.
 
 ## HTML prototype → routes
 
@@ -62,6 +62,6 @@ Source prototype: `aor-tracker-final-version.html`.
 | My cohort (`#pg-cd`)                         | `/dashboard/[userId]/cohort`         | `src/components/pages/dashboard/CohortPage.tsx`         |
 | All cohorts (`#pg-cohorts`)                  | `/dashboard/[userId]/all-cohorts`    | `src/components/pages/dashboard/AllCohortsPage.tsx`     |
 | Shared journey (`shared-journey-view.html`)  | `/s/[shareID]`                       | `src/components/pages/share/ShareJourneyPage.tsx`       |
-| Cohorts                                      | TBD                                  | —                                                       |
+| Cohorts                                      | TBD                                  | -                                                       |
 
 Schema / types: see `SCHEMA_V3.md` and `src/lib/schema/`.

@@ -205,7 +205,7 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
                 <span
                   className={[
                     "text-right text-[13px] font-semibold",
-                    d.value === "—" || displayValue === "—"
+                    d.value === "-" || displayValue === "-"
                       ? "font-medium text-[var(--muted2)]"
                       : "text-[var(--ink)]",
                   ].join(" ")}
@@ -331,7 +331,7 @@ function FieldEditor({
           onChange={(v) => onChange("expressEntryProgram", v)}
         />
       ) : (
-        <span className="text-[13px] font-medium text-[var(--muted2)]">—</span>
+        <span className="text-[13px] font-medium text-[var(--muted2)]">-</span>
       );
     case "draw":
       return (

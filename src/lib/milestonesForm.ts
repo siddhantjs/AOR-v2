@@ -11,7 +11,7 @@ export type MilestonesFormState = {
   secondaryVisaOffice: VisaOffice | "";
 };
 
-/** Server-safe empty form — do not put this in a `"use client"` module. */
+/** Server-safe empty form - do not put this in a `"use client"` module. */
 export function emptyMilestonesFormState(): MilestonesFormState {
   return {
     milestones: Object.fromEntries(
