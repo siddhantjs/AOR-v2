@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LuArrowRight, LuCheck, LuPlus, LuRefreshCw } from "react-icons/lu";
+import { LuArrowRight, LuCheck, LuInfo, LuPlus, LuRefreshCw } from "react-icons/lu";
 import { LogoMark } from "@/components/common/LogoMark";
 import { Button } from "@/components/ui";
+import { GUIDE_URL } from "@/components/pages/landing/landingShared";
 import { daysSince, formatShortDate } from "@/lib/dates";
 import type { ShareJourneyView, ShareMilestone } from "@/lib/api.types";
 
@@ -167,7 +168,7 @@ export function ShareJourneyPage({ data }: ShareJourneyPageProps) {
                     ["Milestones done", String(done)],
                     ["Next up", nextLabel],
                     ["Est. eCOPR", ecoprLabel],
-                    ["Updated", formatShortDate(data.updated)],
+                    ["Last Updated", formatShortDate(data.updated)],
                   ] as const
                 ).map(([label, value]) => (
                   <div
@@ -270,13 +271,35 @@ export function ShareJourneyPage({ data }: ShareJourneyPageProps) {
                   );
                 })}
               </div>
+
+              <div className="mt-[18px] flex items-start gap-2 border-t border-[var(--border)] pt-[15px] text-[11.5px] leading-relaxed text-[var(--muted2)]">
+                <LuInfo className="mt-0.5 size-[13px] shrink-0" strokeWidth={1.9} aria-hidden />
+                <span>
+                  Public read-only snapshot · Cohort{" "}
+                  <Link href="/#cohorts" className="font-semibold text-[var(--red)] no-underline">
+                    {data.cohortLabel}
+                  </Link>{" "}
+                  · {data.pathway} · {data.stream} · {data.cohortN} tracked profiles · estimates
+                  refreshed {formatShortDate(data.updated)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        <p className="mx-auto mt-[22px] max-w-[520px] text-center text-xs leading-relaxed text-[var(--muted2)]">
-          Timing windows are guidance based on this profile, not IRCC guarantees. This link does not
-          expose email, UCI, or application numbers.
+        <p className="mx-auto mt-[22px] max-w-[640px] text-center text-xs leading-relaxed text-[var(--muted2)]">
+          This is a read-only snapshot. Estimated dates use cohort medians from tracked AORTrack
+          timelines and may differ from official{" "}
+          <a
+            href="https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-processing-times.html"
+            rel="noopener noreferrer"
+            target="_blank"
+            className="font-semibold text-[var(--red)] no-underline"
+          >
+            IRCC processing times
+          </a>
+          . Editing milestones requires signing in to your own dashboard — this link doesn&apos;t
+          expose the applicant&apos;s email, UCI or application number.
         </p>
 
         <div className="mt-[22px] flex flex-wrap justify-center gap-3">
@@ -290,6 +313,26 @@ export function ShareJourneyPage({ data }: ShareJourneyPageProps) {
             Home
           </Link>
         </div>
+
+        <p className="mt-[26px] text-center text-[11.5px] text-[var(--muted2)]">
+          <a
+            href={GUIDE_URL}
+            className="font-semibold text-[var(--muted)] no-underline hover:text-[var(--navy)]"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            What each stage means
+          </a>
+          {" · "}
+          <Link
+            href="/#cohorts"
+            className="font-semibold text-[var(--muted)] no-underline hover:text-[var(--navy)]"
+          >
+            Browse cohorts
+          </Link>
+          <br />
+          AORTrack is not affiliated with IRCC or the Government of Canada.
+        </p>
       </div>
     </div>
   );
