@@ -1,67 +1,33 @@
 import axios, { AxiosError, type AxiosInstance } from "axios";
 import type { ApplicantDetailsForm } from "@/lib/applicantDetails";
+import type {
+  LoginRequest,
+  LoginResponse,
+  TrackStartRequest,
+  TrackStartResponse,
+  TrackSubmitRequest,
+  TrackSubmitResponse,
+  UpdateDetailsResponse,
+  UsernameCheckResponse,
+} from "@/lib/api.types";
 import type { DashboardView } from "@/lib/dashboardView";
 import type { AllCohortsPageData, CohortPageData } from "@/lib/loadCohort";
 import type { EditMilestonesData } from "@/lib/loadDashboard";
-import type { MilestoneEstimate } from "@/lib/schema/types";
-import type { MilestoneId } from "@/lib/schema/constants";
+
+export type {
+  LoginRequest,
+  LoginResponse,
+  TrackStartRequest,
+  TrackStartResponse,
+  TrackSubmitRequest,
+  TrackSubmitResponse,
+  UpdateDetailsResponse,
+  UsernameCheckResponse,
+} from "@/lib/api.types";
 
 /** Mounted on the immigration API host (NEXT_PUBLIC_API_URL = host only, no path). */
 const API_PREFIX = "/api/aor-track/v1";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
-
-export type LoginRequest = {
-  email: string;
-  username: string;
-};
-
-export type LoginResponse = {
-  userId: string;
-  redirectTo: string;
-};
-
-export type UsernameCheckResponse = {
-  available: boolean;
-  username?: string;
-  reason?: string;
-};
-
-export type TrackStartRequest = {
-  applyingFrom: string | null;
-  pathway: string;
-  expressEntryProgram?: string | null;
-  drawCategory: string;
-  itaDate: string;
-  aorDate: string;
-  username: string;
-  email: string;
-};
-
-export type TrackStartResponse = {
-  userId: string;
-  status: "skipped" | "completed" | "failed";
-  phase: string | null;
-  reason: string | null;
-  estimates: MilestoneEstimate[];
-};
-
-export type TrackSubmitRequest = {
-  userId: string;
-  milestones: Partial<Record<MilestoneId, { done?: boolean; date?: string }>>;
-  primaryVisaOffice?: string;
-  secondaryVisaOffice?: string;
-};
-
-export type TrackSubmitResponse = {
-  ok: boolean;
-  userId: string;
-  redirectTo: string;
-};
-
-export type UpdateDetailsResponse = {
-  ok: boolean;
-  form: ApplicantDetailsForm;
-};
 
 function apiErrorMessage(err: unknown, fallback: string): string {
   if (err instanceof AxiosError) {
