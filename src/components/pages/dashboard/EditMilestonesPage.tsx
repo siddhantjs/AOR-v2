@@ -35,7 +35,7 @@ export function EditMilestonesPage({ data }: EditMilestonesPageProps) {
       <TrackFlowHeader
         kicker="Edit timeline"
         title="Your milestones"
-        subtitle="Update what has already happened. Skip what has not. We re-estimate the rest for you."
+        subtitle="Log new milestones as they happen. Dates already saved stay locked."
         phases={[
           { step: 1, label: "Application", state: "done" },
           { step: 2, label: "Milestones", state: "on" },

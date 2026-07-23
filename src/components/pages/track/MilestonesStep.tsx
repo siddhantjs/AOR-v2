@@ -10,6 +10,7 @@ import {
 } from "@/lib/schema/constants";
 import type { MilestoneEstimate } from "@/lib/schema/types";
 import { formatEstimateRange } from "@/lib/estimateFormat";
+import { formatShortDate } from "@/lib/dates";
 import {
   emptyMilestonesFormState,
   type MilestoneEntry,
@@ -177,6 +178,18 @@ export function MilestonesStep({
     () => Boolean(initialState?.primaryVisaOffice || initialState?.secondaryVisaOffice),
   );
 
+  /** Milestone dates already persisted — not editable (toggle or date change). */
+  const lockedDates = useMemo(() => {
+    const locked = new Set<MilestoneId>();
+    const seed = initialState?.milestones;
+    if (!seed) return locked;
+    for (const m of MILESTONES) {
+      const row = seed[m.id];
+      if (row?.done && row.date) locked.add(m.id);
+    }
+    return locked;
+  }, [initialState]);
+
   const estimatesById = useMemo(() => {
     const map = new Map<MilestoneId, MilestoneEstimate>();
     for (const est of estimates) {
@@ -245,15 +258,16 @@ export function MilestonesStep({
   }
 
   function clearDependent(id: MilestoneId, next: MilestonesFormState) {
-    if (id === "bil" && next.milestones.bio_done.done) {
+    if (id === "bil" && next.milestones.bio_done.done && !lockedDates.has("bio_done")) {
       next.milestones.bio_done = { done: false, date: "" };
     }
-    if (id === "bil" || id === "bio_done") {
+    if ((id === "bil" || id === "bio_done") && !officesLocked) {
       next.primaryVisaOffice = "";
       next.secondaryVisaOffice = "";
     }
     if (id === "bgc_start") {
       for (const sub of ["crim", "info", "sec"] as const) {
+        if (lockedDates.has(sub)) continue;
         if (next.milestones[sub].done) {
           next.milestones[sub] = { done: false, date: "" };
         }
@@ -262,6 +276,11 @@ export function MilestonesStep({
   }
 
   function toggle(id: MilestoneId) {
+    if (lockedDates.has(id)) {
+      flash("Saved milestone dates can't be changed.");
+      return;
+    }
+
     const need = needsOf(id);
     const st = state.milestones[id];
 
@@ -295,6 +314,7 @@ export function MilestonesStep({
   }
 
   function setDate(id: MilestoneId, date: string) {
+    if (lockedDates.has(id)) return;
     setState((prev) => {
       const next: MilestonesFormState = {
         ...prev,
@@ -438,6 +458,7 @@ export function MilestonesStep({
             {items.map((m) => {
               const st = state.milestones[m.id];
               const err = errors[m.id];
+              const dateLocked = lockedDates.has(m.id);
 
               return (
                 <div key={m.id}>
@@ -454,14 +475,18 @@ export function MilestonesStep({
                   >
                     <button
                       type="button"
-                      aria-label={`Mark ${m.label}`}
+                      aria-label={
+                        dateLocked ? `${m.label} (saved, locked)` : `Mark ${m.label}`
+                      }
                       aria-pressed={st.done}
+                      aria-disabled={dateLocked || undefined}
                       onClick={() => toggle(m.id)}
                       className={[
                         "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border-[1.6px] transition-[var(--ease)] sm:mt-0",
                         st.done
                           ? "border-[var(--red)] bg-[var(--red)]"
                           : "border-[var(--border2)] bg-[var(--bg-elevated)] hover:border-[var(--red)]",
+                        dateLocked ? "cursor-default opacity-90" : "",
                       ].join(" ")}
                     >
                       <svg
@@ -498,16 +523,25 @@ export function MilestonesStep({
                         </span>
                       ) : null}
                       {st.done ? (
-                        <div className="w-full min-w-0 sm:w-[168px]">
-                          <DashboardDatePicker
-                            value={st.date}
-                            onChange={(v) => setDate(m.id, v)}
-                            min={application.aorDate ? aorMinNext : undefined}
-                            max={todayIso()}
-                            placeholder="dd-mm-yyyy"
-                            popoverAlign="end"
-                          />
-                        </div>
+                        dateLocked ? (
+                          <div className="w-full min-w-0 text-left sm:w-[168px] sm:text-right">
+                            <div className="font-[family-name:var(--font-mono)] text-xs font-semibold text-[var(--green)]">
+                              {formatShortDate(st.date)}
+                            </div>
+                            <div className="text-[11px] text-[var(--muted2)]">Saved</div>
+                          </div>
+                        ) : (
+                          <div className="w-full min-w-0 sm:w-[168px]">
+                            <DashboardDatePicker
+                              value={st.date}
+                              onChange={(v) => setDate(m.id, v)}
+                              min={application.aorDate ? aorMinNext : undefined}
+                              max={todayIso()}
+                              placeholder="dd-mm-yyyy"
+                              popoverAlign="end"
+                            />
+                          </div>
+                        )
                       ) : null}
                     </div>
                   </div>
