@@ -178,7 +178,10 @@ export function MilestonesStep({
     const est = estimatesById.get(id);
     if (est) return formatEstimateRange(est);
     const def = MILESTONES.find((m) => m.id === id);
-    return def?.est ? "We'll estimate" : "no estimate";
+    if (!def?.est) return "no estimate";
+    // BIL-only on first pass; remaining windows come after PVO/SVO.
+    const hasOffices = Boolean(state.primaryVisaOffice || state.secondaryVisaOffice);
+    return hasOffices ? "Est. pending" : "After PVO & SVO";
   }
 
   const loggedCount = useMemo(

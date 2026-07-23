@@ -207,9 +207,7 @@ export function DashboardPage({ data }: DashboardPageProps) {
                           : "bg-[var(--red-pale)] text-[var(--red)]",
                       ].join(" ")}
                     >
-                      {data.nextUp.kind === "estimate"
-                        ? `Est. ${data.nextUp.chipLabel}`
-                        : data.nextUp.chipLabel}
+                      {data.nextUp.chipLabel}
                     </span>
                   </div>
                 </div>
