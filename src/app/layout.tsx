@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Mono, DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
+import { GoogleAnalytics, MicrosoftClarity } from "@/components/seo/tags";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -41,6 +42,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${fraunces.variable} ${dmSans.variable} ${dmMono.variable} h-full`}>
+      <GoogleAnalytics />
+      <MicrosoftClarity />
       <body className="min-h-full antialiased">{children}</body>
     </html>
   );
