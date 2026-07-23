@@ -7,6 +7,7 @@
  * | POST   | /auth/login |
  * | GET    | /username/check?username= |
  * | POST   | /track/start |
+ * | POST   | /track/offices |
  * | POST   | /track/submit |
  * | POST   | /dashboard/:userId/details |
  * | GET    | /dashboard/:userId |
@@ -65,6 +66,22 @@ export type TrackSubmitResponse = {
   ok: boolean;
   userId: string;
   redirectTo: string;
+};
+
+/** POST /track/offices — lock PVO/SVO and run with-offices estimates. */
+export type TrackOfficesRequest = {
+  userId: string;
+  primaryVisaOffice: string;
+  secondaryVisaOffice: string;
+};
+
+export type TrackOfficesResponse = {
+  ok: boolean;
+  userId: string;
+  status: "skipped" | "completed" | "failed";
+  phase: string | null;
+  reason: string | null;
+  estimates: MilestoneEstimate[];
 };
 
 export type UpdateDetailsResponse = {

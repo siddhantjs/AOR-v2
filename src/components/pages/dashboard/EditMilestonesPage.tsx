@@ -42,6 +42,7 @@ export function EditMilestonesPage({ data }: EditMilestonesPageProps) {
         ]}
       />
       <MilestonesStep
+        userId={data.userId}
         application={data.application}
         estimates={data.estimates}
         initialState={data.initialState}

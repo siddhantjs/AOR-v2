@@ -16,6 +16,7 @@ import {
   type MilestonesFormState,
 } from "@/lib/milestonesForm";
 import { DashboardDatePicker, PageLoader, Select } from "@/components/ui";
+import { api } from "@/lib/api";
 import type { ApplicationFormValues } from "./ApplicationDetailsCard";
 
 export type { MilestoneEntry, MilestonesFormState };
@@ -138,6 +139,7 @@ function validateMilestoneDate(
 }
 
 type MilestonesStepProps = {
+  userId: string;
   application: ApplicationFormValues;
   estimates?: MilestoneEstimate[];
   estimateNotice?: string | null;
@@ -146,24 +148,34 @@ type MilestonesStepProps = {
   backLabel?: string;
   onBack: () => void;
   onSubmit: (state: MilestonesFormState) => void | Promise<void>;
+  /** Called after offices are saved and with-offices estimates return. */
+  onEstimatesChange?: (estimates: MilestoneEstimate[]) => void;
 };
 
 export function MilestonesStep({
+  userId,
   application,
-  estimates = [],
+  estimates: estimatesProp = [],
   estimateNotice = null,
   initialState,
   backLabel = "Back",
   onBack,
   onSubmit,
+  onEstimatesChange,
 }: MilestonesStepProps) {
   const [state, setState] = useState<MilestonesFormState>(
     () => initialState ?? emptyMilestonesFormState(),
   );
+  const [estimates, setEstimates] = useState<MilestoneEstimate[]>(estimatesProp);
   const [errors, setErrors] = useState<Partial<Record<MilestoneId, string>>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [savingOffices, setSavingOffices] = useState(false);
+  const [officeConfirmOpen, setOfficeConfirmOpen] = useState(false);
+  const [officesLocked, setOfficesLocked] = useState(
+    () => Boolean(initialState?.primaryVisaOffice || initialState?.secondaryVisaOffice),
+  );
 
   const estimatesById = useMemo(() => {
     const map = new Map<MilestoneId, MilestoneEstimate>();
@@ -173,15 +185,48 @@ export function MilestonesStep({
     return map;
   }, [estimates]);
 
+  const canSaveOffices =
+    !officesLocked && Boolean(state.primaryVisaOffice && state.secondaryVisaOffice);
+
+  async function saveOffices() {
+    if (!canSaveOffices || savingOffices) return;
+
+    setSavingOffices(true);
+    setSubmitError(null);
+    try {
+      const data = await api.trackOffices({
+        userId,
+        primaryVisaOffice: state.primaryVisaOffice,
+        secondaryVisaOffice: state.secondaryVisaOffice,
+      });
+      setEstimates(data.estimates ?? []);
+      onEstimatesChange?.(data.estimates ?? []);
+      setOfficesLocked(true);
+      if (data.status === "failed") {
+        flash(data.reason ?? "Offices saved, but estimates could not be refreshed.");
+      }
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Could not save offices. Try again.");
+    } finally {
+      setSavingOffices(false);
+    }
+  }
+
+  function confirmSaveOffices() {
+    setOfficeConfirmOpen(false);
+    void saveOffices();
+  }
+
   function estimateLabel(id: MilestoneId): string {
     if (id === "bio_done") return "30 days after BIL";
     const est = estimatesById.get(id);
     if (est) return formatEstimateRange(est);
     const def = MILESTONES.find((m) => m.id === id);
     if (!def?.est) return "no estimate";
-    // BIL-only on first pass; remaining windows come after PVO/SVO.
-    const hasOffices = Boolean(state.primaryVisaOffice || state.secondaryVisaOffice);
-    return hasOffices ? "Est. pending" : "After PVO & SVO";
+    // BIL-only on first pass; remaining windows come after PVO/SVO are saved.
+    return officesLocked || state.primaryVisaOffice || state.secondaryVisaOffice
+      ? "Est. pending"
+      : "After PVO & SVO";
   }
 
   const loggedCount = useMemo(
@@ -443,7 +488,7 @@ export function MilestonesStep({
                       {!st.done ? (
                         <span
                           className={[
-                            "max-w-full text-left text-[11.5px] leading-snug sm:max-w-[200px] sm:text-right",
+                            "max-w-full text-left text-[11.5px] leading-snug sm:text-right",
                             estimatesById.has(m.id) || m.id === "bio_done"
                               ? "font-semibold text-[var(--navy)]"
                               : "text-[var(--muted2)] sm:whitespace-nowrap",
@@ -510,6 +555,7 @@ export function MilestonesStep({
                           placeholder="Select"
                           value={state.primaryVisaOffice}
                           options={OFFICE_OPTIONS}
+                          disabled={officesLocked || savingOffices}
                           onChange={(v) =>
                             setState((prev) => ({
                               ...prev,
@@ -522,6 +568,7 @@ export function MilestonesStep({
                           placeholder="Select"
                           value={state.secondaryVisaOffice}
                           options={OFFICE_OPTIONS}
+                          disabled={officesLocked || savingOffices}
                           onChange={(v) =>
                             setState((prev) => ({
                               ...prev,
@@ -529,6 +576,23 @@ export function MilestonesStep({
                             }))
                           }
                         />
+                      </div>
+
+                      <div className="mt-4 flex justify-end">
+                        {officesLocked ? (
+                          <span className="text-[12.5px] font-semibold text-[var(--muted)]">
+                            Offices saved
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={!canSaveOffices || savingOffices}
+                            onClick={() => setOfficeConfirmOpen(true)}
+                            className="inline-flex items-center justify-center rounded-[10px] bg-[var(--navy)] px-[18px] py-2.5 text-[13px] font-bold text-[var(--on-navy)] transition-[var(--ease)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-45"
+                          >
+                            Save offices
+                          </button>
+                        )}
                       </div>
                     </div>
                   ) : null}
@@ -545,7 +609,68 @@ export function MilestonesStep({
         </p>
       ) : null}
 
-      <PageLoader open={submitting} message="Saving your timeline…" />
+      {officeConfirmOpen ? (
+        <OfficeSaveConfirmModal
+          onCancel={() => setOfficeConfirmOpen(false)}
+          onConfirm={confirmSaveOffices}
+        />
+      ) : null}
+
+      <PageLoader
+        open={submitting || savingOffices}
+        message={savingOffices ? "Updating estimates…" : "Saving your timeline…"}
+      />
+    </div>
+  );
+}
+
+function OfficeSaveConfirmModal({
+  onCancel,
+  onConfirm,
+}: {
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-5">
+      <button
+        type="button"
+        className="absolute inset-0 bg-[rgba(22,32,43,0.38)]"
+        aria-label="Close dialog"
+        onClick={onCancel}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="office-save-title"
+        className="relative z-[1] w-full max-w-[400px] rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-5 shadow-[var(--shadow-lg)]"
+      >
+        <h3
+          id="office-save-title"
+          className="m-0 font-[family-name:var(--font-display)] text-[17px] font-extrabold tracking-[-0.02em] text-[var(--navy)]"
+        >
+          Confirm visa offices
+        </h3>
+        <p className="mt-2.5 mb-0 text-[13.5px] leading-relaxed text-[var(--muted)]">
+          Are you sure you want to submit these offices? PVO and SVO can&apos;t be edited later.
+        </p>
+        <div className="mt-5 flex flex-wrap justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-[9px] border border-[var(--border2)] bg-[var(--bg-elevated)] px-4 py-2 text-[13px] font-semibold text-[var(--ink)]"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="rounded-[9px] bg-[var(--red)] px-4 py-2 text-[13px] font-bold text-[var(--on-navy)]"
+          >
+            Yes, save offices
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

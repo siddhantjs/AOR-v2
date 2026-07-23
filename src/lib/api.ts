@@ -3,6 +3,8 @@ import type { ApplicantDetailsForm } from "@/lib/applicantDetails";
 import type {
   LoginRequest,
   LoginResponse,
+  TrackOfficesRequest,
+  TrackOfficesResponse,
   TrackStartRequest,
   TrackStartResponse,
   TrackSubmitRequest,
@@ -17,6 +19,8 @@ import type { EditMilestonesData } from "@/lib/loadDashboard";
 export type {
   LoginRequest,
   LoginResponse,
+  TrackOfficesRequest,
+  TrackOfficesResponse,
   TrackStartRequest,
   TrackStartResponse,
   TrackSubmitRequest,
@@ -87,6 +91,15 @@ export class ApiClient {
       return data;
     } catch (err) {
       throw new Error(apiErrorMessage(err, "Could not save your timeline. Try again."));
+    }
+  }
+
+  async trackOffices(body: TrackOfficesRequest): Promise<TrackOfficesResponse> {
+    try {
+      const { data } = await this.http.post<TrackOfficesResponse>("/track/offices", body);
+      return data;
+    } catch (err) {
+      throw new Error(apiErrorMessage(err, "Could not save offices. Try again."));
     }
   }
 

@@ -96,11 +96,13 @@ export function TrackPage() {
               ]}
             />
             <MilestonesStep
+              userId={userId}
               application={application}
               estimates={estimates}
               estimateNotice={estimateNotice}
               onBack={handleBack}
               onSubmit={handleMilestonesSubmit}
+              onEstimatesChange={setEstimates}
             />
           </>
         ) : (
