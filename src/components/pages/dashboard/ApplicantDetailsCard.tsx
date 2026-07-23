@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   APPLICANT_DETAIL_OPTIONS,
@@ -16,6 +17,8 @@ const editControl = "w-[168px] shrink-0 [&_button]:py-1.5 [&_button]:text-[12.5p
 const inputControl =
   "w-[168px] rounded-[var(--radius-md)] border border-[var(--border2)] bg-[var(--bg-elevated)] px-3 py-1.5 text-right text-[12.5px] text-[var(--ink)] outline-none focus:border-[var(--navy)] focus:shadow-[0_0_0_3px_rgba(26,35,50,0.08)]";
 
+const OFFICE_KEYS = new Set(["pvo", "svo"]);
+
 type ApplicantDetailsCardProps = {
   userId: string;
   initialForm: ApplicantDetailsForm;
@@ -28,6 +31,7 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
   const [draft, setDraft] = useState(initialForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [officeModalOpen, setOfficeModalOpen] = useState(false);
 
   const rows = displayApplicantDetails(form).map((row) =>
     row.key === "ita" && form.itaDate ? { ...row, value: formatLongDate(form.itaDate) } : row,
@@ -65,9 +69,15 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
     setSaving(true);
     setError(null);
     try {
-      const data = await api.updateApplicantDetails(userId, draft);
+      // Offices are display-only here; keep saved PVO/SVO unchanged.
+      const payload = {
+        ...draft,
+        primaryVisaOffice: form.primaryVisaOffice,
+        secondaryVisaOffice: form.secondaryVisaOffice,
+      };
+      const data = await api.updateApplicantDetails(userId, payload);
       if (data.form) setForm(data.form);
-      else setForm(draft);
+      else setForm(payload);
       setEditing(false);
       router.refresh();
     } catch (err) {
@@ -102,26 +112,50 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
       </div>
 
       <div className="grid grid-cols-1 gap-x-[26px] min-[641px]:grid-cols-2">
-        {rows.map((d) => (
-          <div
-            key={d.key}
-            className="flex min-h-[46px] items-center gap-2.5 border-b border-[var(--border)] py-[11px]"
-          >
-            <span className="flex-1 text-[13px] text-[var(--muted)]">{d.label}</span>
-            {editing ? (
-              <FieldEditor fieldKey={d.key} draft={draft} onChange={patchDraft} />
-            ) : (
-              <span
-                className={[
-                  "text-right text-[13px] font-semibold",
-                  d.value === "—" ? "font-medium text-[var(--muted2)]" : "text-[var(--ink)]",
-                ].join(" ")}
-              >
-                {d.value}
-              </span>
-            )}
-          </div>
-        ))}
+        {rows.map((d) => {
+          const isOffice = OFFICE_KEYS.has(d.key);
+          const displayValue =
+            d.key === "pvo"
+              ? form.primaryVisaOffice || "Click Here"
+              : d.key === "svo"
+                ? form.secondaryVisaOffice || "Click Here"
+                : d.value;
+
+          return (
+            <div
+              key={d.key}
+              className="flex min-h-[46px] items-center gap-2.5 border-b border-[var(--border)] py-[11px]"
+            >
+              <span className="flex-1 text-[13px] text-[var(--muted)]">{d.label}</span>
+              {isOffice ? (
+                <button
+                  type="button"
+                  onClick={() => setOfficeModalOpen(true)}
+                  title="Edit PVO and SVO on Edit milestones"
+                  className={[
+                    "text-right text-[13px] font-semibold transition-[var(--ease)]",
+                    displayValue === "—"
+                      ? "font-medium text-[var(--muted2)] hover:text-[var(--navy)]"
+                      : "text-[var(--ink)] hover:text-[var(--navy)]",
+                  ].join(" ")}
+                >
+                  {displayValue}
+                </button>
+              ) : editing ? (
+                <FieldEditor fieldKey={d.key} draft={draft} onChange={patchDraft} />
+              ) : (
+                <span
+                  className={[
+                    "text-right text-[13px] font-semibold",
+                    d.value === "—" ? "font-medium text-[var(--muted2)]" : "text-[var(--ink)]",
+                  ].join(" ")}
+                >
+                  {d.value}
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {error ? (
@@ -150,7 +184,60 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
           </button>
         </div>
       ) : null}
+
+      {officeModalOpen ? (
+        <OfficeEditModal
+          userId={userId}
+          onClose={() => setOfficeModalOpen(false)}
+        />
+      ) : null}
     </section>
+  );
+}
+
+function OfficeEditModal({ userId, onClose }: { userId: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-5">
+      <button
+        type="button"
+        className="absolute inset-0 bg-[rgba(22,32,43,0.38)]"
+        aria-label="Close dialog"
+        onClick={onClose}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="office-edit-title"
+        className="relative z-[1] w-full max-w-[400px] rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-5 shadow-[var(--shadow-lg)]"
+      >
+        <h3
+          id="office-edit-title"
+          className="m-0 font-[family-name:var(--font-display)] text-[17px] font-extrabold tracking-[-0.02em] text-[var(--navy)]"
+        >
+          Edit visa offices
+        </h3>
+        <p className="mt-2.5 mb-0 text-[13.5px] leading-relaxed text-[var(--muted)]">
+          Primary and secondary visa offices (PVO / SVO) can&apos;t be changed here. Go to{" "}
+          <strong className="font-semibold text-[var(--ink)]">Edit milestones</strong> to update
+          them so your estimates can refresh.
+        </p>
+        <div className="mt-5 flex flex-wrap justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-[9px] border border-[var(--border2)] bg-[var(--bg-elevated)] px-4 py-2 text-[13px] font-semibold text-[var(--ink)]"
+          >
+            Cancel
+          </button>
+          <Link
+            href={`/dashboard/${userId}/edit-milestone`}
+            className="inline-flex items-center rounded-[9px] bg-[var(--red)] px-4 py-2 text-[13px] font-bold text-[var(--on-navy)]"
+          >
+            Go to Edit milestones
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -288,26 +375,6 @@ function FieldEditor({
           className={inputControl}
           value={draft.dependants}
           onChange={(e) => onChange("dependants", e.target.value)}
-        />
-      );
-    case "pvo":
-      return (
-        <Select
-          className={editControl}
-          placeholder="Select"
-          value={draft.primaryVisaOffice}
-          options={APPLICANT_DETAIL_OPTIONS.offices}
-          onChange={(v) => onChange("primaryVisaOffice", v)}
-        />
-      );
-    case "svo":
-      return (
-        <Select
-          className={editControl}
-          placeholder="Select"
-          value={draft.secondaryVisaOffice}
-          options={APPLICANT_DETAIL_OPTIONS.offices}
-          onChange={(v) => onChange("secondaryVisaOffice", v)}
         />
       );
     case "cres":
