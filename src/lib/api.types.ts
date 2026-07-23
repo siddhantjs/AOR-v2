@@ -1,6 +1,6 @@
 /**
  * FE mirror of the immigration API contract (`/api/aor-track/v1`).
- * Update this file when the backend request/response shapes change.
+ * Keep in sync with server `aor-tracker/lib/api.types.ts` (server is source of truth).
  *
  * | Method | Path |
  * | ------ | ---------------------------------------------------- |
