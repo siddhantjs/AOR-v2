@@ -19,6 +19,48 @@ const inputControl =
 
 const OFFICE_KEYS = new Set(["pvo", "svo"]);
 
+/** Display row key → form field used to decide if the value is already saved. */
+const ROW_FORM_KEY: Record<string, keyof ApplicantDetailsForm> = {
+  pathway: "pathway",
+  ee: "expressEntryProgram",
+  draw: "drawCategory",
+  ita: "itaDate",
+  loc: "applyingFrom",
+  nat: "nationality",
+  crs: "crsScore",
+  mar: "maritalStatus",
+  spouse: "spouseStatus",
+  fw: "foreignWork",
+  cw: "canadianWork",
+  dep: "dependants",
+  cres: "countryOfResidence",
+  med: "medicalType",
+};
+
+/** Optional profile fields that can still be filled when empty. */
+const FILLABLE_KEYS = [
+  "nationality",
+  "crsScore",
+  "maritalStatus",
+  "spouseStatus",
+  "foreignWork",
+  "canadianWork",
+  "dependants",
+  "countryOfResidence",
+  "medicalType",
+] as const satisfies ReadonlyArray<keyof ApplicantDetailsForm>;
+
+function isFilled(value: string): boolean {
+  return value.trim() !== "";
+}
+
+function isRowLocked(form: ApplicantDetailsForm, rowKey: string): boolean {
+  const formKey = ROW_FORM_KEY[rowKey];
+  if (!formKey) return true;
+  if (rowKey === "ee" && form.pathway !== "express-entry") return true;
+  return isFilled(String(form[formKey] ?? ""));
+}
+
 type ApplicantDetailsCardProps = {
   userId: string;
   initialForm: ApplicantDetailsForm;
@@ -37,6 +79,8 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
     row.key === "ita" && form.itaDate ? { ...row, value: formatLongDate(form.itaDate) } : row,
   );
 
+  const hasFillableEmpty = FILLABLE_KEYS.some((key) => !isFilled(String(form[key] ?? "")));
+
   function startEdit() {
     setDraft(form);
     setError(null);
@@ -53,6 +97,8 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
     key: K,
     value: ApplicantDetailsForm[K],
   ) {
+    // Never overwrite a value that was already saved.
+    if (isFilled(String(form[key] ?? ""))) return;
     setDraft((prev) => {
       const next = { ...prev, [key]: value };
       if (key === "pathway" && value !== "express-entry") {
@@ -69,11 +115,20 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
     setSaving(true);
     setError(null);
     try {
-      // Offices are display-only here; keep saved PVO/SVO unchanged.
-      const payload = {
-        ...draft,
-        primaryVisaOffice: form.primaryVisaOffice,
-        secondaryVisaOffice: form.secondaryVisaOffice,
+      // Preserve locked fields from the saved form; only send new fills for empty ones.
+      const payload: ApplicantDetailsForm = {
+        ...form,
+        ...(isFilled(form.nationality) ? {} : { nationality: draft.nationality }),
+        ...(isFilled(form.crsScore) ? {} : { crsScore: draft.crsScore }),
+        ...(isFilled(form.maritalStatus) ? {} : { maritalStatus: draft.maritalStatus }),
+        ...(isFilled(form.spouseStatus) ? {} : { spouseStatus: draft.spouseStatus }),
+        ...(isFilled(form.foreignWork) ? {} : { foreignWork: draft.foreignWork }),
+        ...(isFilled(form.canadianWork) ? {} : { canadianWork: draft.canadianWork }),
+        ...(isFilled(form.dependants) ? {} : { dependants: draft.dependants }),
+        ...(isFilled(form.countryOfResidence)
+          ? {}
+          : { countryOfResidence: draft.countryOfResidence }),
+        ...(isFilled(form.medicalType) ? {} : { medicalType: draft.medicalType }),
       };
       const data = await api.updateApplicantDetails(userId, payload);
       if (data.form) setForm(data.form);
@@ -93,11 +148,11 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
         <h2 className="m-0 text-base font-extrabold tracking-[-0.02em] text-[var(--navy)]">
           Applicant details
         </h2>
-        {!editing ? (
+        {!editing && hasFillableEmpty ? (
           <button
             type="button"
             onClick={startEdit}
-            title="Edit details"
+            title="Add missing details"
             className="flex size-[34px] items-center justify-center rounded-full border border-[var(--border2)] bg-[var(--bg-elevated)] text-[var(--muted)] transition-[var(--ease)] hover:border-[var(--navy)] hover:text-[var(--navy)]"
           >
             <svg
@@ -114,6 +169,7 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
       <div className="grid grid-cols-1 gap-x-[26px] min-[641px]:grid-cols-2">
         {rows.map((d) => {
           const isOffice = OFFICE_KEYS.has(d.key);
+          const locked = isRowLocked(form, d.key);
           const displayValue =
             d.key === "pvo"
               ? form.primaryVisaOffice || "Click Here"
@@ -134,20 +190,24 @@ export function ApplicantDetailsCard({ userId, initialForm }: ApplicantDetailsCa
                   title="Edit PVO and SVO on Edit milestones"
                   className={[
                     "text-right text-[13px] font-semibold transition-[var(--ease)]",
-                    displayValue === "—"
+                    !form.primaryVisaOffice && d.key === "pvo"
                       ? "font-medium text-[var(--muted2)] hover:text-[var(--navy)]"
-                      : "text-[var(--ink)] hover:text-[var(--navy)]",
+                      : !form.secondaryVisaOffice && d.key === "svo"
+                        ? "font-medium text-[var(--muted2)] hover:text-[var(--navy)]"
+                        : "text-[var(--ink)] hover:text-[var(--navy)]",
                   ].join(" ")}
                 >
                   {displayValue}
                 </button>
-              ) : editing ? (
+              ) : editing && !locked ? (
                 <FieldEditor fieldKey={d.key} draft={draft} onChange={patchDraft} />
               ) : (
                 <span
                   className={[
                     "text-right text-[13px] font-semibold",
-                    d.value === "—" ? "font-medium text-[var(--muted2)]" : "text-[var(--ink)]",
+                    d.value === "—" || displayValue === "—"
+                      ? "font-medium text-[var(--muted2)]"
+                      : "text-[var(--ink)]",
                   ].join(" ")}
                 >
                   {d.value}
